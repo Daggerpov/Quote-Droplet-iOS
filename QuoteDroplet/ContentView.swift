@@ -14,6 +14,12 @@ let colorPalettes = [
     [Color(hex: "EFF8E2"), Color(hex: "DC9E82"), Color(hex: "423E37")]
 ]
 
+struct CustomColorPalette {
+    var color1: Color
+    var color2: Color
+    var color3: Color
+}
+
 enum QuoteCategory: String, CaseIterable {
     case wisdom = "Wisdom"
     case motivation = "Motivation"
@@ -29,6 +35,8 @@ enum QuoteCategory: String, CaseIterable {
 }
 
 struct ContentView: View {
+    @State private var customColorPalette = CustomColorPalette(color1: Color(hex: "0D0630"), color2: Color(hex: "62A87C"), color3: Color(hex: ("384E77")))
+    
     @AppStorage("colorPaletteIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
     var colorPaletteIndex = 0
     @AppStorage("quoteFrequencyIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
@@ -102,6 +110,32 @@ struct ContentView: View {
                     }
                 }
             }
+            
+            // Custom Color Palette Section
+            Group {
+                HStack(spacing: 10) { // Reduced spacing between color pickers
+                    Text("Custom:")
+                        .font(.title2)
+                        .foregroundColor(customColorPalette.color2) // Use the middle color for text color
+                        .padding(.top, 20)
+                    
+                    ColorPicker("", selection: $customColorPalette.color1)
+                        .foregroundColor(customColorPalette.color1)
+                        .frame(width: 100, height: 100) // Make them squares
+                        .cornerRadius(8)
+                    
+                    ColorPicker("", selection: $customColorPalette.color2)
+                        .foregroundColor(customColorPalette.color2)
+                        .frame(width: 100, height: 100) // Make them squares
+                        .cornerRadius(8)
+                    
+                    ColorPicker("", selection: $customColorPalette.color3)
+                        .foregroundColor(customColorPalette.color3)
+                        .frame(width: 100, height: 100) // Make them squares
+                        .cornerRadius(8)
+                }
+            }
+
             
             Spacer() // Create spacing
             
@@ -201,10 +235,10 @@ struct ContentView: View {
 // A view that displays a gradient background using the provided colors
 struct ColorPaletteView: View {
     var colors: [Color]
-    
+
     var body: some View {
         LinearGradient(gradient: Gradient(colors: colors), startPoint: .topLeading, endPoint: .bottomTrailing)
-            .ignoresSafeArea() // This line will make the background take up the whole screen
+            .ignoresSafeArea()
     }
 }
 
