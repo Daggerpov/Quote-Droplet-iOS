@@ -41,11 +41,15 @@ class NotificationSchedulerService {
     
     func scheduleNotifications() {
         // removed toggle check to make sure user has opted in; simply notififying no matter if opted in.
-        if NotificationSchedulerService.isDefaultConfigOverwritten {
-            scheduleNotifications(notificationTime: NotificationSchedulerService.previouslySelectedNotificationTime, quoteCategory: NotificationSchedulerService.previouslySelectedNotificationCategory, defaults: true)
-        } else {
-            NotificationSchedulerService.defaultScheduledNotificationTime = defaultNotificationTime
-            scheduleNotifications(notificationTime: defaultNotificationTime, quoteCategory: defaultQuoteCategory, defaults: true)
+        do {
+            if NotificationSchedulerService.isDefaultConfigOverwritten {
+                scheduleNotifications(notificationTime: NotificationSchedulerService.previouslySelectedNotificationTime, quoteCategory: NotificationSchedulerService.previouslySelectedNotificationCategory, defaults: true)
+            } else {
+                NotificationSchedulerService.defaultScheduledNotificationTime = defaultNotificationTime
+                scheduleNotifications(notificationTime: defaultNotificationTime, quoteCategory: defaultQuoteCategory, defaults: true)
+            }
+        } catch {
+            print("Error scheduling notifications: \(error.localizedDescription)")
         }
     }
     
