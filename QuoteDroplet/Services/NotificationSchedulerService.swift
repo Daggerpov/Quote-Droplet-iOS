@@ -185,7 +185,5 @@ class NotificationSchedulerService {
             }
         }
     }
-    
-    
 }
 
