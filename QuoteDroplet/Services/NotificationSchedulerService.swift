@@ -7,7 +7,6 @@
 
 import Foundation
 import UserNotifications
-import Foundation
 
 private var scheduledNotificationIDs: Set<String> = Set() // for the quotes shown already
 
