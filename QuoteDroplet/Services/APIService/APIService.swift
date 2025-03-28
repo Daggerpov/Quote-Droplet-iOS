@@ -98,7 +98,16 @@ class APIService: IAPIService {
             // Debug raw response if needed
             if responseType == [Quote].self || responseType == Quote.self {
                 if let dataString = String(data: data, encoding: .utf8) {
-                    print("📋 API Raw Response: \(dataString)")
+                    if responseType == [Quote].self {
+                        do {
+                            let quotes = try JSONDecoder().decode([Quote].self, from: data)
+                            print("📋 API Raw Response: Received \(quotes.count) quotes")
+                        } catch {
+                            print("📋 API Raw Response: Could not parse quote array")
+                        }
+                    } else {
+                        print("📋 API Raw Response: Received a single quote")
+                    }
                 }
             }
             

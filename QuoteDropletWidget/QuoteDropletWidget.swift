@@ -165,13 +165,13 @@ struct QuoteDropletWidgetEntryView : View {
                 if widgetQuote.text != "" {
                     if family == .systemSmall {
                         Text("\(widgetQuote.text)")
-                            .font(Font.custom(availableFonts[data.selectedFontIndex], size: 16)) // Use the selected font
+                            .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: 16)) // Use the selected font
                             .foregroundColor(colors[1]) // Use the second color for text color
                             .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
                             .minimumScaleFactor(0.5)
                     } else {
                         Text("\(widgetQuote.text)")
-                            .font(Font.custom(availableFonts[data.selectedFontIndex], size: 500)) // Use the selected font
+                            .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: 500)) // Use the selected font
                             .foregroundColor(colors[1]) // Use the second color for text color
                             .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
                             .minimumScaleFactor(0.01)
@@ -192,7 +192,7 @@ struct QuoteDropletWidgetEntryView : View {
                     .font(
                         Font
                             .custom(
-                                availableFonts[data.selectedFontIndex],
+                                availableFonts[data.getSelectedFontIndex()],
                                 size: getFontSizeForText(
                                     familia: family,
                                     whichText: .authorText
@@ -202,7 +202,7 @@ struct QuoteDropletWidgetEntryView : View {
                     
                 } else {
                     Text("\(getTextForWidgetPreview(familia: family)[0])")
-                        .font(Font.custom(availableFonts[data.selectedFontIndex], size: 500)) // Use the selected font
+                        .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: 500)) // Use the selected font
                         .foregroundColor(colors[1]) // Use the second color for text color
                         .padding(.horizontal, 10)
                         .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
@@ -217,7 +217,7 @@ struct QuoteDropletWidgetEntryView : View {
                             likesSection
                         }
                     }
-                    .font(Font.custom(availableFonts[data.selectedFontIndex], size: getFontSizeForText(familia: family, whichText: .authorText))) // Use the selected font for author text
+                    .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .authorText))) // Use the selected font for author text
                 }
             }
             .padding()
@@ -229,10 +229,7 @@ struct QuoteDropletWidgetEntryView : View {
                 likes = fetchedLikeCount
             }
             isLiked = isQuoteLiked(widgetQuote)
-            
-            
         }
-        
     }
     
     private func toggleBookmark() {
@@ -279,18 +276,46 @@ struct QuoteDropletWidgetEntryView : View {
     }
     
     private func isQuoteLiked(_ quote: Quote) -> Bool {
-        return getLikedQuotes().contains(where: { $0.id == quote.id })
+        // Provide safer access to avoid crashes
+        do {
+            guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
+                print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
+                return false
+            }
+            if let quotes = try? JSONDecoder().decode([Quote].self, from: likedQuotesData) {
+                return quotes.contains(where: { $0.id == quote.id })
+            }
+            return false
+        } catch {
+            print("⚠️ Warning: Error decoding liked quotes: \(error)")
+            return false
+        }
     }
     
     private func getLikedQuotes() -> [Quote] {
-        if let quotes = try? JSONDecoder().decode([Quote].self, from: likedQuotesData) {
-            return quotes
+        // Provide safer access to avoid crashes
+        do {
+            guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
+                print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
+                return []
+            }
+            if let quotes = try? JSONDecoder().decode([Quote].self, from: likedQuotesData) {
+                return quotes
+            }
+            return []
+        } catch {
+            print("⚠️ Warning: Error decoding liked quotes: \(error)")
+            return []
         }
-        return []
     }
     
     private func isQuoteBookmarked(_ quote: Quote) -> Bool {
-        return localQuotesService.getBookmarkedQuotes().contains(where: { $0.id == quote.id })
+        do {
+            return localQuotesService.getBookmarkedQuotes().contains(where: { $0.id == quote.id })
+        } catch {
+            print("⚠️ Warning: Error checking bookmarked quotes: \(error)")
+            return false
+        }
     }
 }
 
@@ -504,14 +529,37 @@ struct LikeQuoteIntent: AppIntent {
     }
     
     private func isQuoteLiked(_ quote: Quote) -> Bool {
-        return getLikedQuotes().contains(where: { $0.id == quote.id })
+        // Provide safer access to avoid crashes
+        do {
+            guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
+                print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
+                return false
+            }
+            if let quotes = try? JSONDecoder().decode([Quote].self, from: likedQuotesData) {
+                return quotes.contains(where: { $0.id == quote.id })
+            }
+            return false
+        } catch {
+            print("⚠️ Warning: Error decoding liked quotes: \(error)")
+            return false
+        }
     }
     
     private func getLikedQuotes() -> [Quote] {
-        if let quotes = try? JSONDecoder().decode([Quote].self, from: likedQuotesData) {
-            return quotes
+        // Provide safer access to avoid crashes
+        do {
+            guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
+                print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
+                return []
+            }
+            if let quotes = try? JSONDecoder().decode([Quote].self, from: likedQuotesData) {
+                return quotes
+            }
+            return []
+        } catch {
+            print("⚠️ Warning: Error decoding liked quotes: \(error)")
+            return []
         }
-        return []
     }
 }
 

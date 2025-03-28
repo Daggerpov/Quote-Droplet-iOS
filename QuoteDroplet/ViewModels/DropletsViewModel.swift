@@ -93,7 +93,7 @@ class DropletsViewModel: ObservableObject {
                         classification: "all",
                         completion: { [weak self] quote, error in
                             guard let self = self else { return }
-                            if let quote = quote, self.quotes.contains(where: { $0.id == quote.id }) {
+                            if let quote = quote, !self.quotes.contains(where: { $0.id == quote.id }) {
                                 DispatchQueue.main.async {
                                     self.quotes.append(quote)
                                 }
@@ -113,7 +113,7 @@ class DropletsViewModel: ObservableObject {
                 group.enter()
                 apiService.getQuoteByID(id: id) { [weak self] quote, error in
                     guard let self = self else { return }
-                    if let quote = quote, self.savedQuotes.contains(where: { $0.id == quote.id }) {
+                    if let quote = quote, !self.savedQuotes.contains(where: { $0.id == quote.id }) {
                         DispatchQueue.main.async {
                             self.savedQuotes.append(quote)
                         }
@@ -132,7 +132,7 @@ class DropletsViewModel: ObservableObject {
                 group.enter()
                 apiService.getQuoteByID(id: id) { [weak self] quote, error in
                     guard let self = self else { return }
-                    if let quote = quote, self.recentQuotes.contains(where: { $0.id == quote.id }) {
+                    if let quote = quote, !self.recentQuotes.contains(where: { $0.id == quote.id }) {
                         DispatchQueue.main.async {
                             self.recentQuotes.append(quote)
                         }
