@@ -7,7 +7,6 @@
 
 import SwiftUI
 import GoogleMobileAds
-import FirebaseCore
 
 @available(iOS 16, *)
 @main
@@ -38,8 +37,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             }
         }
         GADMobileAds.sharedInstance().start(completionHandler: nil)
-        
-        FirebaseApp.configure()
         
         return true
     }
