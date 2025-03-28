@@ -133,7 +133,7 @@ struct QuoteDropletWidgetEntryView : View {
     private var likesSection: some View {
         HStack {
             if #available(iOS 17.0, *) {
-                Button(intent: LikeQuoteIntent()) {
+                Button(intent: LikeQuoteIntent(quote: widgetQuote)) {
                     Image(systemName: isLiked ? "heart.fill" : "heart")
                         .foregroundStyle(colors[2])
                 }.backgroundStyle(colors[2])
@@ -144,9 +144,17 @@ struct QuoteDropletWidgetEntryView : View {
             
             Text("\(widgetQuote.likes ?? 69)")
                 .foregroundColor(colors[2])
+                
+            if #available(iOS 17.0, *) {
+                Button(intent: NextQuoteIntent()) {
+                    Image(systemName: "arrow.right")
+                        .foregroundStyle(colors[2])
+                }.backgroundStyle(colors[2])
+            } else {
+                Image(systemName: "arrow.right")
+                    .foregroundStyle(colors[2])
+            }
         }
-        
-        
     }
     
     var body: some View {
@@ -251,7 +259,7 @@ struct QuoteDropletWidgetEntryView : View {
             apiService.unlikeQuote(quoteID: widgetQuote.id) { updatedQuote, error in
                 DispatchQueue.main.async {
                     if let updatedQuote = updatedQuote {
-                        // Update likes count
+                        // Update likes count only, not the entire quote
                         self.likes = updatedQuote.likes ?? 15
                     }
                     self.isLiking = false
@@ -261,7 +269,7 @@ struct QuoteDropletWidgetEntryView : View {
             apiService.likeQuote(quoteID: widgetQuote.id) { updatedQuote, error in
                 DispatchQueue.main.async {
                     if let updatedQuote = updatedQuote {
-                        // Update likes count
+                        // Update likes count only, not the entire quote
                         self.likes = updatedQuote.likes ?? 15
                     }
                     self.isLiking = false
@@ -429,11 +437,7 @@ struct LikeQuoteIntent: AppIntent {
     @AppStorage("likedQuotes", store: UserDefaults(suiteName: "group.selectedSettings"))
     private var likedQuotesData: Data = Data()
     
-    //    @AppStorage("bookmarkedQuotes", store: UserDefaults(suiteName: "group.selectedSettings"))
-    //    private var bookmarkedQuotesData: Data = Data()
-    
     @State private var isLiked: Bool = false
-    //    @State private var isBookmarked: Bool = false
     @State private var likes: Int = 69 // Change likes to non-optional
     @State private var isLiking: Bool = false // Add state for liking status
     
@@ -447,7 +451,6 @@ struct LikeQuoteIntent: AppIntent {
     
     init(quote: Quote) {
         self.widgetQuote = quote
-        //        self._isBookmarked = State(initialValue: isQuoteBookmarked(widgetQuote))
         self._isLiked = State(initialValue: isQuoteLiked(widgetQuote))
     }
     
@@ -459,7 +462,8 @@ struct LikeQuoteIntent: AppIntent {
         likeQuoteAction()
         toggleLike()
         
-        return .result()
+        // Only update the like status, don't refresh the entire widget which would change the quote
+        return .result(value: false)
     }
     
     private func toggleLike() {
@@ -480,7 +484,7 @@ struct LikeQuoteIntent: AppIntent {
             apiService.unlikeQuote(quoteID: widgetQuote.id) { updatedQuote, error in
                 DispatchQueue.main.async {
                     if let updatedQuote = updatedQuote {
-                        // Update likes count
+                        // Update likes count only, not the entire quote
                         self.likes = updatedQuote.likes ?? 15
                     }
                     self.isLiking = false
@@ -490,7 +494,7 @@ struct LikeQuoteIntent: AppIntent {
             apiService.likeQuote(quoteID: widgetQuote.id) { updatedQuote, error in
                 DispatchQueue.main.async {
                     if let updatedQuote = updatedQuote {
-                        // Update likes count
+                        // Update likes count only, not the entire quote
                         self.likes = updatedQuote.likes ?? 15
                     }
                     self.isLiking = false
@@ -511,6 +515,21 @@ struct LikeQuoteIntent: AppIntent {
     }
 }
 
+@available(iOS 16.0, *)
+struct NextQuoteIntent: AppIntent {
+    static var title: LocalizedStringResource = "Next Quote Button"
+    
+    static var description = IntentDescription("Show Next Quote")
+    
+    func perform() async throws -> some IntentResult {
+        // Request an immediate widget refresh
+        WidgetCenter.shared.reloadTimelines(ofKind: "QuoteDropletWidget")
+        WidgetCenter.shared.reloadTimelines(ofKind: "QuoteDropletWidgetWithIntents")
+        
+        // This will trigger a widget refresh to show a new quote
+        return .result()
+    }
+}
 
 struct SimpleEntry: TimelineEntry {
     let date: Date
