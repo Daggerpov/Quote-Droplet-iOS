@@ -22,8 +22,6 @@
 		DC0EFB852C4CB18100B4D46A /* AdHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC0EFB832C4CB18100B4D46A /* AdHelper.swift */; };
 		DC0EFB872C4CB1C500B4D46A /* ColorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC0EFB862C4CB1C500B4D46A /* ColorHelper.swift */; };
 		DC0EFB882C4CB1C500B4D46A /* ColorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC0EFB862C4CB1C500B4D46A /* ColorHelper.swift */; };
-		DC14DCC02BB25B9400F87C12 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DC14DCBF2BB25B9400F87C12 /* GoogleService-Info.plist */; };
-		DC14DCC12BB25B9400F87C12 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DC14DCBF2BB25B9400F87C12 /* GoogleService-Info.plist */; };
 		DC26EB942BF96FD4004CA84F /* DropletsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC26EB932BF96FD4004CA84F /* DropletsView.swift */; };
 		DC26EB952BF96FD4004CA84F /* DropletsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC26EB932BF96FD4004CA84F /* DropletsView.swift */; };
 		DC2998FA2C4D9C5C0025D32E /* SingleQuoteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2998F92C4D9C5C0025D32E /* SingleQuoteViewModel.swift */; };
@@ -177,7 +175,6 @@
 		DC03AD572CCC89AC000C6572 /* SingleQuoteSourceEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleQuoteSourceEnum.swift; sourceTree = "<group>"; };
 		DC0EFB832C4CB18100B4D46A /* AdHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdHelper.swift; sourceTree = "<group>"; };
 		DC0EFB862C4CB1C500B4D46A /* ColorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorHelper.swift; sourceTree = "<group>"; };
-		DC14DCBF2BB25B9400F87C12 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DC26EB932BF96FD4004CA84F /* DropletsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropletsView.swift; sourceTree = "<group>"; };
 		DC2998F92C4D9C5C0025D32E /* SingleQuoteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleQuoteViewModel.swift; sourceTree = "<group>"; };
 		DC2998FE2C4D9C820025D32E /* sound-for-noti-water-drip-pixabay.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "sound-for-noti-water-drip-pixabay.mp3"; sourceTree = "<group>"; };
@@ -417,7 +414,6 @@
 				DCB1DA5B2CCC5FE900D823B0 /* Enums */,
 				DC0EFB8D2C4CB79100B4D46A /* Services */,
 				DC2998FC2C4D9C670025D32E /* Models */,
-				DC14DCBF2BB25B9400F87C12 /* GoogleService-Info.plist */,
 				DCAB2DD02A9FBAB800A822D7 /* Info.plist */,
 				DCAB2D9E2A9FA91300A822D7 /* QuoteDropletApp.swift */,
 				DCAB2DA42A9FA91900A822D7 /* Preview Content */,
@@ -643,7 +639,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DCAB2DA62A9FA91900A822D7 /* Preview Assets.xcassets in Resources */,
-				DC14DCC02BB25B9400F87C12 /* GoogleService-Info.plist in Resources */,
 				DCAB2DA32A9FA91900A822D7 /* Assets.xcassets in Resources */,
 				DC7010E12BAE63DC008678CB /* QuotesBackup.json in Resources */,
 			);
@@ -655,7 +650,6 @@
 			files = (
 				DC7010E22BAE63DC008678CB /* QuotesBackup.json in Resources */,
 				DCAB2DBF2A9FA96100A822D7 /* Assets.xcassets in Resources */,
-				DC14DCC12BB25B9400F87C12 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
