@@ -16,6 +16,7 @@
 			dependencies = (
 			);
 			name = GoogleUserMessagingPlatform;
+			productName = GoogleUserMessagingPlatform;
 		};
 		FEA3B3A570634836C0457F3D7CEF1699 /* Google-Mobile-Ads-SDK */ = {
 			isa = PBXAggregateTarget;
@@ -27,6 +28,7 @@
 				C1ACEF2970E882A9D8C858129C142771 /* PBXTargetDependency */,
 			);
 			name = "Google-Mobile-Ads-SDK";
+			productName = "Google-Mobile-Ads-SDK";
 		};
 /* End PBXAggregateTarget section */
 
@@ -64,13 +66,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		151E310033EF426FB40BA8358989D5D2 /* GoogleUserMessagingPlatform-xcframeworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "GoogleUserMessagingPlatform-xcframeworks.sh"; sourceTree = "<group>"; };
-		16B6B0601570326E06D84FFAD71AC2F3 /* Pods-Quote Droplet */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-Quote Droplet"; path = Pods_Quote_Droplet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		1930295812D3B282EE685334CFD0B2DF /* Pods-QuoteDropletWidgetExtension */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-QuoteDropletWidgetExtension"; path = Pods_QuoteDropletWidgetExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		16B6B0601570326E06D84FFAD71AC2F3 /* Pods_Quote_Droplet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Quote_Droplet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1930295812D3B282EE685334CFD0B2DF /* Pods_QuoteDropletWidgetExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_QuoteDropletWidgetExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		31ECAFBFA367CA042E4C45AC4E2BBD65 /* Pods-QuoteDropletWidgetExtension-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-QuoteDropletWidgetExtension-acknowledgements.plist"; sourceTree = "<group>"; };
 		38A48902A17A3DAC695F82A1CC724D72 /* Pods-Quote Droplet-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Quote Droplet-acknowledgements.plist"; sourceTree = "<group>"; };
 		3C56091F4575B169D8FAC534E84DB88D /* Pods-Quote Droplet.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-Quote Droplet.modulemap"; sourceTree = "<group>"; };
-		41E32A55DAA59757B49F8BE5430483BE /* Google-Mobile-Ads-SDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Google-Mobile-Ads-SDK.release.xcconfig"; sourceTree = "<group>"; };
 		514ED3C7F9C198AE116A43240117C7F4 /* Pods-QuoteDropletWidgetExtension-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-QuoteDropletWidgetExtension-dummy.m"; sourceTree = "<group>"; };
 		5AB2CAA92D6C5D0FD358D665DEFEE1DF /* Pods-QuoteDropletWidgetExtension-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-QuoteDropletWidgetExtension-acknowledgements.markdown"; sourceTree = "<group>"; };
 		5EF2333E5322DE3C3B8129AD7E07947B /* Pods-Quote Droplet-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Quote Droplet-dummy.m"; sourceTree = "<group>"; };
@@ -80,16 +80,10 @@
 		847CDF1E72BE13E9348BBAA4EA00D90E /* Pods-QuoteDropletWidgetExtension-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-QuoteDropletWidgetExtension-umbrella.h"; sourceTree = "<group>"; };
 		8B97016226FBF035491AEEC42B6E79B0 /* Pods-Quote Droplet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Quote Droplet.debug.xcconfig"; sourceTree = "<group>"; };
 		918606BAD4A957E2150D15482DA0A962 /* Pods-QuoteDropletWidgetExtension.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-QuoteDropletWidgetExtension.modulemap"; sourceTree = "<group>"; };
-		9364FA5532F2F128F06F220BF75AE9E8 /* GoogleUserMessagingPlatform.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = GoogleUserMessagingPlatform.debug.xcconfig; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		B96862CB3554500E7C77E3D63DE0DA72 /* GoogleMobileAds.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; name = GoogleMobileAds.xcframework; path = Frameworks/GoogleMobileAdsFramework/GoogleMobileAds.xcframework; sourceTree = "<group>"; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		BD51CD30A5FE26454BA6B6763630E7F5 /* Pods-QuoteDropletWidgetExtension-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-QuoteDropletWidgetExtension-Info.plist"; sourceTree = "<group>"; };
-		CA17175129F3B56264B4CC5FFD15564C /* UserMessagingPlatform.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; name = UserMessagingPlatform.xcframework; path = Frameworks/Release/UserMessagingPlatform.xcframework; sourceTree = "<group>"; };
 		CF267FF45C02CFBA92EC94C35565A5B4 /* Pods-Quote Droplet-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Quote Droplet-umbrella.h"; sourceTree = "<group>"; };
-		D13441D7C4609B55FE1A834AFB2B2DC2 /* Google-Mobile-Ads-SDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Google-Mobile-Ads-SDK.debug.xcconfig"; sourceTree = "<group>"; };
-		D43B31695B6540102855FA81589C8208 /* Google-Mobile-Ads-SDK-xcframeworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Google-Mobile-Ads-SDK-xcframeworks.sh"; sourceTree = "<group>"; };
 		F8650BC05841376A8BE2DEAEF908BC9F /* Pods-Quote Droplet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Quote Droplet.release.xcconfig"; sourceTree = "<group>"; };
-		F92AC8B888074062B14E65F908BF20D3 /* GoogleUserMessagingPlatform.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = GoogleUserMessagingPlatform.release.xcconfig; sourceTree = "<group>"; };
 		F9C1D83A78248942D0805831FA42282D /* Pods-Quote Droplet-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Quote Droplet-acknowledgements.markdown"; sourceTree = "<group>"; };
 		FE21064A2C157362C7CD65057C531252 /* Pods-QuoteDropletWidgetExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-QuoteDropletWidgetExtension.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -114,30 +108,9 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		253B7EA9CCE4ED972247C99492BB262F /* Support Files */ = {
-			isa = PBXGroup;
-			children = (
-				151E310033EF426FB40BA8358989D5D2 /* GoogleUserMessagingPlatform-xcframeworks.sh */,
-				9364FA5532F2F128F06F220BF75AE9E8 /* GoogleUserMessagingPlatform.debug.xcconfig */,
-				F92AC8B888074062B14E65F908BF20D3 /* GoogleUserMessagingPlatform.release.xcconfig */,
-			);
-			name = "Support Files";
-			path = "../Target Support Files/GoogleUserMessagingPlatform";
-			sourceTree = "<group>";
-		};
-		359FC29AA87321B8E1F8C1E99D18E0A5 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				B96862CB3554500E7C77E3D63DE0DA72 /* GoogleMobileAds.xcframework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		43F02FCF9B6BEDCFFA106FBD7F544B88 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				8FDC8FCAF85E5E7D80598D0467A0FB64 /* Google-Mobile-Ads-SDK */,
-				AA5403484DDFFB902DA42AD1AA8594D7 /* GoogleUserMessagingPlatform */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -173,37 +146,6 @@
 				5905354B19C6EAF211DA6AEF7D800FC2 /* Pods-QuoteDropletWidgetExtension */,
 			);
 			name = "Targets Support Files";
-			sourceTree = "<group>";
-		};
-		8FDC8FCAF85E5E7D80598D0467A0FB64 /* Google-Mobile-Ads-SDK */ = {
-			isa = PBXGroup;
-			children = (
-				359FC29AA87321B8E1F8C1E99D18E0A5 /* Frameworks */,
-				BAAA170880DF3998A0A89BD2E47E4198 /* Support Files */,
-			);
-			name = "Google-Mobile-Ads-SDK";
-			path = "Google-Mobile-Ads-SDK";
-			sourceTree = "<group>";
-		};
-		AA5403484DDFFB902DA42AD1AA8594D7 /* GoogleUserMessagingPlatform */ = {
-			isa = PBXGroup;
-			children = (
-				F7B9514D373FDE8BF22133940EA711E9 /* Frameworks */,
-				253B7EA9CCE4ED972247C99492BB262F /* Support Files */,
-			);
-			name = GoogleUserMessagingPlatform;
-			path = GoogleUserMessagingPlatform;
-			sourceTree = "<group>";
-		};
-		BAAA170880DF3998A0A89BD2E47E4198 /* Support Files */ = {
-			isa = PBXGroup;
-			children = (
-				D43B31695B6540102855FA81589C8208 /* Google-Mobile-Ads-SDK-xcframeworks.sh */,
-				D13441D7C4609B55FE1A834AFB2B2DC2 /* Google-Mobile-Ads-SDK.debug.xcconfig */,
-				41E32A55DAA59757B49F8BE5430483BE /* Google-Mobile-Ads-SDK.release.xcconfig */,
-			);
-			name = "Support Files";
-			path = "../Target Support Files/Google-Mobile-Ads-SDK";
 			sourceTree = "<group>";
 		};
 		CF1408CF629C7361332E53B88F7BD30C = {
@@ -244,18 +186,10 @@
 		F08EDFA5ADBAE034A438BCAF3979B0C2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				16B6B0601570326E06D84FFAD71AC2F3 /* Pods-Quote Droplet */,
-				1930295812D3B282EE685334CFD0B2DF /* Pods-QuoteDropletWidgetExtension */,
+				16B6B0601570326E06D84FFAD71AC2F3 /* Pods_Quote_Droplet.framework */,
+				1930295812D3B282EE685334CFD0B2DF /* Pods_QuoteDropletWidgetExtension.framework */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		F7B9514D373FDE8BF22133940EA711E9 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				CA17175129F3B56264B4CC5FFD15564C /* UserMessagingPlatform.xcframework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -295,7 +229,7 @@
 			);
 			name = "Pods-Quote Droplet";
 			productName = Pods_Quote_Droplet;
-			productReference = 16B6B0601570326E06D84FFAD71AC2F3 /* Pods-Quote Droplet */;
+			productReference = 16B6B0601570326E06D84FFAD71AC2F3 /* Pods_Quote_Droplet.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		EFBAAC15BF12BE5056F202C033D458B7 /* Pods-QuoteDropletWidgetExtension */ = {
@@ -315,7 +249,7 @@
 			);
 			name = "Pods-QuoteDropletWidgetExtension";
 			productName = Pods_QuoteDropletWidgetExtension;
-			productReference = 1930295812D3B282EE685334CFD0B2DF /* Pods-QuoteDropletWidgetExtension */;
+			productReference = 1930295812D3B282EE685334CFD0B2DF /* Pods_QuoteDropletWidgetExtension.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -586,7 +520,6 @@
 		};
 		5BA5F815B0F4696F39287802667A42C5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 41E32A55DAA59757B49F8BE5430483BE /* Google-Mobile-Ads-SDK.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -604,7 +537,6 @@
 		};
 		7567ACC1C8235F85E757D9BDFFF795B9 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F92AC8B888074062B14E65F908BF20D3 /* GoogleUserMessagingPlatform.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -721,7 +653,6 @@
 		};
 		97331E09D529345AC2D6742D8CD9B9BE /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D13441D7C4609B55FE1A834AFB2B2DC2 /* Google-Mobile-Ads-SDK.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -776,7 +707,6 @@
 		};
 		DD7D8196F61F5985A0841583F70C787B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9364FA5532F2F128F06F220BF75AE9E8 /* GoogleUserMessagingPlatform.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
