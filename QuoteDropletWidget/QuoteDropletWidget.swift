@@ -50,8 +50,16 @@ struct Provider: IntentTimelineProvider {
         // Schedule the next update based on the calculated frequency
         let nextUpdate = Calendar.current.date(byAdding: .second, value: frequencyInSeconds, to: startDate)!
         
-        if data
-            .getQuoteCategory() == .bookmarkedQuotes {
+        // Create a fallback quote in case of any errors
+        let fallbackQuote = Quote(
+            id: 999,
+            text: "More is lost by indecision than by wrong decision.",
+            author: "Cicero",
+            classification: "wisdom",
+            likes: 0
+        )
+        
+        if data.getQuoteCategory() == .bookmarkedQuotes {
             let bookmarkedQuotes = localQuotesService.getBookmarkedQuotes()
             
             if !bookmarkedQuotes.isEmpty {
@@ -60,22 +68,33 @@ struct Provider: IntentTimelineProvider {
                 let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
                 completion(timeline)
             } else {
-                // TODO: add an error or maybe a quote with the message "No Saved Added" Please go into the Droplets section of the app to save some quotes, so they can show up here"
-                completion(Timeline(entries: [], policy: .after(nextUpdate)))
+                // Use fallback quote with a message about no bookmarks
+                let noBookmarksQuote = Quote(
+                    id: 998,
+                    text: "No bookmarked quotes found. Save quotes in the app to see them here.",
+                    author: "Quote Droplet",
+                    classification: "info",
+                    likes: 0
+                )
+                let entry = SimpleEntry(date: nextUpdate, configuration: configuration, quote: noBookmarksQuote, widgetColorPaletteIndex: data.getIndex(), widgetCustomColorPalette: data.getColorPalette(), quoteFrequency: data.getQuoteFrequencySelected(), quoteCategory: data.getQuoteCategory())
+                let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
+                completion(timeline)
             }
         } else {
             // Fetch the initial quote
-            
             apiService
                 .getRandomQuoteByClassification(
                     classification: data
                         .getQuoteCategory().lowercasedName,
                     completion:  { quote, error in
                         if let quote = quote {
-                            //                    if isSavedRecent == false {
-                            //                    saveRecentQuote(quote: quote) , source: "widget") TODO: do something with source later on
-                            //                    }
                             let entry = SimpleEntry(date: nextUpdate, configuration: configuration, quote: quote, widgetColorPaletteIndex: data.getIndex(), widgetCustomColorPalette: data.getColorPalette(), quoteFrequency: data.getQuoteFrequencySelected(), quoteCategory: data.getQuoteCategory())
+                            
+                            let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
+                            completion(timeline)
+                        } else {
+                            // Use fallback quote if API fails
+                            let entry = SimpleEntry(date: nextUpdate, configuration: configuration, quote: fallbackQuote, widgetColorPaletteIndex: data.getIndex(), widgetCustomColorPalette: data.getColorPalette(), quoteFrequency: data.getQuoteFrequencySelected(), quoteCategory: data.getQuoteCategory())
                             
                             let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
                             completion(timeline)
@@ -109,11 +128,16 @@ struct QuoteDropletWidgetEntryView : View {
     
     init(entry: SimpleEntry, isIntentsActive: Bool) {
         self.entry = entry
-        self.widgetQuote = entry.quote ?? Quote(id: 1, text: "", author: "", classification: "", likes: 15)
-        self._isBookmarked = State(initialValue: isQuoteBookmarked(widgetQuote))
-        self._isLiked = State(initialValue: isQuoteLiked(widgetQuote))
+        self.widgetQuote = entry.quote ?? Quote(
+            id: 1, 
+            text: "More is lost by indecision than by wrong decision.", 
+            author: "Cicero", 
+            classification: "wisdom", 
+            likes: 0
+        )
+        self._isBookmarked = State(initialValue: isQuoteBookmarked(self.widgetQuote))
+        self._isLiked = State(initialValue: isQuoteLiked(self.widgetQuote))
         self._isIntentsActive = State(initialValue: isIntentsActive)
-        // TODO: saving way too many quotes from here: bug.
     }
     
     var colors: [Color] {
@@ -373,7 +397,7 @@ struct QuoteDropletWidgetExtraLarge: Widget {
         IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
             QuoteDropletWidgetEntryView(entry: entry, isIntentsActive: false)
         }
-        .disableContentMarginsIfNeeded() // Use the extension here
+        .disableContentMarginsIfNeeded()
         .configurationDisplayName("Example Widget")
         .description("Note that the color palette and font are customizable.")
         .supportedFamilies([.systemExtraLarge])
@@ -388,9 +412,9 @@ struct QuoteDropletWidgetWithIntentsMedium: Widget {
         IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
             QuoteDropletWidgetEntryView(entry: entry, isIntentsActive: true)
         }
-        .disableContentMarginsIfNeeded() // Use the extension here
-        .configurationDisplayName("Example Widget With Buttons")
-        .description("Note that the color palette and font are customizable.")
+        .disableContentMarginsIfNeeded()
+        .configurationDisplayName("Interactive Widget")
+        .description("Widget with interactive elements.")
         .supportedFamilies([.systemMedium])
     }
 }
@@ -403,9 +427,9 @@ struct QuoteDropletWidgetWithIntentsLarge: Widget {
         IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
             QuoteDropletWidgetEntryView(entry: entry, isIntentsActive: true)
         }
-        .disableContentMarginsIfNeeded() // Use the extension here
-        .configurationDisplayName("Example Widget With Buttons")
-        .description("Note that the color palette and font are customizable.")
+        .disableContentMarginsIfNeeded()
+        .configurationDisplayName("Interactive Widget")
+        .description("Widget with interactive elements.")
         .supportedFamilies([.systemLarge])
     }
 }
@@ -418,9 +442,9 @@ struct QuoteDropletWidgetWithIntentsExtraLarge: Widget {
         IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
             QuoteDropletWidgetEntryView(entry: entry, isIntentsActive: true)
         }
-        .disableContentMarginsIfNeeded() // Use the extension here
-        .configurationDisplayName("Example Widget With Buttons")
-        .description("Note that the color palette and font are customizable.")
+        .disableContentMarginsIfNeeded()
+        .configurationDisplayName("Interactive Widget")
+        .description("Widget with interactive elements.")
         .supportedFamilies([.systemExtraLarge])
     }
 }
