@@ -14,10 +14,11 @@ struct HeaderView: View {
     
     var body: some View {
         HStack{
-            Spacer()
             // Wrap in a ZStack to avoid any NavigationLink related crashes
             ZStack {
-                NavigationLink(destination: InfoView()) {
+                NavigationLink {
+                    InfoView()
+                } label: {
                     Image(systemName: "line.3.horizontal")
                         .font(.title)
                         .scaleEffect(1)

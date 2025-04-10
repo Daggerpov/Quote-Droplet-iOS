@@ -67,9 +67,29 @@ struct DataService {
     private var quoteFrequencySelected = QuoteFrequency.oneDay
     
     func getQuoteFrequencySelected() -> QuoteFrequency {
-        if let rawValue = userDefaults?.string(forKey: "quoteFrequencySelected"),
-           let frequency = QuoteFrequency(rawValue: rawValue) {
-            return frequency
+        if let rawValue = userDefaults?.string(forKey: "quoteFrequencySelected") {
+            // First try with the raw value (e.g., "1 day")
+            if let frequency = QuoteFrequency(rawValue: rawValue) {
+                return frequency
+            }
+            
+            // If that fails, try checking for case names directly
+            switch rawValue {
+            case "oneDay":
+                return .oneDay
+            case "eightHours":
+                return .eightHours
+            case "twelveHours":
+                return .twelveHours
+            case "twoDays":
+                return .twoDays
+            case "fourDays":
+                return .fourDays
+            case "oneWeek":
+                return .oneWeek
+            default:
+                return quoteFrequencySelected
+            }
         }
         return quoteFrequencySelected
     }
