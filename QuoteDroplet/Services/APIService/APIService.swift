@@ -336,10 +336,14 @@ class APIService: IAPIService {
             switch result {
             case .success(let response):
                 print("✅ API Success: getCountForCategory - Count: \(response.count) for category: \(category.rawValue)")
-                completion(response.count)
+                DispatchQueue.main.async {
+                    completion(response.count)
+                }
             case .failure:
                 print("⚠️ API Warning: getCountForCategory - Failed to get count, defaulting to 0")
-                completion(0)
+                DispatchQueue.main.async {
+                    completion(0)
+                }
             }
         }
     }

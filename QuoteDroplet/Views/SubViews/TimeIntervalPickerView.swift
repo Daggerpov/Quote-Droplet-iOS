@@ -19,6 +19,7 @@ struct TimeIntervalPicker: View {
         ForEach(QuoteFrequency.allCases, id: \.rawValue) { frequencyOption in
             Text("Every \(frequencyOption.displayName)")
                 .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[1] ?? .white)
+                .tag(frequencyOption)
         }
     }
     
