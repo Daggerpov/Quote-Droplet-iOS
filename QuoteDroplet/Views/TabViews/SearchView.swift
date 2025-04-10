@@ -54,8 +54,6 @@ struct SearchView: View {
                         ExpandableSearchBar()
                     }
                 }
-                AdBannerViewController(adUnitID: "ca-app-pub-5189478572039689/1609477369")                    .frame(height: 50)
-                    .padding(.bottom, 10)
             }
             .modifier(MainScreenBackgroundStyling())
             .onAppear() {

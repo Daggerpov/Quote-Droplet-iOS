@@ -18,8 +18,6 @@
 		DC03AD562CCC88CE000C6572 /* WidgetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC03AD542CCC88C9000C6572 /* WidgetViewModel.swift */; };
 		DC03AD582CCC89B3000C6572 /* SingleQuoteSourceEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC03AD572CCC89AC000C6572 /* SingleQuoteSourceEnum.swift */; };
 		DC03AD592CCC89B3000C6572 /* SingleQuoteSourceEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC03AD572CCC89AC000C6572 /* SingleQuoteSourceEnum.swift */; };
-		DC0EFB842C4CB18100B4D46A /* AdHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC0EFB832C4CB18100B4D46A /* AdHelper.swift */; };
-		DC0EFB852C4CB18100B4D46A /* AdHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC0EFB832C4CB18100B4D46A /* AdHelper.swift */; };
 		DC0EFB872C4CB1C500B4D46A /* ColorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC0EFB862C4CB1C500B4D46A /* ColorHelper.swift */; };
 		DC0EFB882C4CB1C500B4D46A /* ColorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC0EFB862C4CB1C500B4D46A /* ColorHelper.swift */; };
 		DC26EB942BF96FD4004CA84F /* DropletsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC26EB932BF96FD4004CA84F /* DropletsView.swift */; };
@@ -173,7 +171,6 @@
 		DC03AD512CCC82AB000C6572 /* WidgetHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetHelpers.swift; sourceTree = "<group>"; };
 		DC03AD542CCC88C9000C6572 /* WidgetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetViewModel.swift; sourceTree = "<group>"; };
 		DC03AD572CCC89AC000C6572 /* SingleQuoteSourceEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleQuoteSourceEnum.swift; sourceTree = "<group>"; };
-		DC0EFB832C4CB18100B4D46A /* AdHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdHelper.swift; sourceTree = "<group>"; };
 		DC0EFB862C4CB1C500B4D46A /* ColorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorHelper.swift; sourceTree = "<group>"; };
 		DC26EB932BF96FD4004CA84F /* DropletsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropletsView.swift; sourceTree = "<group>"; };
 		DC2998F92C4D9C5C0025D32E /* SingleQuoteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleQuoteViewModel.swift; sourceTree = "<group>"; };
@@ -309,7 +306,6 @@
 			children = (
 				DCDF64262CCC93F400FBA5B1 /* ViewModifiers.swift */,
 				DCB722132B9D06E60094BAB8 /* GeneralVars.swift */,
-				DC0EFB832C4CB18100B4D46A /* AdHelper.swift */,
 				DC0EFB862C4CB1C500B4D46A /* ColorHelper.swift */,
 				DCC0B3712CC9CFC9002DED7A /* LinkImageBuilder.swift */,
 				DCC0B37C2CC9DD97002DED7A /* ColorPickerWithoutLabel.swift */,
@@ -745,7 +741,6 @@
 				DC26EB942BF96FD4004CA84F /* DropletsView.swift in Sources */,
 				DCC0B36A2CC9B2D0002DED7A /* ColorPaletteView.swift in Sources */,
 				DCAB2DCD2A9FACC300A822D7 /* Quote.swift in Sources */,
-				DC0EFB842C4CB18100B4D46A /* AdHelper.swift in Sources */,
 				DC03AD562CCC88CE000C6572 /* WidgetViewModel.swift in Sources */,
 				DCBA0C882C5C270700A2E949 /* HeaderView.swift in Sources */,
 				DC5205B02B9CED5B0007CB5B /* AppearanceView.swift in Sources */,
@@ -822,7 +817,6 @@
 				DCC0B3702CC9C995002DED7A /* Fonts.swift in Sources */,
 				DC890E802C5F211900008838 /* LocalQuotesService.swift in Sources */,
 				DCC0B3842CC9FC2F002DED7A /* GoogleImageModel.swift in Sources */,
-				DC0EFB852C4CB18100B4D46A /* AdHelper.swift in Sources */,
 				DC2999082C4DBED40025D32E /* AuthorHelper.swift in Sources */,
 				DCBA0C892C5C270700A2E949 /* HeaderView.swift in Sources */,
 				DCC0B3672CC9B1A4002DED7A /* QuoteJSON.swift in Sources */,

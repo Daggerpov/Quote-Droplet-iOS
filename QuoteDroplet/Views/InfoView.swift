@@ -44,7 +44,6 @@ struct InfoView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                AdBannerViewController(adUnitID: "ca-app-pub-5189478572039689/7801914805").frame(height: 50)
                 Spacer()
                 HStack {
                     Spacer()

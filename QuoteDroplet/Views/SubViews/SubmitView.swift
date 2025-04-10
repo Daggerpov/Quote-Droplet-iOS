@@ -81,10 +81,6 @@ extension SubmitView {
                 //                .navigationTitle("Quote Submission")
                 .accentColor(.blue)
             }
-            AdBannerViewController(adUnitID:
-                                    //                                    "ca-app-pub-5189478572039689/1371107555"
-                                   "ca-app-pub-5189478572039689/1609477369" // new one from Mar 25
-            )                    .frame(height: 50)    // Fourth person banner ad, for submission inside Quotes View
         }
         
     }

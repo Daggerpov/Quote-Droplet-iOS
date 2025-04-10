@@ -3,7 +3,7 @@
 
 target 'Quote Droplet' do
   # Comment the next line if you don't want to use dynamic frameworks
-  use_frameworks!
+#  use_frameworks!
 
   # Pods for Quote Droplet
 
@@ -11,8 +11,7 @@ end
 
 target 'QuoteDropletWidgetExtension' do
   # Comment the next line if you don't want to use dynamic frameworks
-  use_frameworks!
-  pod 'Google-Mobile-Ads-SDK'
+#  use_frameworks!
   # Pods for QuoteDropletWidgetExtension
 
 end
