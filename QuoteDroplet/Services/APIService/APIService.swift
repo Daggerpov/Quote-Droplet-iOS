@@ -97,7 +97,7 @@ class APIService: IAPIService {
             
             // Debug raw response if needed
             if responseType == [Quote].self || responseType == Quote.self {
-                if let dataString = String(data: data, encoding: .utf8) {
+                if String(data: data, encoding: .utf8) != nil {
                     if responseType == [Quote].self {
                         do {
                             let quotes = try JSONDecoder().decode([Quote].self, from: data)
