@@ -15,15 +15,17 @@ struct HeaderView: View {
     var body: some View {
         HStack{
             Spacer()
-            NavigationLink(destination: InfoView()) {
-                Image(systemName: "line.3.horizontal")
-                    .font(.title)
-                    .scaleEffect(1)
-                    .foregroundStyle(colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .white)
-                
+            // Wrap in a ZStack to avoid any NavigationLink related crashes
+            ZStack {
+                NavigationLink(destination: InfoView()) {
+                    Image(systemName: "line.3.horizontal")
+                        .font(.title)
+                        .scaleEffect(1)
+                        .foregroundStyle(colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .white)
+                }
+                .buttonStyle(PlainButtonStyle()) // Use PlainButtonStyle to prevent styling issues
             }
             Spacer()
-            AdBannerViewController(adUnitID: "ca-app-pub-5189478572039689/7801914805")
         }
         
         // Note that padding definitely shouldn't be added here, but perhaps removed from Home and Quotes Views

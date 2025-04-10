@@ -300,16 +300,15 @@ struct QuoteDropletWidgetEntryView : View {
     }
     
     private func isQuoteLiked(_ quote: Quote) -> Bool {
-        // Provide safer access to avoid crashes
-        do {
-            guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
-                print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
-                return false
-            }
-            if let quotes = try? JSONDecoder().decode([Quote].self, from: likedQuotesData) {
-                return quotes.contains(where: { $0.id == quote.id })
-            }
+        guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
+            print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
             return false
+        }
+        
+        // Use a do-catch block for the JSON decoding to prevent crashes
+        do {
+            let quotes = try JSONDecoder().decode([Quote].self, from: likedQuotesData)
+            return quotes.contains(where: { $0.id == quote.id })
         } catch {
             print("⚠️ Warning: Error decoding liked quotes: \(error)")
             return false
@@ -317,16 +316,15 @@ struct QuoteDropletWidgetEntryView : View {
     }
     
     private func getLikedQuotes() -> [Quote] {
-        // Provide safer access to avoid crashes
-        do {
-            guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
-                print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
-                return []
-            }
-            if let quotes = try? JSONDecoder().decode([Quote].self, from: likedQuotesData) {
-                return quotes
-            }
+        guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
+            print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
             return []
+        }
+        
+        // Use a do-catch block for the JSON decoding to prevent crashes
+        do {
+            let quotes = try JSONDecoder().decode([Quote].self, from: likedQuotesData)
+            return quotes
         } catch {
             print("⚠️ Warning: Error decoding liked quotes: \(error)")
             return []
@@ -334,12 +332,7 @@ struct QuoteDropletWidgetEntryView : View {
     }
     
     private func isQuoteBookmarked(_ quote: Quote) -> Bool {
-        do {
-            return localQuotesService.getBookmarkedQuotes().contains(where: { $0.id == quote.id })
-        } catch {
-            print("⚠️ Warning: Error checking bookmarked quotes: \(error)")
-            return false
-        }
+        return localQuotesService.getBookmarkedQuotes().contains(where: { $0.id == quote.id })
     }
 }
 
@@ -553,16 +546,15 @@ struct LikeQuoteIntent: AppIntent {
     }
     
     private func isQuoteLiked(_ quote: Quote) -> Bool {
-        // Provide safer access to avoid crashes
-        do {
-            guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
-                print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
-                return false
-            }
-            if let quotes = try? JSONDecoder().decode([Quote].self, from: likedQuotesData) {
-                return quotes.contains(where: { $0.id == quote.id })
-            }
+        guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
+            print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
             return false
+        }
+        
+        // Use a do-catch block for the JSON decoding to prevent crashes
+        do {
+            let quotes = try JSONDecoder().decode([Quote].self, from: likedQuotesData)
+            return quotes.contains(where: { $0.id == quote.id })
         } catch {
             print("⚠️ Warning: Error decoding liked quotes: \(error)")
             return false
@@ -570,16 +562,15 @@ struct LikeQuoteIntent: AppIntent {
     }
     
     private func getLikedQuotes() -> [Quote] {
-        // Provide safer access to avoid crashes
-        do {
-            guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
-                print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
-                return []
-            }
-            if let quotes = try? JSONDecoder().decode([Quote].self, from: likedQuotesData) {
-                return quotes
-            }
+        guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
+            print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
             return []
+        }
+        
+        // Use a do-catch block for the JSON decoding to prevent crashes
+        do {
+            let quotes = try JSONDecoder().decode([Quote].self, from: likedQuotesData)
+            return quotes
         } catch {
             print("⚠️ Warning: Error decoding liked quotes: \(error)")
             return []
