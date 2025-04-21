@@ -6,8 +6,6 @@
 //
 
 import SwiftUI
-import GoogleMobileAds
-import FirebaseCore
 
 @available(iOS 16, *)
 @main
@@ -37,9 +35,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                 print("Failed to request notification authorization: \(error.localizedDescription)")
             }
         }
-        GADMobileAds.sharedInstance().start(completionHandler: nil)
-        
-        FirebaseApp.configure()
         
         return true
     }

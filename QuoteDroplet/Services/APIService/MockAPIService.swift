@@ -145,4 +145,15 @@ class MockAPIService: IAPIService {
     ) {
         completion(countForCategoryResponse ?? 0)
     }
+
+    // Add implementations for the async methods
+    func likeQuoteAsync(quoteID: Int) async throws -> Quote? {
+        // For testing, return a mock response
+        return Quote.mockQuote()
+    }
+    
+    func unlikeQuoteAsync(quoteID: Int) async throws -> Quote? {
+        // For testing, return a mock response
+        return Quote.mockQuote()
+    }
 }

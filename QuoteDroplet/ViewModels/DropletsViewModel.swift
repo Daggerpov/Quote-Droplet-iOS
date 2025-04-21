@@ -32,6 +32,8 @@ class DropletsViewModel: ObservableObject {
     
     func setSelected(newValue: SelectedPage) -> Void {
         self.selected = newValue
+        // Check if we need to load quotes for the selected tab
+        self.checkMoreQuotesNeeded()
     }
     
     func getTitleText() -> String {
@@ -69,8 +71,19 @@ class DropletsViewModel: ObservableObject {
     }
     
     public func checkMoreQuotesNeeded() -> Void {
-        if !self.isLoadingMore && self.quotes.count < Self.maxQuotes {
-            self.loadMoreQuotes()
+        switch self.selected {
+        case .feed:
+            if !self.isLoadingMore && self.quotes.count < Self.maxQuotes {
+                self.loadMoreQuotes()
+            }
+        case .saved:
+            if !self.isLoadingMore && self.savedQuotes.count < Self.maxQuotes {
+                self.loadMoreQuotes()
+            }
+        case .recent:
+            if !self.isLoadingMore && self.recentQuotes.count < Self.maxQuotes {
+                self.loadMoreQuotes()
+            }
         }
     }
     
@@ -79,7 +92,7 @@ class DropletsViewModel: ObservableObject {
             (self.selected == .feed && self.quotes.count >= Self.maxQuotes) || (self.selected == .saved && self.savedQuotes.count >= Self.maxQuotes) || (self.selected == .recent && self.recentQuotes.count >= Self.maxQuotes))
     }
     
-    private func loadMoreQuotes() -> Void {
+    public func loadMoreQuotes() -> Void {
         guard !self.isLoadingMore else { return }
         
         self.isLoadingMore = true
@@ -93,7 +106,7 @@ class DropletsViewModel: ObservableObject {
                         classification: "all",
                         completion: { [weak self] quote, error in
                             guard let self = self else { return }
-                            if let quote = quote, self.quotes.contains(where: { $0.id == quote.id }) {
+                            if let quote = quote, !self.quotes.contains(where: { $0.id == quote.id }) {
                                 DispatchQueue.main.async {
                                     self.quotes.append(quote)
                                 }
@@ -104,19 +117,45 @@ class DropletsViewModel: ObservableObject {
                     )
             }
         } else if selected == .saved {
+            // Clear existing saved quotes before reloading
+            DispatchQueue.main.async {
+                self.savedQuotes = []
+            }
+            
             let bookmarkedQuotes: [Quote] = self.localQuotesService.getBookmarkedQuotes()
+            print("DEBUG: Found \(bookmarkedQuotes.count) bookmarked quotes")
+            
             var bookmarkedQuoteIDs: [Int] = []
             for bookmarkedQuote in bookmarkedQuotes {
                 bookmarkedQuoteIDs.append(bookmarkedQuote.id)
             }
+            print("DEBUG: Bookmarked quote IDs: \(bookmarkedQuoteIDs)")
+            
+            if bookmarkedQuoteIDs.isEmpty {
+                // No need to make API calls if there are no IDs
+                self.isLoadingMore = false
+                return
+            }
+            
             for id in bookmarkedQuoteIDs {
                 group.enter()
                 apiService.getQuoteByID(id: id) { [weak self] quote, error in
                     guard let self = self else { return }
-                    if let quote = quote, self.savedQuotes.contains(where: { $0.id == quote.id }) {
-                        DispatchQueue.main.async {
-                            self.savedQuotes.append(quote)
+                    if let error = error {
+                        print("DEBUG: Error fetching quote ID \(id): \(error)")
+                    }
+                    if let quote = quote {
+                        print("DEBUG: Successfully fetched quote ID \(id)")
+                        if !self.savedQuotes.contains(where: { $0.id == quote.id }) {
+                            DispatchQueue.main.async {
+                                self.savedQuotes.append(quote)
+                                print("DEBUG: Added quote ID \(quote.id) to savedQuotes, count now: \(self.savedQuotes.count)")
+                            }
+                        } else {
+                            print("DEBUG: Quote ID \(quote.id) already in savedQuotes")
                         }
+                    } else {
+                        print("DEBUG: No quote returned for ID \(id)")
                     }
                     group.leave()
                 }
@@ -132,7 +171,7 @@ class DropletsViewModel: ObservableObject {
                 group.enter()
                 apiService.getQuoteByID(id: id) { [weak self] quote, error in
                     guard let self = self else { return }
-                    if let quote = quote, self.recentQuotes.contains(where: { $0.id == quote.id }) {
+                    if let quote = quote, !self.recentQuotes.contains(where: { $0.id == quote.id }) {
                         DispatchQueue.main.async {
                             self.recentQuotes.append(quote)
                         }

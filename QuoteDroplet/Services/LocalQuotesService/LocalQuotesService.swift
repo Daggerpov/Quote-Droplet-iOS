@@ -39,8 +39,10 @@ class LocalQuotesService: ILocalQuotesService {
         @AppStorage("bookmarkedQuotes", store: UserDefaults(suiteName: "group.selectedSettings"))
         var bookmarkedQuotesData: Data = Data()
         if let quotes = try? JSONDecoder().decode([Quote].self, from: bookmarkedQuotesData) {
+            print("DEBUG: LocalQuotesService - Retrieved \(quotes.count) bookmarked quotes from UserDefaults")
             return quotes
         }
+        print("DEBUG: LocalQuotesService - No bookmarked quotes found in UserDefaults")
         return []
     }
     

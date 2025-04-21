@@ -18,12 +18,8 @@
 		DC03AD562CCC88CE000C6572 /* WidgetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC03AD542CCC88C9000C6572 /* WidgetViewModel.swift */; };
 		DC03AD582CCC89B3000C6572 /* SingleQuoteSourceEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC03AD572CCC89AC000C6572 /* SingleQuoteSourceEnum.swift */; };
 		DC03AD592CCC89B3000C6572 /* SingleQuoteSourceEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC03AD572CCC89AC000C6572 /* SingleQuoteSourceEnum.swift */; };
-		DC0EFB842C4CB18100B4D46A /* AdHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC0EFB832C4CB18100B4D46A /* AdHelper.swift */; };
-		DC0EFB852C4CB18100B4D46A /* AdHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC0EFB832C4CB18100B4D46A /* AdHelper.swift */; };
 		DC0EFB872C4CB1C500B4D46A /* ColorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC0EFB862C4CB1C500B4D46A /* ColorHelper.swift */; };
 		DC0EFB882C4CB1C500B4D46A /* ColorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC0EFB862C4CB1C500B4D46A /* ColorHelper.swift */; };
-		DC14DCC02BB25B9400F87C12 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DC14DCBF2BB25B9400F87C12 /* GoogleService-Info.plist */; };
-		DC14DCC12BB25B9400F87C12 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DC14DCBF2BB25B9400F87C12 /* GoogleService-Info.plist */; };
 		DC26EB942BF96FD4004CA84F /* DropletsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC26EB932BF96FD4004CA84F /* DropletsView.swift */; };
 		DC26EB952BF96FD4004CA84F /* DropletsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC26EB932BF96FD4004CA84F /* DropletsView.swift */; };
 		DC2998FA2C4D9C5C0025D32E /* SingleQuoteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2998F92C4D9C5C0025D32E /* SingleQuoteViewModel.swift */; };
@@ -175,9 +171,7 @@
 		DC03AD512CCC82AB000C6572 /* WidgetHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetHelpers.swift; sourceTree = "<group>"; };
 		DC03AD542CCC88C9000C6572 /* WidgetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetViewModel.swift; sourceTree = "<group>"; };
 		DC03AD572CCC89AC000C6572 /* SingleQuoteSourceEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleQuoteSourceEnum.swift; sourceTree = "<group>"; };
-		DC0EFB832C4CB18100B4D46A /* AdHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdHelper.swift; sourceTree = "<group>"; };
 		DC0EFB862C4CB1C500B4D46A /* ColorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorHelper.swift; sourceTree = "<group>"; };
-		DC14DCBF2BB25B9400F87C12 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DC26EB932BF96FD4004CA84F /* DropletsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropletsView.swift; sourceTree = "<group>"; };
 		DC2998F92C4D9C5C0025D32E /* SingleQuoteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleQuoteViewModel.swift; sourceTree = "<group>"; };
 		DC2998FE2C4D9C820025D32E /* sound-for-noti-water-drip-pixabay.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "sound-for-noti-water-drip-pixabay.mp3"; sourceTree = "<group>"; };
@@ -312,7 +306,6 @@
 			children = (
 				DCDF64262CCC93F400FBA5B1 /* ViewModifiers.swift */,
 				DCB722132B9D06E60094BAB8 /* GeneralVars.swift */,
-				DC0EFB832C4CB18100B4D46A /* AdHelper.swift */,
 				DC0EFB862C4CB1C500B4D46A /* ColorHelper.swift */,
 				DCC0B3712CC9CFC9002DED7A /* LinkImageBuilder.swift */,
 				DCC0B37C2CC9DD97002DED7A /* ColorPickerWithoutLabel.swift */,
@@ -417,7 +410,6 @@
 				DCB1DA5B2CCC5FE900D823B0 /* Enums */,
 				DC0EFB8D2C4CB79100B4D46A /* Services */,
 				DC2998FC2C4D9C670025D32E /* Models */,
-				DC14DCBF2BB25B9400F87C12 /* GoogleService-Info.plist */,
 				DCAB2DD02A9FBAB800A822D7 /* Info.plist */,
 				DCAB2D9E2A9FA91300A822D7 /* QuoteDropletApp.swift */,
 				DCAB2DA42A9FA91900A822D7 /* Preview Content */,
@@ -592,7 +584,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1600;
-				LastUpgradeCheck = 1600;
+				LastUpgradeCheck = 1630;
 				TargetAttributes = {
 					DC5DD5232CCDD0ED00B80F5D = {
 						CreatedOnToolsVersion = 16.0;
@@ -643,7 +635,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DCAB2DA62A9FA91900A822D7 /* Preview Assets.xcassets in Resources */,
-				DC14DCC02BB25B9400F87C12 /* GoogleService-Info.plist in Resources */,
 				DCAB2DA32A9FA91900A822D7 /* Assets.xcassets in Resources */,
 				DC7010E12BAE63DC008678CB /* QuotesBackup.json in Resources */,
 			);
@@ -655,7 +646,6 @@
 			files = (
 				DC7010E22BAE63DC008678CB /* QuotesBackup.json in Resources */,
 				DCAB2DBF2A9FA96100A822D7 /* Assets.xcassets in Resources */,
-				DC14DCC12BB25B9400F87C12 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -751,7 +741,6 @@
 				DC26EB942BF96FD4004CA84F /* DropletsView.swift in Sources */,
 				DCC0B36A2CC9B2D0002DED7A /* ColorPaletteView.swift in Sources */,
 				DCAB2DCD2A9FACC300A822D7 /* Quote.swift in Sources */,
-				DC0EFB842C4CB18100B4D46A /* AdHelper.swift in Sources */,
 				DC03AD562CCC88CE000C6572 /* WidgetViewModel.swift in Sources */,
 				DCBA0C882C5C270700A2E949 /* HeaderView.swift in Sources */,
 				DC5205B02B9CED5B0007CB5B /* AppearanceView.swift in Sources */,
@@ -828,7 +817,6 @@
 				DCC0B3702CC9C995002DED7A /* Fonts.swift in Sources */,
 				DC890E802C5F211900008838 /* LocalQuotesService.swift in Sources */,
 				DCC0B3842CC9FC2F002DED7A /* GoogleImageModel.swift in Sources */,
-				DC0EFB852C4CB18100B4D46A /* AdHelper.swift in Sources */,
 				DC2999082C4DBED40025D32E /* AuthorHelper.swift in Sources */,
 				DCBA0C892C5C270700A2E949 /* HeaderView.swift in Sources */,
 				DCC0B3672CC9B1A4002DED7A /* QuoteJSON.swift in Sources */,
@@ -859,7 +847,6 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = GUW483PXY6;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -881,7 +868,6 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = GUW483PXY6;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -931,6 +917,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = GUW483PXY6;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -993,6 +980,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = GUW483PXY6;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -1024,7 +1012,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"QuoteDroplet/Preview Content\"";
-				DEVELOPMENT_TEAM = GUW483PXY6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = QuoteDroplet/Info.plist;
@@ -1062,7 +1049,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"QuoteDroplet/Preview Content\"";
-				DEVELOPMENT_TEAM = GUW483PXY6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = QuoteDroplet/Info.plist;
@@ -1099,7 +1085,6 @@
 				CODE_SIGN_ENTITLEMENTS = QuoteDropletWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = GUW483PXY6;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = QuoteDropletWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = QuoteDropletWidget;
@@ -1129,7 +1114,6 @@
 				CODE_SIGN_ENTITLEMENTS = QuoteDropletWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = GUW483PXY6;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = QuoteDropletWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = QuoteDropletWidget;

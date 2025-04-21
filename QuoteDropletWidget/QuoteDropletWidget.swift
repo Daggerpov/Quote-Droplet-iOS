@@ -50,8 +50,16 @@ struct Provider: IntentTimelineProvider {
         // Schedule the next update based on the calculated frequency
         let nextUpdate = Calendar.current.date(byAdding: .second, value: frequencyInSeconds, to: startDate)!
         
-        if data
-            .getQuoteCategory() == .bookmarkedQuotes {
+        // Create a fallback quote in case of any errors
+        let fallbackQuote = Quote(
+            id: 999,
+            text: "More is lost by indecision than by wrong decision.",
+            author: "Cicero",
+            classification: "wisdom",
+            likes: 0
+        )
+        
+        if data.getQuoteCategory() == .bookmarkedQuotes {
             let bookmarkedQuotes = localQuotesService.getBookmarkedQuotes()
             
             if !bookmarkedQuotes.isEmpty {
@@ -60,22 +68,33 @@ struct Provider: IntentTimelineProvider {
                 let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
                 completion(timeline)
             } else {
-                // TODO: add an error or maybe a quote with the message "No Saved Added" Please go into the Droplets section of the app to save some quotes, so they can show up here"
-                completion(Timeline(entries: [], policy: .after(nextUpdate)))
+                // Use fallback quote with a message about no bookmarks
+                let noBookmarksQuote = Quote(
+                    id: 998,
+                    text: "No bookmarked quotes found. Save quotes in the app to see them here.",
+                    author: "Quote Droplet",
+                    classification: "info",
+                    likes: 0
+                )
+                let entry = SimpleEntry(date: nextUpdate, configuration: configuration, quote: noBookmarksQuote, widgetColorPaletteIndex: data.getIndex(), widgetCustomColorPalette: data.getColorPalette(), quoteFrequency: data.getQuoteFrequencySelected(), quoteCategory: data.getQuoteCategory())
+                let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
+                completion(timeline)
             }
         } else {
             // Fetch the initial quote
-            
             apiService
                 .getRandomQuoteByClassification(
                     classification: data
                         .getQuoteCategory().lowercasedName,
                     completion:  { quote, error in
                         if let quote = quote {
-                            //                    if isSavedRecent == false {
-                            //                    saveRecentQuote(quote: quote) , source: "widget") TODO: do something with source later on
-                            //                    }
                             let entry = SimpleEntry(date: nextUpdate, configuration: configuration, quote: quote, widgetColorPaletteIndex: data.getIndex(), widgetCustomColorPalette: data.getColorPalette(), quoteFrequency: data.getQuoteFrequencySelected(), quoteCategory: data.getQuoteCategory())
+                            
+                            let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
+                            completion(timeline)
+                        } else {
+                            // Use fallback quote if API fails
+                            let entry = SimpleEntry(date: nextUpdate, configuration: configuration, quote: fallbackQuote, widgetColorPaletteIndex: data.getIndex(), widgetCustomColorPalette: data.getColorPalette(), quoteFrequency: data.getQuoteFrequencySelected(), quoteCategory: data.getQuoteCategory())
                             
                             let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
                             completion(timeline)
@@ -109,11 +128,16 @@ struct QuoteDropletWidgetEntryView : View {
     
     init(entry: SimpleEntry, isIntentsActive: Bool) {
         self.entry = entry
-        self.widgetQuote = entry.quote ?? Quote(id: 1, text: "", author: "", classification: "", likes: 15)
-        self._isBookmarked = State(initialValue: isQuoteBookmarked(widgetQuote))
-        self._isLiked = State(initialValue: isQuoteLiked(widgetQuote))
+        self.widgetQuote = entry.quote ?? Quote(
+            id: 1, 
+            text: "More is lost by indecision than by wrong decision.", 
+            author: "Cicero", 
+            classification: "wisdom", 
+            likes: 0
+        )
+        self._isBookmarked = State(initialValue: isQuoteBookmarked(self.widgetQuote))
+        self._isLiked = State(initialValue: isQuoteLiked(self.widgetQuote))
         self._isIntentsActive = State(initialValue: isIntentsActive)
-        // TODO: saving way too many quotes from here: bug.
     }
     
     var colors: [Color] {
@@ -133,7 +157,7 @@ struct QuoteDropletWidgetEntryView : View {
     private var likesSection: some View {
         HStack {
             if #available(iOS 17.0, *) {
-                Button(intent: LikeQuoteIntent()) {
+                Button(intent: LikeQuoteIntent(quote: widgetQuote)) {
                     Image(systemName: isLiked ? "heart.fill" : "heart")
                         .foregroundStyle(colors[2])
                 }.backgroundStyle(colors[2])
@@ -144,29 +168,34 @@ struct QuoteDropletWidgetEntryView : View {
             
             Text("\(widgetQuote.likes ?? 69)")
                 .foregroundColor(colors[2])
+                
+            if #available(iOS 17.0, *) {
+                Button(intent: NextQuoteIntent()) {
+                    Image(systemName: "arrow.right")
+                        .foregroundStyle(colors[2])
+                }.backgroundStyle(colors[2])
+            } else {
+                Image(systemName: "arrow.right")
+                    .foregroundStyle(colors[2])
+            }
         }
-        
-        
     }
     
     var body: some View {
-        ZStack {
-            colors[0] // Use the first color as the background color
-            
+        if #available(iOS 17.0, *) {
             VStack {
                 if widgetQuote.text != "" {
                     if family == .systemSmall {
                         Text("\(widgetQuote.text)")
-                            .font(Font.custom(availableFonts[data.selectedFontIndex], size: 16)) // Use the selected font
-                            .foregroundColor(colors[1]) // Use the second color for text color
+                            .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .quoteText)))
+                            .foregroundColor(colors[1])
                             .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
                             .minimumScaleFactor(0.5)
                     } else {
                         Text("\(widgetQuote.text)")
-                            .font(Font.custom(availableFonts[data.selectedFontIndex], size: 500)) // Use the selected font
-                            .foregroundColor(colors[1]) // Use the second color for text color
+                            .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .quoteText)))
+                            .foregroundColor(colors[1])
                             .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
-                            .minimumScaleFactor(0.01)
                     }
                     
                     HStack {
@@ -184,7 +213,7 @@ struct QuoteDropletWidgetEntryView : View {
                     .font(
                         Font
                             .custom(
-                                availableFonts[data.selectedFontIndex],
+                                availableFonts[data.getSelectedFontIndex()],
                                 size: getFontSizeForText(
                                     familia: family,
                                     whichText: .authorText
@@ -194,7 +223,7 @@ struct QuoteDropletWidgetEntryView : View {
                     
                 } else {
                     Text("\(getTextForWidgetPreview(familia: family)[0])")
-                        .font(Font.custom(availableFonts[data.selectedFontIndex], size: 500)) // Use the selected font
+                        .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .quoteText)))
                         .foregroundColor(colors[1]) // Use the second color for text color
                         .padding(.horizontal, 10)
                         .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
@@ -209,20 +238,91 @@ struct QuoteDropletWidgetEntryView : View {
                             likesSection
                         }
                     }
-                    .font(Font.custom(availableFonts[data.selectedFontIndex], size: getFontSizeForText(familia: family, whichText: .authorText))) // Use the selected font for author text
+                    .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .authorText))) // Use the selected font for author text
                 }
             }
             .padding()
-        }
-        .onAppear {
-            isBookmarked = isQuoteBookmarked(widgetQuote)
-            
-            getQuoteLikeCountMethod { fetchedLikeCount in
-                likes = fetchedLikeCount
+            .onAppear {
+                isBookmarked = isQuoteBookmarked(widgetQuote)
+                
+                getQuoteLikeCountMethod { fetchedLikeCount in
+                    likes = fetchedLikeCount
+                }
+                isLiked = isQuoteLiked(widgetQuote)
             }
-            isLiked = isQuoteLiked(widgetQuote)
-            
-            
+            .containerBackground(colors[0], for: .widget)
+        } else {
+            // Fallback for iOS 16 and earlier
+            ZStack {
+                colors[0]
+                VStack {
+                    if widgetQuote.text != "" {
+                        if family == .systemSmall {
+                            Text("\(widgetQuote.text)")
+                                .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .quoteText)))
+                                .foregroundColor(colors[1])
+                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
+                                .minimumScaleFactor(0.5)
+                        } else {
+                            Text("\(widgetQuote.text)")
+                                .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .quoteText)))
+                                .foregroundColor(colors[1])
+                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
+                        }
+                        
+                        HStack {
+                            if (isAuthorValid(authorGiven: widgetQuote.author)) {
+                                Text("— \(widgetQuote.author ?? "")")
+                                    .foregroundColor(colors[2]) // Use the third color for author text color
+                                    .padding(.horizontal, 5)
+                                    .lineLimit(1) // Ensure the text stays on one line
+                                    .minimumScaleFactor(0.01) // Allow the text to shrink to 50% of its original size
+                            }
+                            if isIntentsActive {
+                                likesSection
+                            }
+                        }
+                        .font(
+                            Font
+                                .custom(
+                                    availableFonts[data.getSelectedFontIndex()],
+                                    size: getFontSizeForText(
+                                        familia: family,
+                                        whichText: .authorText
+                                    )
+                                )
+                        ) // Use the selected font for author text
+                        
+                    } else {
+                        Text("\(getTextForWidgetPreview(familia: family)[0])")
+                            .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .quoteText)))
+                            .foregroundColor(colors[1]) // Use the second color for text color
+                            .padding(.horizontal, 10)
+                            .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
+                            .minimumScaleFactor(0.01)
+                        //                    Spacer() // Add a spacer to push the author text to the center
+                        HStack {
+                            Text("— \(getTextForWidgetPreview(familia: family)[1])")
+                            
+                                .foregroundColor(colors[2]) // Use the third color for author text color
+                                .padding(.horizontal, 10)
+                            if isIntentsActive {
+                                likesSection
+                            }
+                        }
+                        .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .authorText))) // Use the selected font for author text
+                    }
+                }
+                .padding()
+            }
+            .onAppear {
+                isBookmarked = isQuoteBookmarked(widgetQuote)
+                
+                getQuoteLikeCountMethod { fetchedLikeCount in
+                    likes = fetchedLikeCount
+                }
+                isLiked = isQuoteLiked(widgetQuote)
+            }
         }
         
     }
@@ -251,7 +351,7 @@ struct QuoteDropletWidgetEntryView : View {
             apiService.unlikeQuote(quoteID: widgetQuote.id) { updatedQuote, error in
                 DispatchQueue.main.async {
                     if let updatedQuote = updatedQuote {
-                        // Update likes count
+                        // Update likes count only, not the entire quote
                         self.likes = updatedQuote.likes ?? 15
                     }
                     self.isLiking = false
@@ -261,7 +361,7 @@ struct QuoteDropletWidgetEntryView : View {
             apiService.likeQuote(quoteID: widgetQuote.id) { updatedQuote, error in
                 DispatchQueue.main.async {
                     if let updatedQuote = updatedQuote {
-                        // Update likes count
+                        // Update likes count only, not the entire quote
                         self.likes = updatedQuote.likes ?? 15
                     }
                     self.isLiking = false
@@ -271,14 +371,35 @@ struct QuoteDropletWidgetEntryView : View {
     }
     
     private func isQuoteLiked(_ quote: Quote) -> Bool {
-        return getLikedQuotes().contains(where: { $0.id == quote.id })
+        guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
+            print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
+            return false
+        }
+        
+        // Use a do-catch block for the JSON decoding to prevent crashes
+        do {
+            let quotes = try JSONDecoder().decode([Quote].self, from: likedQuotesData)
+            return quotes.contains(where: { $0.id == quote.id })
+        } catch {
+            print("⚠️ Warning: Error decoding liked quotes: \(error)")
+            return false
+        }
     }
     
     private func getLikedQuotes() -> [Quote] {
-        if let quotes = try? JSONDecoder().decode([Quote].self, from: likedQuotesData) {
-            return quotes
+        guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
+            print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
+            return []
         }
-        return []
+        
+        // Use a do-catch block for the JSON decoding to prevent crashes
+        do {
+            let quotes = try JSONDecoder().decode([Quote].self, from: likedQuotesData)
+            return quotes
+        } catch {
+            print("⚠️ Warning: Error decoding liked quotes: \(error)")
+            return []
+        }
     }
     
     private func isQuoteBookmarked(_ quote: Quote) -> Bool {
@@ -340,7 +461,7 @@ struct QuoteDropletWidgetExtraLarge: Widget {
         IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
             QuoteDropletWidgetEntryView(entry: entry, isIntentsActive: false)
         }
-        .disableContentMarginsIfNeeded() // Use the extension here
+        .disableContentMarginsIfNeeded()
         .configurationDisplayName("Example Widget")
         .description("Note that the color palette and font are customizable.")
         .supportedFamilies([.systemExtraLarge])
@@ -355,9 +476,9 @@ struct QuoteDropletWidgetWithIntentsMedium: Widget {
         IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
             QuoteDropletWidgetEntryView(entry: entry, isIntentsActive: true)
         }
-        .disableContentMarginsIfNeeded() // Use the extension here
-        .configurationDisplayName("Example Widget With Buttons")
-        .description("Note that the color palette and font are customizable.")
+        .disableContentMarginsIfNeeded()
+        .configurationDisplayName("Interactive Widget")
+        .description("Widget with interactive elements.")
         .supportedFamilies([.systemMedium])
     }
 }
@@ -370,9 +491,9 @@ struct QuoteDropletWidgetWithIntentsLarge: Widget {
         IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
             QuoteDropletWidgetEntryView(entry: entry, isIntentsActive: true)
         }
-        .disableContentMarginsIfNeeded() // Use the extension here
-        .configurationDisplayName("Example Widget With Buttons")
-        .description("Note that the color palette and font are customizable.")
+        .disableContentMarginsIfNeeded()
+        .configurationDisplayName("Interactive Widget")
+        .description("Widget with interactive elements.")
         .supportedFamilies([.systemLarge])
     }
 }
@@ -385,9 +506,9 @@ struct QuoteDropletWidgetWithIntentsExtraLarge: Widget {
         IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
             QuoteDropletWidgetEntryView(entry: entry, isIntentsActive: true)
         }
-        .disableContentMarginsIfNeeded() // Use the extension here
-        .configurationDisplayName("Example Widget With Buttons")
-        .description("Note that the color palette and font are customizable.")
+        .disableContentMarginsIfNeeded()
+        .configurationDisplayName("Interactive Widget")
+        .description("Widget with interactive elements.")
         .supportedFamilies([.systemExtraLarge])
     }
 }
@@ -425,30 +546,22 @@ struct QuoteDropletWidget_Previews: PreviewProvider {
 struct LikeQuoteIntent: AppIntent {
     let widgetQuote: Quote
     
-    @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
-    @AppStorage("likedQuotes", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var likedQuotesData: Data = Data()
-    
-    //    @AppStorage("bookmarkedQuotes", store: UserDefaults(suiteName: "group.selectedSettings"))
-    //    private var bookmarkedQuotesData: Data = Data()
-    
-    @State private var isLiked: Bool = false
-    //    @State private var isBookmarked: Bool = false
-    @State private var likes: Int = 69 // Change likes to non-optional
-    @State private var isLiking: Bool = false // Add state for liking status
+    // Remove @EnvironmentObject and @AppStorage - these don't work properly in widget intents
+    private var isLiked: Bool = false
+    private var likes: Int = 69
+    private var isLiking: Bool = false
     
     let localQuotesService: LocalQuotesService = LocalQuotesService()
     let apiService: APIService = APIService()
     
     init() {
         self.widgetQuote = Quote(id: 1, text: "", author: "", classification: "", likes: 15)
-        self._isLiked = State(initialValue: false)
+        self.isLiked = false
     }
     
     init(quote: Quote) {
         self.widgetQuote = quote
-        //        self._isBookmarked = State(initialValue: isQuoteBookmarked(widgetQuote))
-        self._isLiked = State(initialValue: isQuoteLiked(widgetQuote))
+        self.isLiked = isQuoteLiked(widgetQuote)
     }
     
     static var title: LocalizedStringResource = "Like Quote Button"
@@ -456,61 +569,99 @@ struct LikeQuoteIntent: AppIntent {
     static var description = IntentDescription("Like/Unlike Quote")
     
     func perform() async throws -> some IntentResult {
-        likeQuoteAction()
-        toggleLike()
+        var mutableSelf = self
+        await mutableSelf.likeQuoteAction()
+        mutableSelf.toggleLike()
         
+        // Only update the like status, don't refresh the entire widget which would change the quote
         return .result()
     }
     
-    private func toggleLike() {
+    private mutating func toggleLike() {
         isLiked.toggle()
         
         localQuotesService.saveLikedQuote(quote: widgetQuote, isLiked: isLiked)
     }
     
-    private func likeQuoteAction() {
+    private mutating func likeQuoteAction() async {
         guard !isLiking else { return }
         isLiking = true
         
         // Check if the quote is already liked
         let isAlreadyLiked = isQuoteLiked(widgetQuote)
         
-        // Call the like/unlike API based on the current like status
+        // Use async/await pattern instead of completion handlers for better intent handling
         if isAlreadyLiked {
-            apiService.unlikeQuote(quoteID: widgetQuote.id) { updatedQuote, error in
-                DispatchQueue.main.async {
-                    if let updatedQuote = updatedQuote {
-                        // Update likes count
-                        self.likes = updatedQuote.likes ?? 15
-                    }
-                    self.isLiking = false
+            do {
+                let result = try await apiService.unlikeQuoteAsync(quoteID: widgetQuote.id)
+                if let updatedQuote = result {
+                    self.likes = updatedQuote.likes ?? 15
                 }
+            } catch {
+                print("⚠️ Error unliking quote: \(error)")
             }
         } else {
-            apiService.likeQuote(quoteID: widgetQuote.id) { updatedQuote, error in
-                DispatchQueue.main.async {
-                    if let updatedQuote = updatedQuote {
-                        // Update likes count
-                        self.likes = updatedQuote.likes ?? 15
-                    }
-                    self.isLiking = false
+            do {
+                let result = try await apiService.likeQuoteAsync(quoteID: widgetQuote.id)
+                if let updatedQuote = result {
+                    self.likes = updatedQuote.likes ?? 15
                 }
+            } catch {
+                print("⚠️ Error liking quote: \(error)")
             }
         }
+        
+        isLiking = false
     }
     
     private func isQuoteLiked(_ quote: Quote) -> Bool {
-        return getLikedQuotes().contains(where: { $0.id == quote.id })
+        guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
+            print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
+            return false
+        }
+        
+        // Use a do-catch block for the JSON decoding to prevent crashes
+        do {
+            let quotes = try JSONDecoder().decode([Quote].self, from: likedQuotesData)
+            return quotes.contains(where: { $0.id == quote.id })
+        } catch {
+            print("⚠️ Warning: Error decoding liked quotes: \(error)")
+            return false
+        }
     }
     
     private func getLikedQuotes() -> [Quote] {
-        if let quotes = try? JSONDecoder().decode([Quote].self, from: likedQuotesData) {
-            return quotes
+        guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
+            print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
+            return []
         }
-        return []
+        
+        // Use a do-catch block for the JSON decoding to prevent crashes
+        do {
+            let quotes = try JSONDecoder().decode([Quote].self, from: likedQuotesData)
+            return quotes
+        } catch {
+            print("⚠️ Warning: Error decoding liked quotes: \(error)")
+            return []
+        }
     }
 }
 
+@available(iOS 16.0, *)
+struct NextQuoteIntent: AppIntent {
+    static var title: LocalizedStringResource = "Next Quote Button"
+    
+    static var description = IntentDescription("Show Next Quote")
+    
+    func perform() async throws -> some IntentResult {
+        // Request an immediate widget refresh
+        WidgetCenter.shared.reloadTimelines(ofKind: "QuoteDropletWidget")
+        WidgetCenter.shared.reloadTimelines(ofKind: "QuoteDropletWidgetWithIntents")
+        
+        // This will trigger a widget refresh to show a new quote
+        return .result()
+    }
+}
 
 struct SimpleEntry: TimelineEntry {
     let date: Date
@@ -583,4 +734,16 @@ public func getTextForWidgetPreview(familia: WidgetFamily) -> [String] {
         return ["Show me a person who has never made a mistake and I'll show you someone who hasn't achieved much.", "Joan Collins"];
     }
     
+}
+
+extension View {
+    func widgetBackground(_ backgroundView: some View) -> some View {
+        if #available(iOS 17.0, macCatalyst 17.0, *) {
+            return containerBackground(for: .widget) {
+                backgroundView
+            }
+        } else {
+            return background(backgroundView)
+        }
+    }
 }

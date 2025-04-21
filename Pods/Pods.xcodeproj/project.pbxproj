@@ -6,30 +6,6 @@
 	objectVersion = 56;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		458B188365A307B3C128ABF524D1A3E3 /* GoogleUserMessagingPlatform */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 4C177F9CCD5FDC474507145C7E5E4454 /* Build configuration list for PBXAggregateTarget "GoogleUserMessagingPlatform" */;
-			buildPhases = (
-				799D5D108AB943733650B6AD204A1438 /* [CP] Copy XCFrameworks */,
-			);
-			dependencies = (
-			);
-			name = GoogleUserMessagingPlatform;
-		};
-		FEA3B3A570634836C0457F3D7CEF1699 /* Google-Mobile-Ads-SDK */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 6C61C380A92C6E2DB722888110DE226E /* Build configuration list for PBXAggregateTarget "Google-Mobile-Ads-SDK" */;
-			buildPhases = (
-				2B810FC6750ED2E63D14CCA7D8317D1B /* [CP] Copy XCFrameworks */,
-			);
-			dependencies = (
-				C1ACEF2970E882A9D8C858129C142771 /* PBXTargetDependency */,
-			);
-			name = "Google-Mobile-Ads-SDK";
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		2977E76EC77458CAD55732162416A57C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
 		7A7D8BB649C66086566C9D17789FCF3E /* Pods-Quote Droplet-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = CF267FF45C02CFBA92EC94C35565A5B4 /* Pods-Quote Droplet-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -39,38 +15,12 @@
 		DEDE60FC78C79D86157878BF03611BC2 /* Pods-QuoteDropletWidgetExtension-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 514ED3C7F9C198AE116A43240117C7F4 /* Pods-QuoteDropletWidgetExtension-dummy.m */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		27DA501ED4B1346EC37D119166BC4D27 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = FEA3B3A570634836C0457F3D7CEF1699;
-			remoteInfo = "Google-Mobile-Ads-SDK";
-		};
-		4A17A934583E2BB2A7A2F163481AA58D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 458B188365A307B3C128ABF524D1A3E3;
-			remoteInfo = GoogleUserMessagingPlatform;
-		};
-		AC194341D67EFB6E4FB3FB5FB0A25286 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 458B188365A307B3C128ABF524D1A3E3;
-			remoteInfo = GoogleUserMessagingPlatform;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
-		151E310033EF426FB40BA8358989D5D2 /* GoogleUserMessagingPlatform-xcframeworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "GoogleUserMessagingPlatform-xcframeworks.sh"; sourceTree = "<group>"; };
-		16B6B0601570326E06D84FFAD71AC2F3 /* Pods-Quote Droplet */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-Quote Droplet"; path = Pods_Quote_Droplet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		1930295812D3B282EE685334CFD0B2DF /* Pods-QuoteDropletWidgetExtension */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-QuoteDropletWidgetExtension"; path = Pods_QuoteDropletWidgetExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		16B6B0601570326E06D84FFAD71AC2F3 /* Pods_Quote_Droplet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Quote_Droplet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1930295812D3B282EE685334CFD0B2DF /* Pods_QuoteDropletWidgetExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_QuoteDropletWidgetExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		31ECAFBFA367CA042E4C45AC4E2BBD65 /* Pods-QuoteDropletWidgetExtension-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-QuoteDropletWidgetExtension-acknowledgements.plist"; sourceTree = "<group>"; };
 		38A48902A17A3DAC695F82A1CC724D72 /* Pods-Quote Droplet-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Quote Droplet-acknowledgements.plist"; sourceTree = "<group>"; };
 		3C56091F4575B169D8FAC534E84DB88D /* Pods-Quote Droplet.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-Quote Droplet.modulemap"; sourceTree = "<group>"; };
-		41E32A55DAA59757B49F8BE5430483BE /* Google-Mobile-Ads-SDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Google-Mobile-Ads-SDK.release.xcconfig"; sourceTree = "<group>"; };
 		514ED3C7F9C198AE116A43240117C7F4 /* Pods-QuoteDropletWidgetExtension-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-QuoteDropletWidgetExtension-dummy.m"; sourceTree = "<group>"; };
 		5AB2CAA92D6C5D0FD358D665DEFEE1DF /* Pods-QuoteDropletWidgetExtension-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-QuoteDropletWidgetExtension-acknowledgements.markdown"; sourceTree = "<group>"; };
 		5EF2333E5322DE3C3B8129AD7E07947B /* Pods-Quote Droplet-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Quote Droplet-dummy.m"; sourceTree = "<group>"; };
@@ -80,16 +30,10 @@
 		847CDF1E72BE13E9348BBAA4EA00D90E /* Pods-QuoteDropletWidgetExtension-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-QuoteDropletWidgetExtension-umbrella.h"; sourceTree = "<group>"; };
 		8B97016226FBF035491AEEC42B6E79B0 /* Pods-Quote Droplet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Quote Droplet.debug.xcconfig"; sourceTree = "<group>"; };
 		918606BAD4A957E2150D15482DA0A962 /* Pods-QuoteDropletWidgetExtension.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-QuoteDropletWidgetExtension.modulemap"; sourceTree = "<group>"; };
-		9364FA5532F2F128F06F220BF75AE9E8 /* GoogleUserMessagingPlatform.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = GoogleUserMessagingPlatform.debug.xcconfig; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		B96862CB3554500E7C77E3D63DE0DA72 /* GoogleMobileAds.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; name = GoogleMobileAds.xcframework; path = Frameworks/GoogleMobileAdsFramework/GoogleMobileAds.xcframework; sourceTree = "<group>"; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		BD51CD30A5FE26454BA6B6763630E7F5 /* Pods-QuoteDropletWidgetExtension-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-QuoteDropletWidgetExtension-Info.plist"; sourceTree = "<group>"; };
-		CA17175129F3B56264B4CC5FFD15564C /* UserMessagingPlatform.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; name = UserMessagingPlatform.xcframework; path = Frameworks/Release/UserMessagingPlatform.xcframework; sourceTree = "<group>"; };
 		CF267FF45C02CFBA92EC94C35565A5B4 /* Pods-Quote Droplet-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Quote Droplet-umbrella.h"; sourceTree = "<group>"; };
-		D13441D7C4609B55FE1A834AFB2B2DC2 /* Google-Mobile-Ads-SDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Google-Mobile-Ads-SDK.debug.xcconfig"; sourceTree = "<group>"; };
-		D43B31695B6540102855FA81589C8208 /* Google-Mobile-Ads-SDK-xcframeworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Google-Mobile-Ads-SDK-xcframeworks.sh"; sourceTree = "<group>"; };
 		F8650BC05841376A8BE2DEAEF908BC9F /* Pods-Quote Droplet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Quote Droplet.release.xcconfig"; sourceTree = "<group>"; };
-		F92AC8B888074062B14E65F908BF20D3 /* GoogleUserMessagingPlatform.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = GoogleUserMessagingPlatform.release.xcconfig; sourceTree = "<group>"; };
 		F9C1D83A78248942D0805831FA42282D /* Pods-Quote Droplet-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Quote Droplet-acknowledgements.markdown"; sourceTree = "<group>"; };
 		FE21064A2C157362C7CD65057C531252 /* Pods-QuoteDropletWidgetExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-QuoteDropletWidgetExtension.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -114,30 +58,9 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		253B7EA9CCE4ED972247C99492BB262F /* Support Files */ = {
-			isa = PBXGroup;
-			children = (
-				151E310033EF426FB40BA8358989D5D2 /* GoogleUserMessagingPlatform-xcframeworks.sh */,
-				9364FA5532F2F128F06F220BF75AE9E8 /* GoogleUserMessagingPlatform.debug.xcconfig */,
-				F92AC8B888074062B14E65F908BF20D3 /* GoogleUserMessagingPlatform.release.xcconfig */,
-			);
-			name = "Support Files";
-			path = "../Target Support Files/GoogleUserMessagingPlatform";
-			sourceTree = "<group>";
-		};
-		359FC29AA87321B8E1F8C1E99D18E0A5 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				B96862CB3554500E7C77E3D63DE0DA72 /* GoogleMobileAds.xcframework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		43F02FCF9B6BEDCFFA106FBD7F544B88 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				8FDC8FCAF85E5E7D80598D0467A0FB64 /* Google-Mobile-Ads-SDK */,
-				AA5403484DDFFB902DA42AD1AA8594D7 /* GoogleUserMessagingPlatform */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -173,37 +96,6 @@
 				5905354B19C6EAF211DA6AEF7D800FC2 /* Pods-QuoteDropletWidgetExtension */,
 			);
 			name = "Targets Support Files";
-			sourceTree = "<group>";
-		};
-		8FDC8FCAF85E5E7D80598D0467A0FB64 /* Google-Mobile-Ads-SDK */ = {
-			isa = PBXGroup;
-			children = (
-				359FC29AA87321B8E1F8C1E99D18E0A5 /* Frameworks */,
-				BAAA170880DF3998A0A89BD2E47E4198 /* Support Files */,
-			);
-			name = "Google-Mobile-Ads-SDK";
-			path = "Google-Mobile-Ads-SDK";
-			sourceTree = "<group>";
-		};
-		AA5403484DDFFB902DA42AD1AA8594D7 /* GoogleUserMessagingPlatform */ = {
-			isa = PBXGroup;
-			children = (
-				F7B9514D373FDE8BF22133940EA711E9 /* Frameworks */,
-				253B7EA9CCE4ED972247C99492BB262F /* Support Files */,
-			);
-			name = GoogleUserMessagingPlatform;
-			path = GoogleUserMessagingPlatform;
-			sourceTree = "<group>";
-		};
-		BAAA170880DF3998A0A89BD2E47E4198 /* Support Files */ = {
-			isa = PBXGroup;
-			children = (
-				D43B31695B6540102855FA81589C8208 /* Google-Mobile-Ads-SDK-xcframeworks.sh */,
-				D13441D7C4609B55FE1A834AFB2B2DC2 /* Google-Mobile-Ads-SDK.debug.xcconfig */,
-				41E32A55DAA59757B49F8BE5430483BE /* Google-Mobile-Ads-SDK.release.xcconfig */,
-			);
-			name = "Support Files";
-			path = "../Target Support Files/Google-Mobile-Ads-SDK";
 			sourceTree = "<group>";
 		};
 		CF1408CF629C7361332E53B88F7BD30C = {
@@ -244,18 +136,10 @@
 		F08EDFA5ADBAE034A438BCAF3979B0C2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				16B6B0601570326E06D84FFAD71AC2F3 /* Pods-Quote Droplet */,
-				1930295812D3B282EE685334CFD0B2DF /* Pods-QuoteDropletWidgetExtension */,
+				16B6B0601570326E06D84FFAD71AC2F3 /* Pods_Quote_Droplet.framework */,
+				1930295812D3B282EE685334CFD0B2DF /* Pods_QuoteDropletWidgetExtension.framework */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		F7B9514D373FDE8BF22133940EA711E9 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				CA17175129F3B56264B4CC5FFD15564C /* UserMessagingPlatform.xcframework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -295,7 +179,7 @@
 			);
 			name = "Pods-Quote Droplet";
 			productName = Pods_Quote_Droplet;
-			productReference = 16B6B0601570326E06D84FFAD71AC2F3 /* Pods-Quote Droplet */;
+			productReference = 16B6B0601570326E06D84FFAD71AC2F3 /* Pods_Quote_Droplet.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		EFBAAC15BF12BE5056F202C033D458B7 /* Pods-QuoteDropletWidgetExtension */ = {
@@ -310,12 +194,10 @@
 			buildRules = (
 			);
 			dependencies = (
-				A5C65073C6AC6F2B6FFBBD3240932F6C /* PBXTargetDependency */,
-				BBD55D63BA7D65B18B3017DCE87D83EB /* PBXTargetDependency */,
 			);
 			name = "Pods-QuoteDropletWidgetExtension";
 			productName = Pods_QuoteDropletWidgetExtension;
-			productReference = 1930295812D3B282EE685334CFD0B2DF /* Pods-QuoteDropletWidgetExtension */;
+			productReference = 1930295812D3B282EE685334CFD0B2DF /* Pods_QuoteDropletWidgetExtension.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -324,8 +206,9 @@
 		BFDFE7DC352907FC980B868725387E98 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1630;
 			};
 			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
 			compatibilityVersion = "Xcode 14.0";
@@ -340,8 +223,6 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				FEA3B3A570634836C0457F3D7CEF1699 /* Google-Mobile-Ads-SDK */,
-				458B188365A307B3C128ABF524D1A3E3 /* GoogleUserMessagingPlatform */,
 				29D13FFA1DECA761A6B8B61CD1592B5C /* Pods-Quote Droplet */,
 				EFBAAC15BF12BE5056F202C033D458B7 /* Pods-QuoteDropletWidgetExtension */,
 			);
@@ -365,43 +246,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		2B810FC6750ED2E63D14CCA7D8317D1B /* [CP] Copy XCFrameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Google-Mobile-Ads-SDK/Google-Mobile-Ads-SDK-xcframeworks-input-files.xcfilelist",
-			);
-			name = "[CP] Copy XCFrameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Google-Mobile-Ads-SDK/Google-Mobile-Ads-SDK-xcframeworks-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Google-Mobile-Ads-SDK/Google-Mobile-Ads-SDK-xcframeworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		799D5D108AB943733650B6AD204A1438 /* [CP] Copy XCFrameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/GoogleUserMessagingPlatform/GoogleUserMessagingPlatform-xcframeworks-input-files.xcfilelist",
-			);
-			name = "[CP] Copy XCFrameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/GoogleUserMessagingPlatform/GoogleUserMessagingPlatform-xcframeworks-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/GoogleUserMessagingPlatform/GoogleUserMessagingPlatform-xcframeworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		7764836C820C49A8674D399CB217F654 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -421,42 +265,19 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		A5C65073C6AC6F2B6FFBBD3240932F6C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "Google-Mobile-Ads-SDK";
-			target = FEA3B3A570634836C0457F3D7CEF1699 /* Google-Mobile-Ads-SDK */;
-			targetProxy = 27DA501ED4B1346EC37D119166BC4D27 /* PBXContainerItemProxy */;
-		};
-		BBD55D63BA7D65B18B3017DCE87D83EB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = GoogleUserMessagingPlatform;
-			target = 458B188365A307B3C128ABF524D1A3E3 /* GoogleUserMessagingPlatform */;
-			targetProxy = 4A17A934583E2BB2A7A2F163481AA58D /* PBXContainerItemProxy */;
-		};
-		C1ACEF2970E882A9D8C858129C142771 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = GoogleUserMessagingPlatform;
-			target = 458B188365A307B3C128ABF524D1A3E3 /* GoogleUserMessagingPlatform */;
-			targetProxy = AC194341D67EFB6E4FB3FB5FB0A25286 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
 		0B8E43E3213DE9643C80CCC2A51507A3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F8650BC05841376A8BE2DEAEF908BC9F /* Pods-Quote Droplet.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				INFOPLIST_FILE = "Target Support Files/Pods-Quote Droplet/Pods-Quote Droplet-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -467,6 +288,7 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-Quote Droplet/Pods-Quote Droplet.modulemap";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -485,16 +307,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8B97016226FBF035491AEEC42B6E79B0 /* Pods-Quote Droplet.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				INFOPLIST_FILE = "Target Support Files/Pods-Quote Droplet/Pods-Quote Droplet-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -505,6 +325,7 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-Quote Droplet/Pods-Quote Droplet.modulemap";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -553,9 +374,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -576,7 +399,6 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -584,56 +406,18 @@
 			};
 			name = Debug;
 		};
-		5BA5F815B0F4696F39287802667A42C5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 41E32A55DAA59757B49F8BE5430483BE /* Google-Mobile-Ads-SDK.release.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		7567ACC1C8235F85E757D9BDFFF795B9 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = F92AC8B888074062B14E65F908BF20D3 /* GoogleUserMessagingPlatform.release.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 		765AEAD6107A3B3E6D257FA12BEEF086 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 82802D7DF069C02FC9D133CF739429E6 /* Pods-QuoteDropletWidgetExtension.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				INFOPLIST_FILE = "Target Support Files/Pods-QuoteDropletWidgetExtension/Pods-QuoteDropletWidgetExtension-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -644,6 +428,7 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-QuoteDropletWidgetExtension/Pods-QuoteDropletWidgetExtension.modulemap";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -692,9 +477,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -711,7 +498,6 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -719,37 +505,18 @@
 			};
 			name = Release;
 		};
-		97331E09D529345AC2D6742D8CD9B9BE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D13441D7C4609B55FE1A834AFB2B2DC2 /* Google-Mobile-Ads-SDK.debug.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
 		A3CF097CFC1DD2A3E7032CDA3BD62E7D /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FE21064A2C157362C7CD65057C531252 /* Pods-QuoteDropletWidgetExtension.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				INFOPLIST_FILE = "Target Support Files/Pods-QuoteDropletWidgetExtension/Pods-QuoteDropletWidgetExtension-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -760,6 +527,7 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-QuoteDropletWidgetExtension/Pods-QuoteDropletWidgetExtension.modulemap";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -773,23 +541,6 @@
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
-		};
-		DD7D8196F61F5985A0841583F70C787B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9364FA5532F2F128F06F220BF75AE9E8 /* GoogleUserMessagingPlatform.debug.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
 		};
 /* End XCBuildConfiguration section */
 
@@ -808,24 +559,6 @@
 			buildConfigurations = (
 				4BC7450F9457737EE3E637BA155B56F7 /* Debug */,
 				8B5A46FF8D3C1289CDEE3BAFACABCD2A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		4C177F9CCD5FDC474507145C7E5E4454 /* Build configuration list for PBXAggregateTarget "GoogleUserMessagingPlatform" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DD7D8196F61F5985A0841583F70C787B /* Debug */,
-				7567ACC1C8235F85E757D9BDFFF795B9 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		6C61C380A92C6E2DB722888110DE226E /* Build configuration list for PBXAggregateTarget "Google-Mobile-Ads-SDK" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				97331E09D529345AC2D6742D8CD9B9BE /* Debug */,
-				5BA5F815B0F4696F39287802667A42C5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

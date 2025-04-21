@@ -94,6 +94,9 @@ extension DropletsView {
             Text("Recent").tag(SelectedPage.recent)
         })
         .pickerStyle(SegmentedPickerStyle())
+        .onChange(of: viewModel.selected) { newValue in
+            viewModel.loadMoreQuotes()
+        }
     }
     
     private var titleText: some View {

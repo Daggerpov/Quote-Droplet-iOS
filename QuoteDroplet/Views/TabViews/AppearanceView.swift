@@ -80,7 +80,7 @@ extension AppearanceView {
     private var sampleColorSection: some View {
         VStack {
             Text("Sample Colors:")
-                modifier(ColorPaletteTitleStyling())
+                .modifier(ColorPaletteTitleStyling())
             sampleColorPickers
         }
         .frame(alignment: .center)
