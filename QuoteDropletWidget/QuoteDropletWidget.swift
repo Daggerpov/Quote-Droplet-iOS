@@ -241,6 +241,7 @@ struct QuoteDropletWidgetEntryView : View {
                     .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .authorText))) // Use the selected font for author text
                 }
             }
+            .padding()
             .onAppear {
                 isBookmarked = isQuoteBookmarked(widgetQuote)
                 
@@ -312,6 +313,7 @@ struct QuoteDropletWidgetEntryView : View {
                         .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .authorText))) // Use the selected font for author text
                     }
                 }
+                .padding()
             }
             .onAppear {
                 isBookmarked = isQuoteBookmarked(widgetQuote)
