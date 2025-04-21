@@ -309,6 +309,32 @@ class APIService: IAPIService {
         sendData(endpoint: endpoint, body: [:], responseType: Quote.self, completion: completion)
     }
     
+    func likeQuoteAsync(quoteID: Int) async throws -> Quote? {
+        let endpoint = "quotes/like/\(quoteID)"
+        return try await withCheckedThrowingContinuation { continuation in
+            sendData(endpoint: endpoint, body: [:], responseType: Quote.self) { quote, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: quote)
+                }
+            }
+        }
+    }
+    
+    func unlikeQuoteAsync(quoteID: Int) async throws -> Quote? {
+        let endpoint = "quotes/unlike/\(quoteID)"
+        return try await withCheckedThrowingContinuation { continuation in
+            sendData(endpoint: endpoint, body: [:], responseType: Quote.self) { quote, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: quote)
+                }
+            }
+        }
+    }
+    
     func getQuoteByID(id: Int, completion: @escaping (Quote?, Error?) -> Void) {
         let endpoint = "quotes/\(id)"
         fetchData(endpoint: endpoint, responseType: Quote.self, completion: completion)

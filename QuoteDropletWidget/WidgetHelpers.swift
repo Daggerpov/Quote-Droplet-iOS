@@ -11,8 +11,8 @@ import SwiftUI
 // Extension to disable content margins
 extension WidgetConfiguration {
     func disableContentMarginsIfNeeded() -> some WidgetConfiguration {
-        if #available(iOS 17.0, *) {
-            return self.contentMarginsDisabled()
+        if #available(iOS 17.0, macCatalyst 17.0, *) {
+            return contentMarginsDisabled()
         } else {
             return self
         }

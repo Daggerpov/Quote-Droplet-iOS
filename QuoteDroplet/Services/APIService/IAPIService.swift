@@ -59,6 +59,12 @@ protocol IAPIService {
             Error?
         ) -> Void
     ) -> Void
+    func likeQuoteAsync(
+        quoteID: Int
+    ) async throws -> Quote?
+    func unlikeQuoteAsync(
+        quoteID: Int
+    ) async throws -> Quote?
     func getQuoteByID(
         id: Int,
         completion: @escaping (
