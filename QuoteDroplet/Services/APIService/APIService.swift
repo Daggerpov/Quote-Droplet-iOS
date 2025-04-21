@@ -340,21 +340,6 @@ class APIService: IAPIService {
         fetchData(endpoint: endpoint, responseType: Quote.self, completion: completion)
     }
     
-    func getLikeCountForQuote(quoteGiven: Quote, completion: @escaping (Int) -> Void) {
-        let endpoint = "quoteLikes/\(quoteGiven.id)"
-        
-        performRequest(endpoint: endpoint, method: .get, responseType: LikeCountResponse.self) { result in
-            switch result {
-            case .success(let response):
-                print("✅ API Success: getLikeCountForQuote - Like count: \(response.likes)")
-                completion(response.likes)
-            case .failure:
-                print("⚠️ API Warning: getLikeCountForQuote - Failed to get like count, defaulting to 0")
-                completion(0)
-            }
-        }
-    }
-    
     func getCountForCategory(category: QuoteCategory, completion: @escaping (Int) -> Void) {
         let endpoint = "quoteCount?category=\(category.rawValue.lowercased())"
         

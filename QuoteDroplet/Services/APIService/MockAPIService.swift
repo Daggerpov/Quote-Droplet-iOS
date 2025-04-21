@@ -126,13 +126,6 @@ class MockAPIService: IAPIService {
         likeCountResponse = count
     }
 
-    func getLikeCountForQuote(
-        quoteGiven: Quote,
-        completion: @escaping (Int) -> Void
-    ) {
-        completion(likeCountResponse ?? 0)
-    }
-
     // MARK: - Count for Category Response
     private var countForCategoryResponse: Int?
     func setCountForCategoryResponse(count: Int) {

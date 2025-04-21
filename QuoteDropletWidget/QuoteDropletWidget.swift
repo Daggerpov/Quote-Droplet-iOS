@@ -113,7 +113,7 @@ struct QuoteDropletWidgetEntryView : View {
     var entry: Provider.Entry
     @Environment(\.widgetFamily) var family
     
-    let widgetQuote: Quote
+    var widgetQuote: Quote
     
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
     @AppStorage("likedQuotes", store: UserDefaults(suiteName: "group.selectedSettings"))
@@ -121,7 +121,6 @@ struct QuoteDropletWidgetEntryView : View {
     
     @State private var isLiked: Bool = false
     @State private var isBookmarked: Bool = false
-    @State private var likes: Int = 69 // Change likes to non-optional
     @State private var isLiking: Bool = false // Add state for liking status
     
     @State private var isIntentsActive: Bool = false
@@ -145,12 +144,6 @@ struct QuoteDropletWidgetEntryView : View {
             return data.getColorPalette()
         } else {
             return colorPalettes[safe: data.getIndex()] ?? [Color.clear]
-        }
-    }
-    
-    private func getQuoteLikeCountMethod(completion: @escaping (Int) -> Void) {
-        apiService.getLikeCountForQuote(quoteGiven: widgetQuote) { likeCount in
-            completion(likeCount)
         }
     }
     
@@ -244,10 +237,6 @@ struct QuoteDropletWidgetEntryView : View {
             .padding()
             .onAppear {
                 isBookmarked = isQuoteBookmarked(widgetQuote)
-                
-                getQuoteLikeCountMethod { fetchedLikeCount in
-                    likes = fetchedLikeCount
-                }
                 isLiked = isQuoteLiked(widgetQuote)
             }
             .containerBackground(colors[0], for: .widget)
@@ -317,10 +306,6 @@ struct QuoteDropletWidgetEntryView : View {
             }
             .onAppear {
                 isBookmarked = isQuoteBookmarked(widgetQuote)
-                
-                getQuoteLikeCountMethod { fetchedLikeCount in
-                    likes = fetchedLikeCount
-                }
                 isLiked = isQuoteLiked(widgetQuote)
             }
         }
@@ -339,7 +324,7 @@ struct QuoteDropletWidgetEntryView : View {
         localQuotesService.saveLikedQuote(quote: widgetQuote, isLiked: isLiked)
     }
     
-    private func likeQuoteAction() {
+    private mutating func likeQuoteAction() {
         guard !isLiking else { return }
         isLiking = true
         
@@ -352,7 +337,7 @@ struct QuoteDropletWidgetEntryView : View {
                 DispatchQueue.main.async {
                     if let updatedQuote = updatedQuote {
                         // Update likes count only, not the entire quote
-                        self.likes = updatedQuote.likes ?? 15
+                        self.widgetQuote = updatedQuote
                     }
                     self.isLiking = false
                 }
@@ -361,8 +346,7 @@ struct QuoteDropletWidgetEntryView : View {
             apiService.likeQuote(quoteID: widgetQuote.id) { updatedQuote, error in
                 DispatchQueue.main.async {
                     if let updatedQuote = updatedQuote {
-                        // Update likes count only, not the entire quote
-                        self.likes = updatedQuote.likes ?? 15
+                        self.widgetQuote = updatedQuote
                     }
                     self.isLiking = false
                 }
@@ -544,11 +528,10 @@ struct QuoteDropletWidget_Previews: PreviewProvider {
 
 @available(iOS 16.0, *)
 struct LikeQuoteIntent: AppIntent {
-    let widgetQuote: Quote
+    var widgetQuote: Quote
     
     // Remove @EnvironmentObject and @AppStorage - these don't work properly in widget intents
     private var isLiked: Bool = false
-    private var likes: Int = 69
     private var isLiking: Bool = false
     
     let localQuotesService: LocalQuotesService = LocalQuotesService()
@@ -595,7 +578,7 @@ struct LikeQuoteIntent: AppIntent {
             do {
                 let result = try await apiService.unlikeQuoteAsync(quoteID: widgetQuote.id)
                 if let updatedQuote = result {
-                    self.likes = updatedQuote.likes ?? 15
+                    self.widgetQuote = updatedQuote
                 }
             } catch {
                 print("⚠️ Error unliking quote: \(error)")
@@ -604,7 +587,7 @@ struct LikeQuoteIntent: AppIntent {
             do {
                 let result = try await apiService.likeQuoteAsync(quoteID: widgetQuote.id)
                 if let updatedQuote = result {
-                    self.likes = updatedQuote.likes ?? 15
+                    self.widgetQuote = updatedQuote
                 }
             } catch {
                 print("⚠️ Error liking quote: \(error)")
