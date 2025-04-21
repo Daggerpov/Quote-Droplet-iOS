@@ -324,34 +324,35 @@ struct QuoteDropletWidgetEntryView : View {
         localQuotesService.saveLikedQuote(quote: widgetQuote, isLiked: isLiked)
     }
     
-    private mutating func likeQuoteAction() {
+    private mutating func likeQuoteAction() async {
         guard !isLiking else { return }
         isLiking = true
         
         // Check if the quote is already liked
         let isAlreadyLiked = isQuoteLiked(widgetQuote)
         
-        // Call the like/unlike API based on the current like status
+        // Use async/await pattern instead of completion handlers
         if isAlreadyLiked {
-            apiService.unlikeQuote(quoteID: widgetQuote.id) { updatedQuote, error in
-                DispatchQueue.main.async {
-                    if let updatedQuote = updatedQuote {
-                        // Update likes count only, not the entire quote
-                        self.widgetQuote = updatedQuote
-                    }
-                    self.isLiking = false
+            do {
+                let result = try await apiService.unlikeQuoteAsync(quoteID: widgetQuote.id)
+                if let updatedQuote = result {
+                    self.widgetQuote = updatedQuote
                 }
+            } catch {
+                print("⚠️ Error unliking quote: \(error)")
             }
         } else {
-            apiService.likeQuote(quoteID: widgetQuote.id) { updatedQuote, error in
-                DispatchQueue.main.async {
-                    if let updatedQuote = updatedQuote {
-                        self.widgetQuote = updatedQuote
-                    }
-                    self.isLiking = false
+            do {
+                let result = try await apiService.likeQuoteAsync(quoteID: widgetQuote.id)
+                if let updatedQuote = result {
+                    self.widgetQuote = updatedQuote
                 }
+            } catch {
+                print("⚠️ Error liking quote: \(error)")
             }
         }
+        
+        isLiking = false
     }
     
     private func isQuoteLiked(_ quote: Quote) -> Bool {
@@ -573,7 +574,7 @@ struct LikeQuoteIntent: AppIntent {
         // Check if the quote is already liked
         let isAlreadyLiked = isQuoteLiked(widgetQuote)
         
-        // Use async/await pattern instead of completion handlers for better intent handling
+        // Use async/await pattern instead of completion handlers
         if isAlreadyLiked {
             do {
                 let result = try await apiService.unlikeQuoteAsync(quoteID: widgetQuote.id)
