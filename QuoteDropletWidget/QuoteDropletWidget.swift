@@ -574,7 +574,7 @@ struct LikeQuoteIntent: AppIntent {
         mutableSelf.toggleLike()
         
         // Only update the like status, don't refresh the entire widget which would change the quote
-        return .result(value: false)
+        return .result()
     }
     
     private mutating func toggleLike() {
