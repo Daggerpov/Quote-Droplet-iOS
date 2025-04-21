@@ -72,12 +72,6 @@ protocol IAPIService {
             Error?
         ) -> Void
     ) -> Void
-    func getLikeCountForQuote(
-        quoteGiven: Quote,
-        completion: @escaping (
-            Int
-        ) -> Void
-    ) -> Void
     func getCountForCategory(
         category: QuoteCategory,
         completion: @escaping (

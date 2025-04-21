@@ -14,7 +14,7 @@ class SingleQuoteViewModel: ObservableObject {
     @Published var isCopied: Bool = false
     @Published var isLiked: Bool = false
     @Published var isBookmarked: Bool = false
-    @Published var likes: Int = 0
+    @Published var likes: Int
     @Published var isLiking: Bool = false
     
     // MARK: app review vars
@@ -44,6 +44,7 @@ class SingleQuoteViewModel: ObservableObject {
         self.quote = quote
         self.from = from
         self.searchText = searchText
+        self.likes = quote.likes ?? 0
     }
     
     public func shouldShowArrow() -> Bool {
@@ -52,11 +53,6 @@ class SingleQuoteViewModel: ObservableObject {
     
     public func getQuoteInfo() -> Void {
         isBookmarked = localQuotesService.isQuoteBookmarked(quote)
-        
-        getQuoteLikeCountMethod(for: quote) { [weak self] fetchedLikeCount in
-            guard let self = self else { return }
-            self.likes = fetchedLikeCount
-        }
         isLiked = localQuotesService.isQuoteLiked(quote)
     }
     
@@ -103,14 +99,6 @@ class SingleQuoteViewModel: ObservableObject {
             }
             
             self.increaseInteractions()
-        }
-    }
-    
-    func getQuoteLikeCountMethod(for quote: Quote, completion: @escaping (Int) -> Void) -> Void {
-        apiService.getLikeCountForQuote(quoteGiven: quote) { likeCount in
-            DispatchQueue.main.async {
-                completion(likeCount)
-            }
         }
     }
     
