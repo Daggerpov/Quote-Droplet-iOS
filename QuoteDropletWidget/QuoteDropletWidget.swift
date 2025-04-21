@@ -182,23 +182,20 @@ struct QuoteDropletWidgetEntryView : View {
     }
     
     var body: some View {
-        ZStack {
-            colors[0] // Use the first color as the background color
-            
+        if #available(iOS 17.0, *) {
             VStack {
                 if widgetQuote.text != "" {
                     if family == .systemSmall {
                         Text("\(widgetQuote.text)")
-                            .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: 16)) // Use the selected font
-                            .foregroundColor(colors[1]) // Use the second color for text color
+                            .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .quoteText)))
+                            .foregroundColor(colors[1])
                             .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
                             .minimumScaleFactor(0.5)
                     } else {
                         Text("\(widgetQuote.text)")
-                            .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: 500)) // Use the selected font
-                            .foregroundColor(colors[1]) // Use the second color for text color
+                            .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .quoteText)))
+                            .foregroundColor(colors[1])
                             .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
-                            .minimumScaleFactor(0.01)
                     }
                     
                     HStack {
@@ -226,7 +223,7 @@ struct QuoteDropletWidgetEntryView : View {
                     
                 } else {
                     Text("\(getTextForWidgetPreview(familia: family)[0])")
-                        .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: 500)) // Use the selected font
+                        .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .quoteText)))
                         .foregroundColor(colors[1]) // Use the second color for text color
                         .padding(.horizontal, 10)
                         .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
@@ -244,16 +241,88 @@ struct QuoteDropletWidgetEntryView : View {
                     .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .authorText))) // Use the selected font for author text
                 }
             }
-            .padding()
-        }
-        .onAppear {
-            isBookmarked = isQuoteBookmarked(widgetQuote)
-            
-            getQuoteLikeCountMethod { fetchedLikeCount in
-                likes = fetchedLikeCount
+            .onAppear {
+                isBookmarked = isQuoteBookmarked(widgetQuote)
+                
+                getQuoteLikeCountMethod { fetchedLikeCount in
+                    likes = fetchedLikeCount
+                }
+                isLiked = isQuoteLiked(widgetQuote)
             }
-            isLiked = isQuoteLiked(widgetQuote)
+            .containerBackground(colors[0], for: .widget)
+        } else {
+            // Fallback for iOS 16 and earlier
+            ZStack {
+                colors[0]
+                VStack {
+                    if widgetQuote.text != "" {
+                        if family == .systemSmall {
+                            Text("\(widgetQuote.text)")
+                                .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .quoteText)))
+                                .foregroundColor(colors[1])
+                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
+                                .minimumScaleFactor(0.5)
+                        } else {
+                            Text("\(widgetQuote.text)")
+                                .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .quoteText)))
+                                .foregroundColor(colors[1])
+                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
+                        }
+                        
+                        HStack {
+                            if (isAuthorValid(authorGiven: widgetQuote.author)) {
+                                Text("— \(widgetQuote.author ?? "")")
+                                    .foregroundColor(colors[2]) // Use the third color for author text color
+                                    .padding(.horizontal, 5)
+                                    .lineLimit(1) // Ensure the text stays on one line
+                                    .minimumScaleFactor(0.01) // Allow the text to shrink to 50% of its original size
+                            }
+                            if isIntentsActive {
+                                likesSection
+                            }
+                        }
+                        .font(
+                            Font
+                                .custom(
+                                    availableFonts[data.getSelectedFontIndex()],
+                                    size: getFontSizeForText(
+                                        familia: family,
+                                        whichText: .authorText
+                                    )
+                                )
+                        ) // Use the selected font for author text
+                        
+                    } else {
+                        Text("\(getTextForWidgetPreview(familia: family)[0])")
+                            .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .quoteText)))
+                            .foregroundColor(colors[1]) // Use the second color for text color
+                            .padding(.horizontal, 10)
+                            .padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
+                            .minimumScaleFactor(0.01)
+                        //                    Spacer() // Add a spacer to push the author text to the center
+                        HStack {
+                            Text("— \(getTextForWidgetPreview(familia: family)[1])")
+                            
+                                .foregroundColor(colors[2]) // Use the third color for author text color
+                                .padding(.horizontal, 10)
+                            if isIntentsActive {
+                                likesSection
+                            }
+                        }
+                        .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .authorText))) // Use the selected font for author text
+                    }
+                }
+            }
+            .onAppear {
+                isBookmarked = isQuoteBookmarked(widgetQuote)
+                
+                getQuoteLikeCountMethod { fetchedLikeCount in
+                    likes = fetchedLikeCount
+                }
+                isLiked = isQuoteLiked(widgetQuote)
+            }
         }
+        
     }
     
     private func toggleBookmark() {
@@ -475,25 +544,22 @@ struct QuoteDropletWidget_Previews: PreviewProvider {
 struct LikeQuoteIntent: AppIntent {
     let widgetQuote: Quote
     
-    @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
-    @AppStorage("likedQuotes", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var likedQuotesData: Data = Data()
-    
-    @State private var isLiked: Bool = false
-    @State private var likes: Int = 69 // Change likes to non-optional
-    @State private var isLiking: Bool = false // Add state for liking status
+    // Remove @EnvironmentObject and @AppStorage - these don't work properly in widget intents
+    private var isLiked: Bool = false
+    private var likes: Int = 69
+    private var isLiking: Bool = false
     
     let localQuotesService: LocalQuotesService = LocalQuotesService()
     let apiService: APIService = APIService()
     
     init() {
         self.widgetQuote = Quote(id: 1, text: "", author: "", classification: "", likes: 15)
-        self._isLiked = State(initialValue: false)
+        self.isLiked = false
     }
     
     init(quote: Quote) {
         self.widgetQuote = quote
-        self._isLiked = State(initialValue: isQuoteLiked(widgetQuote))
+        self.isLiked = isQuoteLiked(widgetQuote)
     }
     
     static var title: LocalizedStringResource = "Like Quote Button"
@@ -501,48 +567,49 @@ struct LikeQuoteIntent: AppIntent {
     static var description = IntentDescription("Like/Unlike Quote")
     
     func perform() async throws -> some IntentResult {
-        likeQuoteAction()
-        toggleLike()
+        var mutableSelf = self
+        await mutableSelf.likeQuoteAction()
+        mutableSelf.toggleLike()
         
         // Only update the like status, don't refresh the entire widget which would change the quote
         return .result(value: false)
     }
     
-    private func toggleLike() {
+    private mutating func toggleLike() {
         isLiked.toggle()
         
         localQuotesService.saveLikedQuote(quote: widgetQuote, isLiked: isLiked)
     }
     
-    private func likeQuoteAction() {
+    private mutating func likeQuoteAction() async {
         guard !isLiking else { return }
         isLiking = true
         
         // Check if the quote is already liked
         let isAlreadyLiked = isQuoteLiked(widgetQuote)
         
-        // Call the like/unlike API based on the current like status
+        // Use async/await pattern instead of completion handlers for better intent handling
         if isAlreadyLiked {
-            apiService.unlikeQuote(quoteID: widgetQuote.id) { updatedQuote, error in
-                DispatchQueue.main.async {
-                    if let updatedQuote = updatedQuote {
-                        // Update likes count only, not the entire quote
-                        self.likes = updatedQuote.likes ?? 15
-                    }
-                    self.isLiking = false
+            do {
+                let result = try await apiService.unlikeQuoteAsync(quoteID: widgetQuote.id)
+                if let updatedQuote = result {
+                    self.likes = updatedQuote.likes ?? 15
                 }
+            } catch {
+                print("⚠️ Error unliking quote: \(error)")
             }
         } else {
-            apiService.likeQuote(quoteID: widgetQuote.id) { updatedQuote, error in
-                DispatchQueue.main.async {
-                    if let updatedQuote = updatedQuote {
-                        // Update likes count only, not the entire quote
-                        self.likes = updatedQuote.likes ?? 15
-                    }
-                    self.isLiking = false
+            do {
+                let result = try await apiService.likeQuoteAsync(quoteID: widgetQuote.id)
+                if let updatedQuote = result {
+                    self.likes = updatedQuote.likes ?? 15
                 }
+            } catch {
+                print("⚠️ Error liking quote: \(error)")
             }
         }
+        
+        isLiking = false
     }
     
     private func isQuoteLiked(_ quote: Quote) -> Bool {
@@ -665,4 +732,16 @@ public func getTextForWidgetPreview(familia: WidgetFamily) -> [String] {
         return ["Show me a person who has never made a mistake and I'll show you someone who hasn't achieved much.", "Joan Collins"];
     }
     
+}
+
+extension View {
+    func widgetBackground(_ backgroundView: some View) -> some View {
+        if #available(iOS 17.0, macCatalyst 17.0, *) {
+            return containerBackground(for: .widget) {
+                backgroundView
+            }
+        } else {
+            return background(backgroundView)
+        }
+    }
 }
