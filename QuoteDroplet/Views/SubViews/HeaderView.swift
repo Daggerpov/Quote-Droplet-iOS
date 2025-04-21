@@ -28,10 +28,7 @@ struct HeaderView: View {
             }
             Spacer()
         }
-        
-        // Note that padding definitely shouldn't be added here, but perhaps removed from Home and Quotes Views
-        // * Note that now, QuotesView and CommunityView match padding, while DropletsView and AppearanceView
-        // are more to the left
+        .padding(.horizontal)
         .frame(height: 55)
     }
 }

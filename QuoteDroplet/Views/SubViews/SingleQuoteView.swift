@@ -93,8 +93,8 @@ extension SingleQuoteView {
         HStack {
             HStack {
                 Button(action: {
-                    viewModel.likeQuoteAction(for: quote)
                     viewModel.toggleLike(for: quote)
+                    viewModel.likeQuoteAction(for: quote)
                 }) {
                     Image(systemName: viewModel.isLiked ? "heart.fill" : "heart")
                         .modifier(QuoteInteractionButtonStyling())

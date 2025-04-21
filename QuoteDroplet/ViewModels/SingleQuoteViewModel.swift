@@ -131,7 +131,7 @@ class SingleQuoteViewModel: ObservableObject {
                 guard let self = self else { return }
                 DispatchQueue.main.async {
                     if let updatedQuote = updatedQuote {
-                        // Update likes count
+                        // Update likes count only, not the entire quote
                         self.likes = updatedQuote.likes ?? 0
                     }
                     self.isLiking = false
@@ -142,7 +142,7 @@ class SingleQuoteViewModel: ObservableObject {
                 guard let self = self else { return }
                 DispatchQueue.main.async {
                     if let updatedQuote = updatedQuote {
-                        // Update likes count
+                        // Update likes count only, not the entire quote
                         self.likes = updatedQuote.likes ?? 0
                     }
                     self.isLiking = false
