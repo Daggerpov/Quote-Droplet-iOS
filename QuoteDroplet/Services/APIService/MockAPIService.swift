@@ -127,16 +127,23 @@ class MockAPIService: IAPIService {
     }
 
     // MARK: - Count for Category Response
-    private var countForCategoryResponse: Int?
+    private var countForCategoryResponse: Int = 0
     func setCountForCategoryResponse(count: Int) {
         countForCategoryResponse = count
     }
 
-    func getCountForCategory(
-        category: QuoteCategory,
-        completion: @escaping (Int) -> Void
-    ) {
-        completion(countForCategoryResponse ?? 0)
+    func getCountForCategory(category: QuoteCategory, completion: @escaping (Int) -> Void) {
+        completion(countForCategoryResponse)
+    }
+
+    // MARK: - Top Quotes Response
+    private var topQuotesResponse: ([Quote]?, Error?)?
+    func setTopQuotesResponse(quotes: [Quote]?, error: Error?) {
+        topQuotesResponse = (quotes, error)
+    }
+    
+    func getTopQuotes(category: QuoteCategory, completion: @escaping ([Quote]?, Error?) -> Void) {
+        completion(topQuotesResponse?.0, topQuotesResponse?.1)
     }
 
     // Add implementations for the async methods
