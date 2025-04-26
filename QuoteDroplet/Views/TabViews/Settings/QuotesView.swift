@@ -10,47 +10,29 @@ import Foundation
 import WidgetKit
 
 @available(iOS 16.0, *)
-struct QuotesView: View {
+struct QuotesSubview: View {
     @ObservedObject var viewModel: QuotesViewModel
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
     @Environment(\.colorScheme) var colorScheme
 
     @AppStorage("quoteCategory", store: UserDefaults(suiteName: "group.selectedSettings"))
     var quoteCategory: QuoteCategory = .all
-
-    init () {
-        viewModel = QuotesViewModel(localQuotesService: LocalQuotesService(), apiService: APIService())
-    }
     
     var body: some View {
-        NavigationStack{
-            VStack {
-                HeaderView()
-                VStack{
-                    Spacer()
-                    quoteCategoryPickerSection
-                    Spacer()
-                    TimeIntervalPicker()
-                    Spacer()
-                    notificationSection
-                    Spacer()
-                }
-                .padding()
-            }
-            .modifier(MainScreenBackgroundStyling())
+        VStack {
+            Spacer()
+            quoteCategoryPickerSection
+            Spacer()
+            TimeIntervalPicker()
+            Spacer()
+            notificationSection
+            Spacer()
         }
     }
 }
 
 @available(iOS 16.0, *)
-struct QuotesView_Previews: PreviewProvider {
-    static var previews: some View {
-        QuotesView()
-    }
-}
-
-@available(iOS 16.0, *)
-extension QuotesView {
+extension QuotesSubview {
     public func getFormattedNotificationTime () -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "h:mm a"  // Use "h:mm a" for 12-hour format with AM/PM

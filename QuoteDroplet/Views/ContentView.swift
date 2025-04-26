@@ -19,19 +19,21 @@ struct ContentView: View {
                         TabButtonView(imageSystemName: "magnifyingglass.circle.fill", text: "Search")
                     }
                 }
-            AppearanceView()
+            TopView()
                 .tabItem {
-                    TabButtonView(imageSystemName: "paintbrush.fill", text: "Appearance")
-                }
-            QuotesView()
-                .tabItem {
-                    TabButtonView(imageSystemName: "quote.bubble.fill", text: "Quotes")
+                    VStack {
+                        TabButtonView(imageSystemName: "trophy.fill", text: "Top")
+                    }
                 }
             CommunityView()
                 .tabItem {
                     VStack {
                         TabButtonView(imageSystemName: "house.fill", text: "Community")
                     }
+                }
+            SettingsView()
+                .tabItem {
+                    TabButtonView(imageSystemName: "gearshape.fill", text: "Settings")
                 }
         }
         .environmentObject(sharedVars)

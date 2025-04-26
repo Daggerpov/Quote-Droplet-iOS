@@ -78,4 +78,11 @@ protocol IAPIService {
             Int
         ) -> Void
     ) -> Void
+    func getTopQuotes(
+        category: QuoteCategory,
+        completion: @escaping (
+            [Quote]?,
+            Error?
+        ) -> Void
+    ) -> Void
 }

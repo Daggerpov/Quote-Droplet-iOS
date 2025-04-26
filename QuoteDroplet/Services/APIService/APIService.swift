@@ -358,6 +358,21 @@ class APIService: IAPIService {
             }
         }
     }
+    
+    func getTopQuotes(category: QuoteCategory, completion: @escaping ([Quote]?, Error?) -> Void) {
+        let categoryParam = category == .all ? "all" : category.rawValue.lowercased()
+        let endpoint = "quotes/top?category=\(categoryParam)"
+        
+        fetchData(endpoint: endpoint, responseType: [Quote].self) { quotes, error in
+            if let quotes = quotes {
+                print("✅ API Success: getTopQuotes - Retrieved \(quotes.count) top quotes for category: \(category.rawValue)")
+                completion(quotes, nil)
+            } else {
+                print("❌ API Error: getTopQuotes - Failed to get top quotes for category: \(category.rawValue)")
+                completion(nil, error)
+            }
+        }
+    }
 }
 
 // MARK: - Helper Response Types
