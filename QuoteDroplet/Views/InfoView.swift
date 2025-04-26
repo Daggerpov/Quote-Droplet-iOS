@@ -21,6 +21,7 @@ extension Bundle {
 @available(iOS 16.0, *)
 struct InfoView: View {
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
+    @StateObject var feedbackViewModel = FeedbackViewModel(apiService: APIService())
 
     @AppStorage("widgetColorPaletteIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
     var widgetColorPaletteIndex = 0
@@ -58,6 +59,8 @@ struct InfoView: View {
                 Spacer()
                 reviewButton
                 Spacer()
+                feedbackButton
+                Spacer()
                 macNoteSection
                 Spacer()
                 aboutMeSection
@@ -72,6 +75,16 @@ struct InfoView: View {
                 colorPalettes[3][0] = Color(hex: widgetCustomColorPaletteFirstIndex)
                 colorPalettes[3][1] = Color(hex: widgetCustomColorPaletteSecondIndex)
                 colorPalettes[3][2] = Color(hex: widgetCustomColorPaletteThirdIndex)
+            }
+            .sheet(isPresented: $feedbackViewModel.isSubmittingFeedback) {
+                feedbackSubmissionView
+            }
+            .alert(isPresented: $feedbackViewModel.showSubmissionReceivedAlert) {
+                Alert(
+                    title: Text("Feedback Received"),
+                    message: Text(feedbackViewModel.submissionMessage),
+                    dismissButton: .default(Text("OK"))
+                )
             }
         }
         .modifier(MainScreenBackgroundStyling())
@@ -128,6 +141,23 @@ extension InfoView {
         }
     }
     
+    private var feedbackButton: some View {
+        Button(action: {
+            feedbackViewModel.isSubmittingFeedback = true
+        }) {
+            HStack {
+                Image(systemName: "bubble.left.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 25, height: 25)
+                Text("Send Feedback")
+                    .font(.title3)
+            }
+            .modifier(RoundedRectangleStyling())
+        }
+        .padding()
+    }
+    
     
     private var reviewButton: some View {
         
@@ -156,12 +186,10 @@ extension InfoView {
             }) {
                 HStack {
                     Image(systemName: "info.circle")
-                    Text("Note for Mac Owners")
-                        .padding(.leading, 5)
+                    Text("Rate Quote Droplet")
+                        .font(.title3)
                 }
-                .font(.title3)
-                .modifier(BasePicker_OuterBackgroundStyling())
-                .buttonStyle(CustomButtonStyle())
+                .modifier(RoundedRectangleStyling())
             }
             .alert(isPresented: $showMacAlert) {
                 Alert(
@@ -169,6 +197,60 @@ extension InfoView {
                     message: Text("You can actually add this same iOS widget to your Mac's widgets by clicking the date in the top-right corner of your Mac -> Edit Widgets.\n\nAlso, Quote Droplet has a Mac version available on the App Store. It conveniently shows quotes from a small icon in your menu bar, even offline."),
                     dismissButton: .default(Text("OK"))
                 )
+            }
+        }
+    }
+    
+    private var feedbackSubmissionView: some View {
+        VStack {
+            HStack {
+                Button(action: {
+                    feedbackViewModel.showSubmissionInfoAlert = true
+                }) {
+                    HStack {
+                        Image(systemName: "info.circle")
+                            .font(.title3)
+                        Text("About Feedback")
+                    }
+                    .padding()
+                }
+                .alert(isPresented: $feedbackViewModel.showSubmissionInfoAlert) {
+                    Alert(
+                        title: Text("About Feedback"),
+                        message: Text("Your feedback helps me improve Quote Droplet. I personally review all feedback and take it into consideration for future updates."),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }
+            }
+            
+            NavigationStack {
+                Text("Send Feedback")
+                    .font(.largeTitle.bold())
+                    .padding(.bottom, 5)
+                
+                Form {
+                    Section {
+                        Picker("Feedback Type", selection: $feedbackViewModel.feedbackType) {
+                            Text("General").tag("General")
+                            Text("Bug Report").tag("Bug Report")
+                            Text("Feature Request").tag("Feature Request")
+                            Text("Content").tag("Content")
+                        }
+                        .pickerStyle(DefaultPickerStyle())
+                        
+                        TextField("Feedback Message", text: $feedbackViewModel.feedbackText, axis: .vertical)
+                            .lineLimit(5...10)
+                        
+                        TextField("Email (Optional)", text: $feedbackViewModel.contactEmail)
+                            .keyboardType(.emailAddress)
+                            .autocapitalization(.none)
+                    }
+                    
+                    Button("Submit Feedback") {
+                        feedbackViewModel.submitFeedback()
+                    }
+                }
+                .accentColor(.blue)
             }
         }
     }

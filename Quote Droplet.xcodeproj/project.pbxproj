@@ -10,6 +10,8 @@
 		58C409FAC2AEF9737D7FBC0C /* Pods_QuoteDropletWidgetExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07CE975B9D78A4874EB80AAB /* Pods_QuoteDropletWidgetExtension.framework */; };
 		659AC2C72DBC643900C55BA1 /* TopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659AC2C62DBC643900C55BA1 /* TopView.swift */; };
 		659AC2C82DBC643900C55BA1 /* TopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659AC2C62DBC643900C55BA1 /* TopView.swift */; };
+		659AC3322DBC6C6700C55BA1 /* FeedbackViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659AC3312DBC6C6700C55BA1 /* FeedbackViewModel.swift */; };
+		659AC3332DBC6C6700C55BA1 /* FeedbackViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659AC3312DBC6C6700C55BA1 /* FeedbackViewModel.swift */; };
 		65C2EDEB2CF1AD11005C637D /* TabButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C2EDEA2CF1AD0E005C637D /* TabButtonView.swift */; };
 		65C2EDEC2CF1AD11005C637D /* TabButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C2EDEA2CF1AD0E005C637D /* TabButtonView.swift */; };
 		DC03AD4F2CCC6AC3000C6572 /* WidgetEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC03AD4E2CCC6AC0000C6572 /* WidgetEnums.swift */; };
@@ -162,6 +164,7 @@
 		4C8BE2D0CF8DA61E79354E83 /* Pods-Quote Droplet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Quote Droplet.release.xcconfig"; path = "Target Support Files/Pods-Quote Droplet/Pods-Quote Droplet.release.xcconfig"; sourceTree = "<group>"; };
 		593C1A394262CDDE062B3B7E /* Pods-QuoteDropletWidgetExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuoteDropletWidgetExtension.release.xcconfig"; path = "Target Support Files/Pods-QuoteDropletWidgetExtension/Pods-QuoteDropletWidgetExtension.release.xcconfig"; sourceTree = "<group>"; };
 		659AC2C62DBC643900C55BA1 /* TopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopView.swift; sourceTree = "<group>"; };
+		659AC3312DBC6C6700C55BA1 /* FeedbackViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackViewModel.swift; sourceTree = "<group>"; };
 		65C2EDEA2CF1AD0E005C637D /* TabButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabButtonView.swift; sourceTree = "<group>"; };
 		92EE9E79963F79E0C5F7FF15 /* Pods-QuoteDropletWidgetExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuoteDropletWidgetExtension.debug.xcconfig"; path = "Target Support Files/Pods-QuoteDropletWidgetExtension/Pods-QuoteDropletWidgetExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		95461FB5248B4845B525336A /* Pods_Quote_Droplet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Quote_Droplet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -466,6 +469,7 @@
 		DCC0B35E2CC9B057002DED7A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				659AC3312DBC6C6700C55BA1 /* FeedbackViewModel.swift */,
 				DCC0B37F2CC9F561002DED7A /* AuthorViewModel.swift */,
 				DCB82F772CCB301200E81549 /* CommunityViewModel.swift */,
 				DCC0B38B2CCA0903002DED7A /* DropletsViewModel.swift */,
@@ -749,6 +753,7 @@
 				DC03AD562CCC88CE000C6572 /* WidgetViewModel.swift in Sources */,
 				DCBA0C882C5C270700A2E949 /* HeaderView.swift in Sources */,
 				DCC0B37D2CC9DD97002DED7A /* ColorPickerWithoutLabel.swift in Sources */,
+				659AC3332DBC6C6700C55BA1 /* FeedbackViewModel.swift in Sources */,
 				DCC0B3602CC9B136002DED7A /* QuoteCategoryEnum.swift in Sources */,
 				DC29990A2C4DCE0B0025D32E /* AuthorView.swift in Sources */,
 				DCDF64272CCC93F900FBA5B1 /* ViewModifiers.swift in Sources */,
@@ -775,6 +780,7 @@
 				DCC0B3932CCA11F2002DED7A /* SelectedPageEnum.swift in Sources */,
 				DC26EB952BF96FD4004CA84F /* DropletsView.swift in Sources */,
 				65C2EDEC2CF1AD11005C637D /* TabButtonView.swift in Sources */,
+				659AC3322DBC6C6700C55BA1 /* FeedbackViewModel.swift in Sources */,
 				DCC0B3772CC9D4CA002DED7A /* APIErrors.swift in Sources */,
 				DC7010E52BAE654F008678CB /* NotificationSchedulerService.swift in Sources */,
 				DCB1DA592CCC5FBE00D823B0 /* QuoteFrequencyEnum.swift in Sources */,
