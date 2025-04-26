@@ -10,7 +10,7 @@ import SwiftUI
 
 @available(iOS 16.0, *)
 struct TopView: View {
-    @StateObject private var viewModel = TopViewModel(apiService: APIService())
+    @StateObject private var viewModel = TopViewModel(apiService: APIService(), localQuotesService: LocalQuotesService())
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
     
     var body: some View {
@@ -25,6 +25,7 @@ struct TopView: View {
             }
             .modifier(MainScreenBackgroundStyling())
             .onAppear {
+                viewModel.loadLikedQuotes()
                 viewModel.loadTopQuotes()
             }
         }
@@ -100,11 +101,14 @@ extension TopView {
                         
                         Spacer()
                         
-                        if let likes = quote.likes {
+                        Button(action: {
+                            viewModel.toggleLike(for: quote)
+                            viewModel.likeQuoteAction(for: quote)
+                        }) {
                             HStack(spacing: 4) {
-                                Image(systemName: "heart.fill")
+                                Image(systemName: viewModel.isQuoteLiked(quote) ? "heart.fill" : "heart")
                                     .foregroundColor(.red)
-                                Text("\(likes)")
+                                Text("\(quote.likes ?? 0)")
                                     .font(.system(size: 14, weight: .semibold))
                             }
                         }
@@ -128,6 +132,7 @@ extension TopView {
 struct TopView_Previews: PreviewProvider {
     static var previews: some View {
         TopView()
+            .environmentObject(SharedVarsBetweenTabs())
     }
 }
 
@@ -137,11 +142,16 @@ class TopViewModel: ObservableObject {
     @Published var topQuotes: [Quote] = []
     @Published var selectedCategory: QuoteCategory = .all
     @Published var isLoading: Bool = false
+    @Published var likedQuoteIDs: Set<Int> = []
+    @Published var isLiking: Bool = false
     
     private let apiService: IAPIService
+    private let localQuotesService: ILocalQuotesService
     
-    init(apiService: IAPIService) {
+    init(apiService: IAPIService, localQuotesService: ILocalQuotesService) {
         self.apiService = apiService
+        self.localQuotesService = localQuotesService
+        loadLikedQuotes()
     }
     
     func loadTopQuotes() {
@@ -158,6 +168,58 @@ class TopViewModel: ObservableObject {
                 } else {
                     // Handle error
                     self.topQuotes = []
+                }
+            }
+        }
+    }
+    
+    func loadLikedQuotes() {
+        let likedQuotes = localQuotesService.getLikedQuotes()
+        likedQuoteIDs = Set(likedQuotes.map { $0.id })
+    }
+    
+    func isQuoteLiked(_ quote: Quote) -> Bool {
+        return likedQuoteIDs.contains(quote.id)
+    }
+    
+    func toggleLike(for quote: Quote) {
+        let isLiked = isQuoteLiked(quote)
+        
+        // Update local state
+        if isLiked {
+            likedQuoteIDs.remove(quote.id)
+        } else {
+            likedQuoteIDs.insert(quote.id)
+        }
+        
+        // Save to local storage
+        localQuotesService.saveLikedQuote(quote: quote, isLiked: !isLiked)
+    }
+    
+    func likeQuoteAction(for quote: Quote) {
+        guard !isLiking else { return }
+        isLiking = true
+        
+        if isQuoteLiked(quote) {
+            apiService.unlikeQuote(quoteID: quote.id) { [weak self] updatedQuote, error in
+                guard let self = self else { return }
+                
+                DispatchQueue.main.async {
+                    if let updatedQuote = updatedQuote, let index = self.topQuotes.firstIndex(where: { $0.id == updatedQuote.id }) {
+                        self.topQuotes[index].likes = updatedQuote.likes
+                    }
+                    self.isLiking = false
+                }
+            }
+        } else {
+            apiService.likeQuote(quoteID: quote.id) { [weak self] updatedQuote, error in
+                guard let self = self else { return }
+                
+                DispatchQueue.main.async {
+                    if let updatedQuote = updatedQuote, let index = self.topQuotes.firstIndex(where: { $0.id == updatedQuote.id }) {
+                        self.topQuotes[index].likes = updatedQuote.likes
+                    }
+                    self.isLiking = false
                 }
             }
         }
