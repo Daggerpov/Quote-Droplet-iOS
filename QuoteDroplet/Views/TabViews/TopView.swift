@@ -206,7 +206,7 @@ class TopViewModel: ObservableObject {
                 
                 DispatchQueue.main.async {
                     if let updatedQuote = updatedQuote, let index = self.topQuotes.firstIndex(where: { $0.id == updatedQuote.id }) {
-                        self.topQuotes[index].likes = updatedQuote.likes
+                        self.topQuotes[index] = updatedQuote
                     }
                     self.isLiking = false
                 }
@@ -217,7 +217,7 @@ class TopViewModel: ObservableObject {
                 
                 DispatchQueue.main.async {
                     if let updatedQuote = updatedQuote, let index = self.topQuotes.firstIndex(where: { $0.id == updatedQuote.id }) {
-                        self.topQuotes[index].likes = updatedQuote.likes
+                        self.topQuotes[index] = updatedQuote
                     }
                     self.isLiking = false
                 }
