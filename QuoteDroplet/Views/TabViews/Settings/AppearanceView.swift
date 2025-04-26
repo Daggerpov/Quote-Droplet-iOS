@@ -10,7 +10,7 @@ import WidgetKit
 import Foundation
 
 @available(iOS 16.0, *)
-struct AppearanceView: View {
+struct AppearanceSubview: View {
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
     
     @AppStorage("selectedFontIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
@@ -29,36 +29,21 @@ struct AppearanceView: View {
     private var widgetCustomColorPaletteThirdIndex = "DEF4C6"
     
     var body: some View {
-        NavigationStack {
-            VStack {
-                HeaderView()
-                VStack{
-                    Spacer()
-                    widgetPreviewSection
-                    Spacer()
-                    fontSelector
-                    Spacer()
-                    sampleColorSection
-                    customColorSection
-                    Spacer()
-                }
-                .padding()
-            }
-            // only main page view that doesn't have the `.frame(maxWidth: .infinity)`, so I'll keep it that way, instead of applying the `MainScreenBackgroundStyling()` modifier
-            .background(ColorPaletteView(colors: [colorPalettes[safe: sharedVars.colorPaletteIndex]?[0] ?? Color.clear]))
+        VStack {
+            Spacer()
+            widgetPreviewSection
+            Spacer()
+            fontSelector
+            Spacer()
+            sampleColorSection
+            customColorSection
+            Spacer()
         }
     }
 }
 
 @available(iOS 16.0, *)
-struct AppearanceView_Previews: PreviewProvider {
-    static var previews: some View {
-        AppearanceView()
-    }
-}
-
-@available(iOS 16.0, *)
-extension AppearanceView {
+extension AppearanceSubview {
     private var fontSelector: some View {
         HStack {
             Text("Widget Font:")
@@ -191,7 +176,7 @@ extension AppearanceView {
                         }
                     )
                     .cornerRadius(8)
-                    .shadow(color: Color.black.opacity(0.25), radius: 10, x: 0, y: 0) // increased from black opacity of 0.2 and radius of 5
+                    .shadow(color: Color.black.opacity(0.25), radius: 10, x: 0, y: 0)
             }
             .frame(width: 150, height: 150)
         }
