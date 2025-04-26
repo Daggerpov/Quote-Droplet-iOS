@@ -76,6 +76,21 @@ class MockAPIService: IAPIService {
         completion(addQuoteResponse?.0 ?? false, addQuoteResponse?.1)
     }
 
+    // MARK: - Send Feedback Response
+    private var sendFeedbackResponse: (Bool, Error?)?
+    func setSendFeedbackResponse(success: Bool, error: Error?) {
+        sendFeedbackResponse = (success, error)
+    }
+    
+    func sendFeedback(
+        text: String,
+        type: String,
+        email: String,
+        completion: @escaping (Bool, (any Error)?) -> Void
+    ) {
+        completion(sendFeedbackResponse?.0 ?? true, sendFeedbackResponse?.1)
+    }
+
     // MARK: - Like Quote Response
     private var likeQuoteResponse: (Quote?, Error?)?
     func setLikeQuoteResponse(quote: Quote?, error: Error?) {

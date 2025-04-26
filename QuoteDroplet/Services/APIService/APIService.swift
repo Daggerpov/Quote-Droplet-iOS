@@ -254,18 +254,19 @@ class APIService: IAPIService {
     }
     
     func addQuote(text: String, author: String?, classification: String, completion: @escaping (Bool, Error?) -> Void) {
-        let endpoint = "quotes"
-        
-        // Create the quote object to be sent in the request body
-        let quoteObject: [String: Any] = [
+        var quoteObject: [String: Any] = [
             "text": text,
-            "author": author ?? "", // If author is nil, send an empty string
-            "classification": classification.lowercased(), // Convert classification to lowercase
-            "approved": false, // Set approved status to false for new quotes
-            "likes": 0
+            "classification": classification
         ]
         
-        // Special case: we don't expect a Quote in response but a success status
+        if let author = author, !author.isEmpty {
+            quoteObject["author"] = author
+        }
+        
+        print("📤 API: addQuote - Text: \(text), Author: \(author ?? "nil"), Classification: \(classification)")
+        
+        let endpoint = "quotes/submit"
+        
         performRequest(endpoint: endpoint, method: .post, body: quoteObject, responseType: EmptyResponse.self) { result in
             switch result {
             case .success:
@@ -289,6 +290,49 @@ class APIService: IAPIService {
                 case .decodingError:
                     // For addQuote, we don't really care about decoding errors since we expect no meaningful response
                     print("✅ API Success: addQuote - Quote added successfully (ignoring decoding error)")
+                    completion(true, nil)
+                    return
+                case .jsonParsingError(let underlyingError):
+                    nsError = underlyingError as NSError
+                }
+                completion(false, nsError)
+            }
+        }
+    }
+    
+    func sendFeedback(text: String, type: String, email: String, completion: @escaping (Bool, Error?) -> Void) {
+        var feedbackObject: [String: Any] = [
+            "text": text,
+            "type": type
+        ]
+        
+        if !email.isEmpty {
+            feedbackObject["email"] = email
+        }
+        
+        print("📤 API: sendFeedback - Text: \(text), Type: \(type), Email: \(email)")
+        
+        let endpoint = "feedback/submit"
+        
+        performRequest(endpoint: endpoint, method: .post, body: feedbackObject, responseType: EmptyResponse.self) { result in
+            switch result {
+            case .success:
+                print("✅ API Success: sendFeedback - Feedback submitted successfully")
+                completion(true, nil)
+            case .failure(let error):
+                let nsError: NSError
+                switch error {
+                case .invalidURL:
+                    nsError = NSError(domain: "InvalidURL", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
+                case .networkError(let underlyingError):
+                    nsError = underlyingError as NSError
+                case .httpError(let statusCode):
+                    nsError = NSError(domain: "HTTPError", code: statusCode, userInfo: nil)
+                case .noData:
+                    nsError = NSError(domain: "NoDataError", code: -1, userInfo: nil)
+                case .decodingError:
+                    // For sendFeedback, we don't really care about decoding errors since we expect no meaningful response
+                    print("✅ API Success: sendFeedback - Feedback submitted successfully (ignoring decoding error)")
                     completion(true, nil)
                     return
                 case .jsonParsingError(let underlyingError):

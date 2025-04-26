@@ -45,6 +45,15 @@ protocol IAPIService {
             Error?
         ) -> Void
     ) -> Void
+    func sendFeedback(
+        text: String,
+        type: String,
+        email: String,
+        completion: @escaping (
+            Bool,
+            Error?
+        ) -> Void
+    ) -> Void
     func likeQuote(
         quoteID: Int,
         completion: @escaping (
