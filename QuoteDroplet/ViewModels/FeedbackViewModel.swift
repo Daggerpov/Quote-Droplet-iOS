@@ -2,7 +2,7 @@
 //  FeedbackViewModel.swift
 //  Quote Droplet
 //
-//  Created by Daniel Agapov on 2024-10-23.
+//  Created by Daniel Agapov on 4/25/25.
 //
 
 import Foundation
