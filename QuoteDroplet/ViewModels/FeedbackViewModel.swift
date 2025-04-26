@@ -23,10 +23,14 @@ class FeedbackViewModel: ObservableObject {
     }
     
     func submitFeedback() -> Void {
+        self.isSubmittingFeedback = true
         apiService.sendFeedback(text: feedbackText, type: feedbackType, email: contactEmail) { [weak self] success, error in
             guard let self = self else { return }
             if success {
                 self.submissionMessage = "Thanks for your feedback! I appreciate you taking the time to help improve Quote Droplet."
+                self.feedbackText = ""
+                self.contactEmail = ""
+                self.feedbackType = "General"
             } else if let error = error {
                 self.submissionMessage = error.localizedDescription
             } else {
@@ -35,8 +39,5 @@ class FeedbackViewModel: ObservableObject {
             self.isSubmittingFeedback = false
             self.showSubmissionReceivedAlert = true
         }
-        self.feedbackText = ""
-        self.contactEmail = ""
-        self.feedbackType = "General"
     }
 } 
