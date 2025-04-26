@@ -186,12 +186,10 @@ extension InfoView {
             }) {
                 HStack {
                     Image(systemName: "info.circle")
-                    Text("Note for Mac Owners")
-                        .padding(.leading, 5)
+                    Text("Rate Quote Droplet")
+                        .font(.title3)
                 }
-                .font(.title3)
-                .modifier(BasePicker_OuterBackgroundStyling())
-                .buttonStyle(CustomButtonStyle())
+                .modifier(RoundedRectangleStyling())
             }
             .alert(isPresented: $showMacAlert) {
                 Alert(
