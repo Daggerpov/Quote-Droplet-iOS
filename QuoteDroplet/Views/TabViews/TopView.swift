@@ -85,24 +85,28 @@ extension TopView {
                     .frame(width: 40, alignment: .leading)
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(quote.content)
+                    Text(quote.text)
                         .font(.system(size: 16))
                         .foregroundColor(.primary)
                         .multilineTextAlignment(.leading)
                     
                     HStack {
-                        Text("— \(quote.author)")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.secondary)
-                            .italic()
+                        if let author = quote.author, isAuthorValid(authorGiven: quote.author) {
+                            Text("— \(author)")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.secondary)
+                                .italic()
+                        }
                         
                         Spacer()
                         
-                        HStack(spacing: 4) {
-                            Image(systemName: "heart.fill")
-                                .foregroundColor(.red)
-                            Text("\(quote.likes)")
-                                .font(.system(size: 14, weight: .semibold))
+                        if let likes = quote.likes {
+                            HStack(spacing: 4) {
+                                Image(systemName: "heart.fill")
+                                    .foregroundColor(.red)
+                                Text("\(likes)")
+                                    .font(.system(size: 14, weight: .semibold))
+                            }
                         }
                     }
                 }
