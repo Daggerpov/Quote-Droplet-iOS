@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		58C409FAC2AEF9737D7FBC0C /* Pods_QuoteDropletWidgetExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07CE975B9D78A4874EB80AAB /* Pods_QuoteDropletWidgetExtension.framework */; };
+		659AC2C42DBC643200C55BA1 /* SettingsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659AC2C32DBC643200C55BA1 /* SettingsPage.swift */; };
+		659AC2C52DBC643200C55BA1 /* SettingsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659AC2C32DBC643200C55BA1 /* SettingsPage.swift */; };
+		659AC2C72DBC643900C55BA1 /* TopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659AC2C62DBC643900C55BA1 /* TopView.swift */; };
+		659AC2C82DBC643900C55BA1 /* TopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659AC2C62DBC643900C55BA1 /* TopView.swift */; };
 		65C2EDEB2CF1AD11005C637D /* TabButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C2EDEA2CF1AD0E005C637D /* TabButtonView.swift */; };
 		65C2EDEC2CF1AD11005C637D /* TabButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C2EDEA2CF1AD0E005C637D /* TabButtonView.swift */; };
 		DC03AD4F2CCC6AC3000C6572 /* WidgetEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC03AD4E2CCC6AC0000C6572 /* WidgetEnums.swift */; };
@@ -163,6 +167,8 @@
 		07CE975B9D78A4874EB80AAB /* Pods_QuoteDropletWidgetExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_QuoteDropletWidgetExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C8BE2D0CF8DA61E79354E83 /* Pods-Quote Droplet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Quote Droplet.release.xcconfig"; path = "Target Support Files/Pods-Quote Droplet/Pods-Quote Droplet.release.xcconfig"; sourceTree = "<group>"; };
 		593C1A394262CDDE062B3B7E /* Pods-QuoteDropletWidgetExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuoteDropletWidgetExtension.release.xcconfig"; path = "Target Support Files/Pods-QuoteDropletWidgetExtension/Pods-QuoteDropletWidgetExtension.release.xcconfig"; sourceTree = "<group>"; };
+		659AC2C32DBC643200C55BA1 /* SettingsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPage.swift; sourceTree = "<group>"; };
+		659AC2C62DBC643900C55BA1 /* TopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopView.swift; sourceTree = "<group>"; };
 		65C2EDEA2CF1AD0E005C637D /* TabButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabButtonView.swift; sourceTree = "<group>"; };
 		92EE9E79963F79E0C5F7FF15 /* Pods-QuoteDropletWidgetExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuoteDropletWidgetExtension.debug.xcconfig"; path = "Target Support Files/Pods-QuoteDropletWidgetExtension/Pods-QuoteDropletWidgetExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		95461FB5248B4845B525336A /* Pods_Quote_Droplet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Quote_Droplet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -498,6 +504,8 @@
 		DCC0B36C2CC9B305002DED7A /* TabViews */ = {
 			isa = PBXGroup;
 			children = (
+				659AC2C62DBC643900C55BA1 /* TopView.swift */,
+				659AC2C32DBC643200C55BA1 /* SettingsPage.swift */,
 				DC26EB932BF96FD4004CA84F /* DropletsView.swift */,
 				DCE0F64B2C8EA2A900F24BC6 /* SearchView.swift */,
 				DC5205AF2B9CED5B0007CB5B /* AppearanceView.swift */,
@@ -724,9 +732,11 @@
 				DCC0B3832CC9FC2F002DED7A /* GoogleImageModel.swift in Sources */,
 				DC8E76542CCDEB8E00F9EB0E /* MockAPIService.swift in Sources */,
 				DC5DD51F2CCDC5C900B80F5D /* SubmitButtonView.swift in Sources */,
+				659AC2C42DBC643200C55BA1 /* SettingsPage.swift in Sources */,
 				DCC0B3922CCA11F2002DED7A /* SelectedPageEnum.swift in Sources */,
 				DC5205B32B9CEF620007CB5B /* CommunityView.swift in Sources */,
 				DC2999072C4DBED40025D32E /* AuthorHelper.swift in Sources */,
+				659AC2C72DBC643900C55BA1 /* TopView.swift in Sources */,
 				DC03AD522CCC82AD000C6572 /* WidgetHelpers.swift in Sources */,
 				DCB722142B9D06E60094BAB8 /* GeneralVars.swift in Sources */,
 				DCC0B3662CC9B1A4002DED7A /* QuoteJSON.swift in Sources */,
@@ -778,6 +788,7 @@
 				DCB844612CCACD4D0023BCEF /* QuotesViewModel.swift in Sources */,
 				DCC0B36B2CC9B2D0002DED7A /* ColorPaletteView.swift in Sources */,
 				DC5DD51E2CCDC5C900B80F5D /* SubmitButtonView.swift in Sources */,
+				659AC2C52DBC643200C55BA1 /* SettingsPage.swift in Sources */,
 				DCC0B3902CCA0F44002DED7A /* SearchViewModel.swift in Sources */,
 				DCAB2DC12A9FA96100A822D7 /* QuoteDropletWidget.intentdefinition in Sources */,
 				DCE0F64D2C8EA2A900F24BC6 /* SearchView.swift in Sources */,
@@ -797,6 +808,7 @@
 				DC96E93B2A9FE78300866D46 /* ContentView.swift in Sources */,
 				DC5205B42B9CEF620007CB5B /* CommunityView.swift in Sources */,
 				DCE0F6502C8EBCEF00F24BC6 /* SingleQuoteView.swift in Sources */,
+				659AC2C82DBC643900C55BA1 /* TopView.swift in Sources */,
 				DCC0B3612CC9B136002DED7A /* QuoteCategoryEnum.swift in Sources */,
 				DCAB2DBA2A9FA95A00A822D7 /* QuoteDropletWidgetLiveActivity.swift in Sources */,
 				DCDF64282CCC93F900FBA5B1 /* ViewModifiers.swift in Sources */,
