@@ -19,7 +19,7 @@ enum RequestError: Error {
 }
 
 class APIService: IAPIService {
-    private let baseUrl = "http://quote-dropper-production.up.railway.app"
+    private let baseUrl = "https://quote-dropper-production.up.railway.app"
     
     // MARK: - Generic Request Methods
     
@@ -244,7 +244,13 @@ class APIService: IAPIService {
     }
     
     func getQuotesBySearchKeyword(searchKeyword: String, searchCategory: String, completion: @escaping ([Quote]?, Error?) -> Void) {
-        let endpoint = "admin/search/\(searchKeyword)?category=\(searchCategory)"
+        guard let encodedKeyword = searchKeyword.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+            let error = NSError(domain: "InvalidURL", code: -1, userInfo: [NSLocalizedDescriptionKey: "Could not encode search keyword"])
+            completion(nil, error)
+            return
+        }
+        
+        let endpoint = "quotes/search/\(encodedKeyword)?category=\(searchCategory)"
         fetchData(endpoint: endpoint, responseType: [Quote].self, completion: completion)
     }
     
