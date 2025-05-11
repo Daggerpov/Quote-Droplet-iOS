@@ -34,17 +34,44 @@ class SearchViewModel: ObservableObject {
         self.isLoadingMore = true
         let group: DispatchGroup = DispatchGroup()
         
+        // Don't make an API call if search text is empty
+        if searchText.isEmpty {
+            self.isLoadingMore = false
+            return
+        }
+        
+        print("🔍 Search: Searching for \"\(searchText)\" in category \"\(activeCategory.rawValue)\"")
+        
         apiService.getQuotesBySearchKeyword(searchKeyword: searchText, searchCategory: activeCategory.rawValue.lowercased()) { [weak self] quotes, error in
             guard let self = self else { return }
             if let error: Error = error {
-                print("Error fetching quotes: \(error)")
+                print("❌ Search Error: \(error.localizedDescription)")
+                
+                // Check for specific error types
+                let nsError = error as NSError
+                if nsError.domain == "NSURLErrorDomain" {
+                    print("❌ Network Error: \(nsError.code) - This could be due to HTTP/HTTPS connectivity issues")
+                } else if nsError.domain == "HTTPError" {
+                    print("❌ HTTP Error: \(nsError.code) - The server rejected the request")
+                } else if nsError.domain == "InvalidURL" {
+                    print("❌ URL Error: The search URL may be invalid")
+                }
+                
+                DispatchQueue.main.async {
+                    self.isLoadingMore = false
+                }
                 return
             }
             
             guard let quotes: [Quote] = quotes else {
-                print("No quotes found.")
+                print("⚠️ Search Warning: No quotes found for \"\(self.searchText)\"")
+                DispatchQueue.main.async {
+                    self.isLoadingMore = false
+                }
                 return
             }
+            
+            print("✅ Search Success: Found \(quotes.count) quotes matching \"\(self.searchText)\"")
             
             let quotesToAppend: [Quote] = Array(quotes.prefix(SearchViewModel.quotesPerPage))
             
@@ -55,12 +82,11 @@ class SearchViewModel: ObservableObject {
                     }
                 }
             }
-        }
-        
-        group.notify(queue: .main) { [weak self] in
-            guard let self = self else { return }
-            self.isLoadingMore = false
-            self.totalQuotesLoaded += SearchViewModel.quotesPerPage
+            
+            DispatchQueue.main.async {
+                self.isLoadingMore = false
+                self.totalQuotesLoaded += quotesToAppend.count
+            }
         }
     }
 }
