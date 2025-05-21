@@ -7,4 +7,19 @@
 
 import Foundation
 
-struct TestModel: Decodable {}
+struct GoogleImageSearchResponse: Decodable {
+    let items: [ImageItem]?
+    
+    struct ImageItem: Decodable {
+        let link: String
+        let image: ImageInfo?
+    }
+    
+    struct ImageInfo: Decodable {
+        let thumbnailLink: String?
+        let contextLink: String?
+    }
+}
+
+// Keep for backward compatibility
+typealias TestModel = GoogleImageSearchResponse
