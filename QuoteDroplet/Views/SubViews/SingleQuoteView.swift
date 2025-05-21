@@ -75,15 +75,26 @@ extension SingleQuoteView {
     }
 
     private var authorTextView: some View {
-        HStack{
+        HStack {
             if let author: String = quote.author, isAuthorValid(authorGiven: quote.author) {
                 HStack {
                     Spacer()
-                    Text("— \(author)")
-                        .font(.body)
-                        .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .white)
-                        .padding(.bottom, 5)
-                        .frame(alignment: .trailing)
+                    if viewModel.shouldShowArrow() {
+                        NavigationLink(destination: AuthorView(quote: viewModel.quote)) {
+                            Text("— \(author)")
+                                .font(.body)
+                                .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .white)
+                                .padding(.bottom, 5)
+                                .frame(alignment: .trailing)
+                                .underline(true, color: colorPalettes[safe: sharedVars.colorPaletteIndex]?[2].opacity(0.5) ?? .white.opacity(0.5))
+                        }
+                    } else {
+                        Text("— \(author)")
+                            .font(.body)
+                            .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .white)
+                            .padding(.bottom, 5)
+                            .frame(alignment: .trailing)
+                    }
                 }
             }
         }
@@ -133,14 +144,6 @@ extension SingleQuoteView {
             }
 
             Spacer()
-
-            if (viewModel.shouldShowArrow()) {
-                NavigationLink(destination: AuthorView(quote: viewModel.quote)) {
-                    Image(systemName: "arrow.turn.down.right")
-                        .modifier(QuoteInteractionButtonStyling())
-                }
-            }
-
         }
     }
 }
