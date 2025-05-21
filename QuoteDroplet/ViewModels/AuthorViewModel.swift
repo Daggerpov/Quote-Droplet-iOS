@@ -10,6 +10,7 @@ import Foundation
 class AuthorViewModel: ObservableObject {
     @Published var quotes: [Quote] = []
     @Published var isLoadingMore: Bool = false
+    @Published var authorImageURL: String? = nil
     static let quotesPerPage: Int = 100
     private var totalQuotesLoaded: Int = 0
     static let maxQuotes: Int = 200
@@ -26,29 +27,39 @@ class AuthorViewModel: ObservableObject {
     
     func loadRemoteJSON<T: Decodable>(_ urlString: String, completion: @escaping  ((T) -> Void)) -> Void {
         guard let url = URL(string: urlString) else {
-            fatalError("Invalid URL")
+            print("Invalid URL")
+            return
         }
         
         let request: URLRequest = URLRequest(url: url)
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
             guard let data = data else {
-                fatalError(error?.localizedDescription ?? "Unknown Error")
+                print("Error: \(error?.localizedDescription ?? "Unknown Error")")
+                return
             }
             
             do {
                 let decoder = JSONDecoder()
-                let data = try decoder.decode(T.self, from: data)
-                print("data printed from loadremoteJSON")
-                print(data)
-                completion(data)
+                let decodedData = try decoder.decode(T.self, from: data)
+                print("data loaded from loadRemoteJSON")
+                
+                if let imageResponse = decodedData as? GoogleImageSearchResponse,
+                   let firstItem = imageResponse.items?.first {
+                    DispatchQueue.main.async {
+                        self?.authorImageURL = firstItem.link
+                    }
+                }
+                
+                completion(decodedData)
             } catch {
-                fatalError("Couldn't parse data from \(urlString)\n\(error)")
+                print("Decoding error: \(error)")
             }
-        }
+        }.resume()
     }
     
     public func loadInitialQuotes() -> Void {
         self.totalQuotesLoaded = 0
+        self.quotes = []
         self.loadMoreQuotes() // Initial load
     }
     
@@ -56,37 +67,54 @@ class AuthorViewModel: ObservableObject {
         guard !self.isLoadingMore else { return }
         
         self.isLoadingMore = true
-        let group: DispatchGroup = DispatchGroup()
         
-        guard let author: String = self.quote.author else { return }
+        guard let author: String = self.quote.author else { 
+            self.isLoadingMore = false
+            return 
+        }
         
         apiService.getQuotesByAuthor(author: author) { [weak self] quotes, error in
             guard let self = self else { return }
-            if let error = error {
-                print("Error fetching quotes: \(error)")
-                return
-            }
             
-            guard let quotes = quotes else {
-                print("No quotes found.")
-                return
-            }
-            
-            let quotesToAppend: [Quote] = Array(quotes.prefix(AuthorViewModel.quotesPerPage))
-            
-            for quote in quotesToAppend {
-                DispatchQueue.main.async {
-                    if (self.quotes.contains(where: { $0.id == quote.id })){
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("Error fetching quotes: \(error)")
+                    self.isLoadingMore = false
+                    return
+                }
+                
+                guard let quotes = quotes else {
+                    print("No quotes found.")
+                    self.isLoadingMore = false
+                    return
+                }
+                
+                let quotesToAppend: [Quote] = Array(quotes.prefix(AuthorViewModel.quotesPerPage))
+                
+                // Add all quotes that aren't already in the array
+                for quote in quotesToAppend {
+                    if !self.quotes.contains(where: { $0.id == quote.id }) {
                         self.quotes.append(quote)
                     }
                 }
+                
+                self.isLoadingMore = false
+                self.totalQuotesLoaded += AuthorViewModel.quotesPerPage
             }
         }
+    }
+    
+    // Helper function to load author image using Google Custom Search
+    func loadAuthorImage(authorName: String) {
+        guard let APIKey: String = ProcessInfo.processInfo.environment["GoogleImagesAPIKey"] else {
+            return
+        }
         
-        group.notify(queue: .main) { [weak self] in
-            guard let self = self else { return }
-            self.isLoadingMore = false
-            self.totalQuotesLoaded += AuthorViewModel.quotesPerPage
+        let formattedName = authorName.replacingOccurrences(of: " ", with: "%20")
+        let urlString = "https://www.googleapis.com/customsearch/v1?key=\(APIKey)&cx=238ad9d0296fb425a&searchType=image&q=\(formattedName)"
+        
+        loadRemoteJSON(urlString) { [weak self] (data: GoogleImageSearchResponse) in
+            // URL will be handled in loadRemoteJSON
         }
     }
 }
