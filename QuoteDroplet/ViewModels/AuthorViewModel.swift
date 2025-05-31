@@ -73,29 +73,73 @@ class AuthorViewModel: ObservableObject {
             return 
         }
         
-        apiService.getQuotesByAuthor(author: author) { [weak self] quotes, error in
+        print("📚 Fetching quotes for author: \(author)")
+        
+        // Ensure author name is properly URL encoded
+        guard let encodedAuthor = author.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+            print("❌ Error: Unable to encode author name")
+            self.isLoadingMore = false
+            return
+        }
+        
+        apiService.getQuotesByAuthor(author: encodedAuthor) { [weak self] quotes, error in
             guard let self = self else { return }
             
             DispatchQueue.main.async {
                 if let error = error {
-                    print("Error fetching quotes: \(error)")
+                    print("❌ Error fetching quotes: \(error)")
                     self.isLoadingMore = false
                     return
                 }
                 
                 guard let quotes = quotes else {
-                    print("No quotes found.")
+                    print("⚠️ No quotes found.")
                     self.isLoadingMore = false
                     return
                 }
                 
+                print("✅ Received \(quotes.count) quotes from API")
+                
+                // Print out each quote for debugging
+                print("📖 QUOTES RECEIVED FROM API:")
+                for (index, quote) in quotes.enumerated() {
+                    print("  Quote #\(index + 1):")
+                    print("    Content: \(quote.text)")
+                    print("    Author: \(quote.author ?? "Unknown author")")
+                    print("    ID: \(quote.id ?? 0)")
+                    print("    -----------------")
+                }
+                
                 let quotesToAppend: [Quote] = Array(quotes.prefix(AuthorViewModel.quotesPerPage))
+                print("📝 Will try to append up to \(quotesToAppend.count) quotes")
                 
                 // Add all quotes that aren't already in the array
+                var addedCount = 0
                 for quote in quotesToAppend {
                     if !self.quotes.contains(where: { $0.id == quote.id }) {
                         self.quotes.append(quote)
+                        addedCount += 1
                     }
+                }
+                
+                // If no quotes were added even though quotes were returned, add them all anyway
+                // This handles the case where quote.id might be nil or 0 causing the contains check to fail
+                if addedCount == 0 && !quotesToAppend.isEmpty {
+                    print("⚠️ No quotes were added using ID matching - attempting to add all quotes directly")
+                    self.quotes = quotesToAppend
+                    addedCount = quotesToAppend.count
+                }
+                
+                print("📈 Added \(addedCount) new quotes. Total quotes: \(self.quotes.count)")
+                
+                // Print quotes that are in the viewModel array
+                print("📚 QUOTES CURRENTLY IN VIEWMODEL:")
+                for (index, quote) in self.quotes.enumerated() {
+                    print("  Quote #\(index + 1):")
+                    print("    Content: \(quote.text)")
+                    print("    Author: \(quote.author ?? "Unknown author")")
+                    print("    ID: \(quote.id)")
+                    print("    -----------------")
                 }
                 
                 self.isLoadingMore = false
@@ -118,4 +162,5 @@ class AuthorViewModel: ObservableObject {
         }
     }
 }
+
 

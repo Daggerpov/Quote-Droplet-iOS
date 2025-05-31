@@ -15,6 +15,7 @@ class SubmitViewModel: ObservableObject {
     @Published var showSubmissionInfoAlert: Bool = false
     @Published var quoteText: String = ""
     @Published var author: String = ""
+    @Published var submitterName: String = ""
     
     let apiService: IAPIService
     
@@ -23,7 +24,7 @@ class SubmitViewModel: ObservableObject {
     }
     
     func addQuote() -> Void {
-        apiService.addQuote(text: quoteText, author: author, classification: selectedCategory.rawValue) { [weak self] success, error in
+        apiService.addQuote(text: quoteText, author: author, classification: selectedCategory.rawValue, submitterName: submitterName) { [weak self] success, error in
             guard let self = self else { return }
             if success {
                 self.submissionMessage = "Thanks for submitting a quote. It is now awaiting approval to be added to this app's quote database."
@@ -38,6 +39,7 @@ class SubmitViewModel: ObservableObject {
         }
         self.quoteText = ""
         self.author = ""
+        self.submitterName = ""
         self.selectedCategory = .wisdom
     }
 }

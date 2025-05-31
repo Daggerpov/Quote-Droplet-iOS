@@ -12,6 +12,7 @@ import SwiftUI
 struct AuthorView: View {
 	@ObservedObject var viewModel: AuthorViewModel
 	@EnvironmentObject var sharedVars: SharedVarsBetweenTabs
+	@State private var forceViewUpdate = UUID() // Change to UUID for better forcing
 
 	@AppStorage(
 		"widgetColorPaletteIndex",
@@ -120,20 +121,44 @@ struct AuthorView: View {
 				}
 				.padding(.bottom, 10)
 
+				// Debug text to check quotes
+				Text("Quotes array count: \(viewModel.quotes.count)")
+					.foregroundColor(.orange)
+					.font(.headline)
+					.padding(.top, 5)
+
 				ScrollView {
 					LazyVStack {
-						if viewModel.quotes.isEmpty {
+						if viewModel.isLoadingMore && viewModel.quotes.isEmpty {
 							ProgressView()
 								.scaleEffect(1.5)
 								.padding()
 
 							Text("Loading Quotes...")
 								.modifier(QuotesPageTextStyling())
+						} else if viewModel.quotes.isEmpty {
+							Text("No quotes found for this author")
+								.modifier(QuotesPageTextStyling())
+								.padding()
 						} else {
-							ForEach(viewModel.quotes) { quote in
-								SingleQuoteView(quote: quote, from: .authorView)
+							Text("Found \(viewModel.quotes.count) quotes")
+								.foregroundColor(.green)
+								.padding(.top)
+							
+							ForEach(Array(viewModel.quotes.enumerated()), id: \.element.id) { index, quote in
+								VStack {
+									Text("Quote #\(index + 1): \(quote.text ?? "No content")")
+										.padding()
+										.background(Color.gray.opacity(0.2))
+										.cornerRadius(8)
+										.padding(.horizontal)
+									
+									SingleQuoteView(quote: quote, from: .authorView)
+										.id(quote.id)
+								}
 							}
 						}
+						
 						Color.clear.frame(height: 1)
 							.onAppear {
 								if !viewModel.isLoadingMore
@@ -176,6 +201,7 @@ struct AuthorView: View {
 			.onAppear {
 				// Fetch initial quotes when the view appears
 				viewModel.loadInitialQuotes()
+				print("🔄 AuthorView appeared - Loading quotes for \(viewModel.quote.author ?? "unknown")")
 				sharedVars.colorPaletteIndex = widgetColorPaletteIndex
 
 				colorPalettes[3][0] = Color(
@@ -192,6 +218,12 @@ struct AuthorView: View {
 				if let authorName = viewModel.quote.author {
 					viewModel.loadAuthorImage(authorName: authorName)
 				}
+			}
+			.id(forceViewUpdate) // Force the entire view to update with a UUID
+			.onChange(of: viewModel.quotes) { _ in
+				print("📱 Quotes changed: \(viewModel.quotes.count)")
+				// Force view to update
+				forceViewUpdate = UUID()
 			}
 		}
 	}
