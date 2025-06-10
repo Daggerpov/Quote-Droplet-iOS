@@ -71,6 +71,7 @@ class MockAPIService: IAPIService {
         text: String,
         author: String?,
         classification: String,
+        submitterName: String?,
         completion: @escaping (Bool, (any Error)?) -> Void
     ) {
         completion(addQuoteResponse?.0 ?? false, addQuoteResponse?.1)

@@ -40,6 +40,7 @@ protocol IAPIService {
         text: String,
         author: String?,
         classification: String,
+        submitterName: String?,
         completion: @escaping (
             Bool,
             Error?
