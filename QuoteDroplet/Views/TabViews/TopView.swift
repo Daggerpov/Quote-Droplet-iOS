@@ -101,15 +101,25 @@ extension TopView {
                         
                         Spacer()
                         
-                        Button(action: {
-                            viewModel.toggleLike(for: quote)
-                            viewModel.likeQuoteAction(for: quote)
-                        }) {
-                            HStack(spacing: 4) {
-                                Image(systemName: viewModel.isQuoteLiked(quote) ? "heart.fill" : "heart")
-                                    .foregroundColor(.red)
-                                Text("\(quote.likes ?? 0)")
-                                    .font(.system(size: 14, weight: .semibold))
+                        HStack(spacing: 12) {
+                            Button(action: {
+                                copyQuoteToClipboard(quote)
+                            }) {
+                                Image(systemName: "doc.on.doc")
+                                    .foregroundColor(.blue)
+                                    .font(.system(size: 16))
+                            }
+                            
+                            Button(action: {
+                                viewModel.toggleLike(for: quote)
+                                viewModel.likeQuoteAction(for: quote)
+                            }) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: viewModel.isQuoteLiked(quote) ? "heart.fill" : "heart")
+                                        .foregroundColor(.red)
+                                    Text("\(quote.likes ?? 0)")
+                                        .font(.system(size: 14, weight: .semibold))
+                                }
                             }
                         }
                     }
@@ -125,6 +135,26 @@ extension TopView {
                 .fill(Color(UIColor.systemBackground))
                 .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
         )
+    }
+    
+    private func copyQuoteToClipboard(_ quote: Quote) {
+        let quoteText = formatQuoteForClipboard(quote)
+        UIPasteboard.general.string = quoteText
+        
+        // You could add a toast notification here if desired
+        // For now, just providing feedback through haptic
+        let impact = UIImpactFeedbackGenerator(style: .medium)
+        impact.impactOccurred()
+    }
+    
+    private func formatQuoteForClipboard(_ quote: Quote) -> String {
+        var formattedText = "\"\(quote.text)\""
+        
+        if let author = quote.author, isAuthorValid(authorGiven: quote.author) {
+            formattedText += " — \(author)"
+        }
+        
+        return formattedText
     }
 }
 
