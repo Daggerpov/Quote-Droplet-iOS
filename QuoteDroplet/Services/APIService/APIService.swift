@@ -239,8 +239,20 @@ class APIService: IAPIService {
     }
     
     func getQuotesByAuthor(author: String, completion: @escaping ([Quote]?, Error?) -> Void) {
+        // Author is already URL encoded from the calling method
         let endpoint = "quotes/author=\(author)"
-        fetchData(endpoint: endpoint, responseType: [Quote].self, completion: completion)
+        
+        print("🔍 Fetching quotes by author: \(author)")
+        print("🔗 URL endpoint: \(endpoint)")
+        
+        fetchData(endpoint: endpoint, responseType: [Quote].self) { quotes, error in
+            if let quotes = quotes {
+                print("✅ Successfully fetched \(quotes.count) quotes for author: \(author)")
+            } else if let error = error {
+                print("❌ Error fetching quotes for author: \(error.localizedDescription)")
+            }
+            completion(quotes, error)
+        }
     }
     
     func getQuotesBySearchKeyword(searchKeyword: String, searchCategory: String, completion: @escaping ([Quote]?, Error?) -> Void) {
@@ -259,7 +271,7 @@ class APIService: IAPIService {
         fetchData(endpoint: endpoint, responseType: [Quote].self, completion: completion)
     }
     
-    func addQuote(text: String, author: String?, classification: String, completion: @escaping (Bool, Error?) -> Void) {
+    func addQuote(text: String, author: String?, classification: String, submitterName: String?, completion: @escaping (Bool, Error?) -> Void) {
         var quoteObject: [String: Any] = [
             "text": text,
             "classification": classification
@@ -269,9 +281,13 @@ class APIService: IAPIService {
             quoteObject["author"] = author
         }
         
-        print("📤 API: addQuote - Text: \(text), Author: \(author ?? "nil"), Classification: \(classification)")
+        if let submitterName = submitterName, !submitterName.isEmpty {
+            quoteObject["submitter_name"] = submitterName
+        }
         
-        let endpoint = "quotes/submit"
+        print("📤 API: addQuote - Text: \(text), Author: \(author ?? "nil"), Classification: \(classification), Submitter: \(submitterName ?? "nil")")
+        
+        let endpoint = "quotes"
         
         performRequest(endpoint: endpoint, method: .post, body: quoteObject, responseType: EmptyResponse.self) { result in
             switch result {
