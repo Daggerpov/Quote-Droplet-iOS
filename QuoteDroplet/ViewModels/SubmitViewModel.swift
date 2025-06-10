@@ -23,19 +23,21 @@ class SubmitViewModel: ObservableObject {
         self.apiService = apiService
     }
     
-    func addQuote() -> Void {
+    func addQuote() async -> Void {
+		await MainActor.run {
         apiService.addQuote(text: quoteText, author: author, classification: selectedCategory.rawValue, submitterName: submitterName) { [weak self] success, error in
             guard let self = self else { return }
-            if success {
-                self.submissionMessage = "Thanks for submitting a quote. It is now awaiting approval to be added to this app's quote database."
-                // Set showSubmissionReceivedAlert to true after successful submission
-            } else if let error = error {
-                self.submissionMessage = error.localizedDescription
-            } else {
-                self.submissionMessage = "An unknown error occurred."
-            }
-            self.isAddingQuote = false
-            self.showSubmissionReceivedAlert = true // <-- Set to true after successful submission
+				if success {
+					self.submissionMessage = "Thanks for submitting a quote. It is now awaiting approval to be added to this app's quote database."
+					// Set showSubmissionReceivedAlert to true after successful submission
+				} else if let error = error {
+					self.submissionMessage = error.localizedDescription
+				} else {
+					self.submissionMessage = "An unknown error occurred."
+				}
+				self.isAddingQuote = false
+				self.showSubmissionReceivedAlert = true // <-- Set to true after successful submission
+			}
         }
         self.quoteText = ""
         self.author = ""

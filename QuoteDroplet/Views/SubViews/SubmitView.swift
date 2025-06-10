@@ -66,7 +66,9 @@ extension SubmitView {
                         submissionQuoteCategoryPicker
                     }
                     Button("Submit") {
-                        viewModel.addQuote()
+						Task{
+							await viewModel.addQuote()
+						}
                     }
                     .alert(isPresented: $viewModel.showSubmissionReceivedAlert) { // Modify this line
                         Alert(
