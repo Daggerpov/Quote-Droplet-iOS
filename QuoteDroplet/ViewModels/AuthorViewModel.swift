@@ -118,49 +118,16 @@ class AuthorViewModel: ObservableObject {
                 for quote in quotesToAppend {
                     if !self.quotes.contains(where: { $0.id == quote.id }) {
                         self.quotes.append(quote)
-                        addedCount += 1
                     }
                 }
-                
-                // If no quotes were added even though quotes were returned, add them all anyway
-                // This handles the case where quote.id might be nil or 0 causing the contains check to fail
-                if addedCount == 0 && !quotesToAppend.isEmpty {
-                    print("⚠️ No quotes were added using ID matching - attempting to add all quotes directly")
-                    self.quotes = quotesToAppend
-                    addedCount = quotesToAppend.count
-                }
-                
-                print("📈 Added \(addedCount) new quotes. Total quotes: \(self.quotes.count)")
-                
-                // Print quotes that are in the viewModel array
-                print("📚 QUOTES CURRENTLY IN VIEWMODEL:")
-                for (index, quote) in self.quotes.enumerated() {
-                    print("  Quote #\(index + 1):")
-                    print("    Content: \(quote.text)")
-                    print("    Author: \(quote.author ?? "Unknown author")")
-                    print("    ID: \(quote.id)")
-                    print("    -----------------")
-                }
-                
-                self.isLoadingMore = false
-                self.totalQuotesLoaded += AuthorViewModel.quotesPerPage
             }
         }
-    }
-    
-    // Helper function to load author image using Google Custom Search
-    func loadAuthorImage(authorName: String) {
-        guard let APIKey: String = ProcessInfo.processInfo.environment["GoogleImagesAPIKey"] else {
-            return
-        }
-        
-        let formattedName = authorName.replacingOccurrences(of: " ", with: "%20")
-        let urlString = "https://www.googleapis.com/customsearch/v1?key=\(APIKey)&cx=238ad9d0296fb425a&searchType=image&q=\(formattedName)"
-        
-        loadRemoteJSON(urlString) { [weak self] (data: GoogleImageSearchResponse) in
-            // URL will be handled in loadRemoteJSON
+
+        group.notify(queue: .main) { [weak self] in
+            guard let self = self else { return }
+            self.isLoadingMore = false
+            self.totalQuotesLoaded += AuthorViewModel.quotesPerPage
         }
     }
 }
-
 

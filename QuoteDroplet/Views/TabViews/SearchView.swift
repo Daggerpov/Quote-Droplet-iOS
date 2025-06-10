@@ -86,10 +86,24 @@ extension SearchView {
                 .padding(.bottom, 5)
             HStack(spacing: 12) {
                 Image(systemName: "magnifyingglass").font(.title3)
-                TextField("Search Quotes by Keyword", text: $viewModel.searchText)
+                TextField("Search by quote text or author name", text: $viewModel.searchText)
                     .onChange(of: viewModel.searchText) { _ in
                         viewModel.loadQuotesBySearch()
                     }
+                
+                // Clear/dismiss button
+                if !viewModel.searchText.isEmpty {
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            viewModel.clearSearch()
+                        }
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title3)
+                            .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .gray)
+                    }
+                    .transition(.scale.combined(with: .opacity))
+                }
             }
             .padding(.vertical, 10)
             .padding(.horizontal, 15)

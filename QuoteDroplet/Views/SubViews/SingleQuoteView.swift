@@ -62,6 +62,29 @@ extension SingleQuoteView {
         
         return attributedString
     }
+    
+    private var attributedAuthorString: AttributedString {
+        guard let author = quote.author, let searchText = searchText, !searchText.isEmpty else {
+            return AttributedString(quote.author ?? "")
+        }
+        
+        var attributedString = AttributedString(author)
+        let searchTextLowercased = searchText.lowercased()
+        let authorLowercased = author.lowercased()
+        var searchStartIndex = authorLowercased.startIndex
+        
+        // Loop to find and highlight all occurrences in author name
+        while let range = authorLowercased.range(of: searchTextLowercased, range: searchStartIndex..<authorLowercased.endIndex) {
+            // Convert String.Index to AttributedString.Index
+            if let attributedRange = Range(NSRange(range, in: authorLowercased), in: attributedString) {
+                attributedString[attributedRange].backgroundColor = (colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .yellow).opacity(0.3)
+            }
+            // Move searchStartIndex to the end of the found range to continue searching
+            searchStartIndex = range.upperBound
+        }
+        
+        return attributedString
+    }
 
     private var quoteTextView: some View {
         HStack {
@@ -81,7 +104,7 @@ extension SingleQuoteView {
                     Spacer()
                     if viewModel.shouldShowArrow() {
                         NavigationLink(destination: AuthorView(quote: viewModel.quote)) {
-                            Text("— \(author)")
+                            Text(AttributedString("— ") + attributedAuthorString)
                                 .font(.body)
                                 .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .white)
                                 .padding(.bottom, 5)
@@ -89,7 +112,7 @@ extension SingleQuoteView {
                                 .underline(true, color: colorPalettes[safe: sharedVars.colorPaletteIndex]?[2].opacity(0.5) ?? .white.opacity(0.5))
                         }
                     } else {
-                        Text("— \(author)")
+                        Text(AttributedString("— ") + attributedAuthorString)
                             .font(.body)
                             .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .white)
                             .padding(.bottom, 5)
