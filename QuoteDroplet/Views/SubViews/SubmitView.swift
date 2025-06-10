@@ -62,10 +62,13 @@ extension SubmitView {
                     Section() { // without header
                         TextField("Quote Text", text: $viewModel.quoteText)
                         TextField("Quote Author", text: $viewModel.author)
+                        TextField("Your Name/Alias (Optional)", text: $viewModel.submitterName)
                         submissionQuoteCategoryPicker
                     }
                     Button("Submit") {
-                        viewModel.addQuote()
+						Task{
+							await viewModel.addQuote()
+						}
                     }
                     .alert(isPresented: $viewModel.showSubmissionReceivedAlert) { // Modify this line
                         Alert(
