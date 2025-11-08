@@ -3,56 +3,31 @@ import SwiftUI
 @available(iOS 16, *)
 struct ContentView: View {
     @StateObject var sharedVars = SharedVarsBetweenTabs()
-    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         TabView {
             DropletsView()
                 .tabItem {
-                    VStack {
-                        TabButtonView(imageSystemName: "drop.circle.fill", text: "Droplets")
-                    }
+                    Label("Droplets", systemImage: "drop.circle.fill")
                 }
             SearchView()
                 .tabItem {
-                    VStack {
-                        TabButtonView(imageSystemName: "magnifyingglass.circle.fill", text: "Search")
-                    }
+                    Label("Search", systemImage: "magnifyingglass.circle.fill")
                 }
             TopView()
                 .tabItem {
-                    VStack {
-                        TabButtonView(imageSystemName: "trophy.fill", text: "Top")
-                    }
+                    Label("Top", systemImage: "trophy.fill")
                 }
             CommunityView()
                 .tabItem {
-                    VStack {
-                        TabButtonView(imageSystemName: "house.fill", text: "Community")
-                    }
+                    Label("Community", systemImage: "house.fill")
                 }
             SettingsView()
                 .tabItem {
-                    TabButtonView(imageSystemName: "gearshape.fill", text: "Settings")
+                    Label("Settings", systemImage: "gearshape.fill")
                 }
         }
         .environmentObject(sharedVars)
-        .accentColor(.blue)
-        .onChange(of: colorScheme) { newColorScheme in
-            updateTabBarAppearance(for: newColorScheme)
-        }
-        .onAppear {
-            updateTabBarAppearance(for: colorScheme)
-        }
-    }
-    func updateTabBarAppearance(for colorScheme: ColorScheme) {
-        if (colorScheme == .light) {
-            UITabBar.appearance().backgroundColor = UIColor.white
-            UITabBar.appearance().unselectedItemTintColor = UIColor.black
-        } else {
-            UITabBar.appearance().backgroundColor = UIColor.black
-            UITabBar.appearance().unselectedItemTintColor = UIColor.white
-        }
     }
 }
 

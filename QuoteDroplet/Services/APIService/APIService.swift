@@ -204,43 +204,40 @@ class APIService: IAPIService {
     // MARK: - API Methods
     
     func getRandomQuoteByClassification(classification: String, completion: @escaping (Quote?, Error?) -> Void, isShortQuoteDesired: Bool = false) {
-        var endpoint: String
-        if classification == "all" {
-            endpoint = "quotes"
-        } else {
-            endpoint = "quotes/classification=\(classification)"
+        var endpoint = "quotes/random"
+        var queryParams: [String] = []
+        
+        if classification != "all" {
+            queryParams.append("classification=\(classification)")
         }
         
         if isShortQuoteDesired {
-            endpoint += "/maxQuoteLength=65"
+            queryParams.append("maxLength=65")
         }
         
-        fetchData(endpoint: endpoint, responseType: [Quote].self) { quotes, error in
+        if !queryParams.isEmpty {
+            endpoint += "?" + queryParams.joined(separator: "&")
+        }
+        
+        fetchData(endpoint: endpoint, responseType: Quote.self) { quote, error in
             if let error = error {
                 completion(nil, error)
                 return
             }
             
-            guard let quotes = quotes else {
+            guard let quote = quote else {
                 completion(nil, NSError(domain: "NoDataError", code: -1, userInfo: nil))
                 return
             }
             
-            if quotes.isEmpty {
-                print("⚠️ API Warning: getRandomQuoteByClassification - No quotes found")
-                completion(Quote(id: -1, text: "No Quote Found.", author: nil, classification: nil, likes: 0), nil)
-            } else {
-                let randomIndex = Int.random(in: 0..<quotes.count)
-                let selectedQuote = quotes[randomIndex]
-                print("✅ API Success: getRandomQuoteByClassification - Selected quote ID: \(selectedQuote.id)")
-                completion(selectedQuote, nil)
-            }
+            print("✅ API Success: getRandomQuoteByClassification - Selected quote ID: \(quote.id)")
+            completion(quote, nil)
         }
     }
     
     func getQuotesByAuthor(author: String, completion: @escaping ([Quote]?, Error?) -> Void) {
         // Author is already URL encoded from the calling method
-        let endpoint = "quotes/author=\(author)"
+        let endpoint = "quotes?author=\(author)"
         
         print("🔍 Fetching quotes by author: \(author)")
         print("🔗 URL endpoint: \(endpoint)")
@@ -256,18 +253,21 @@ class APIService: IAPIService {
     }
     
     func getQuotesBySearchKeyword(searchKeyword: String, searchCategory: String, completion: @escaping ([Quote]?, Error?) -> Void) {
-        guard let encodedKeyword = searchKeyword.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+        guard let encodedKeyword = searchKeyword.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
             let error = NSError(domain: "InvalidURL", code: -1, userInfo: [NSLocalizedDescriptionKey: "Could not encode search keyword"])
             completion(nil, error)
             return
         }
         
-        let endpoint = "quotes/search/\(encodedKeyword)?category=\(searchCategory)"
+        var endpoint = "quotes?search=\(encodedKeyword)"
+        if searchCategory != "all" {
+            endpoint += "&category=\(searchCategory)"
+        }
         fetchData(endpoint: endpoint, responseType: [Quote].self, completion: completion)
     }
     
     func getRecentQuotes(limit: Int, completion: @escaping ([Quote]?, Error?) -> Void) {
-        let endpoint = "quotes/recent/\(limit)"
+        let endpoint = "quotes/recent?limit=\(limit)"
         fetchData(endpoint: endpoint, responseType: [Quote].self, completion: completion)
     }
     
@@ -334,7 +334,7 @@ class APIService: IAPIService {
         
         print("📤 API: sendFeedback - Text: \(text), Type: \(type), Email: \(email)")
         
-        let endpoint = "feedback/submit"
+        let endpoint = "feedback"
         
         performRequest(endpoint: endpoint, method: .post, body: feedbackObject, responseType: EmptyResponse.self) { result in
             switch result {
@@ -366,17 +366,40 @@ class APIService: IAPIService {
     }
     
     func likeQuote(quoteID: Int, completion: @escaping (Quote?, Error?) -> Void) {
-        let endpoint = "quotes/like/\(quoteID)"
+        let endpoint = "quotes/\(quoteID)/like"
         sendData(endpoint: endpoint, body: [:], responseType: Quote.self, completion: completion)
     }
     
     func unlikeQuote(quoteID: Int, completion: @escaping (Quote?, Error?) -> Void) {
-        let endpoint = "quotes/unlike/\(quoteID)"
-        sendData(endpoint: endpoint, body: [:], responseType: Quote.self, completion: completion)
+        let endpoint = "quotes/\(quoteID)/like"
+        // Use DELETE method for unlike
+        performRequest(endpoint: endpoint, method: .delete, responseType: Quote.self) { result in
+            switch result {
+            case .success(let quote):
+                completion(quote, nil)
+            case .failure(let error):
+                let nsError: NSError
+                switch error {
+                case .invalidURL:
+                    nsError = NSError(domain: "InvalidURL", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
+                case .networkError(let underlyingError):
+                    nsError = underlyingError as NSError
+                case .httpError(let statusCode):
+                    nsError = NSError(domain: "HTTPError", code: statusCode, userInfo: nil)
+                case .noData:
+                    nsError = NSError(domain: "NoDataError", code: -1, userInfo: nil)
+                case .decodingError(let underlyingError):
+                    nsError = underlyingError as NSError
+                case .jsonParsingError(let underlyingError):
+                    nsError = underlyingError as NSError
+                }
+                completion(nil, nsError)
+            }
+        }
     }
     
     func likeQuoteAsync(quoteID: Int) async throws -> Quote? {
-        let endpoint = "quotes/like/\(quoteID)"
+        let endpoint = "quotes/\(quoteID)/like"
         return try await withCheckedThrowingContinuation { continuation in
             sendData(endpoint: endpoint, body: [:], responseType: Quote.self) { quote, error in
                 if let error = error {
@@ -389,13 +412,14 @@ class APIService: IAPIService {
     }
     
     func unlikeQuoteAsync(quoteID: Int) async throws -> Quote? {
-        let endpoint = "quotes/unlike/\(quoteID)"
+        let endpoint = "quotes/\(quoteID)/like"
         return try await withCheckedThrowingContinuation { continuation in
-            sendData(endpoint: endpoint, body: [:], responseType: Quote.self) { quote, error in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                } else {
+            performRequest(endpoint: endpoint, method: .delete, responseType: Quote.self) { result in
+                switch result {
+                case .success(let quote):
                     continuation.resume(returning: quote)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
                 }
             }
         }
@@ -407,7 +431,7 @@ class APIService: IAPIService {
     }
     
     func getCountForCategory(category: QuoteCategory, completion: @escaping (Int) -> Void) {
-        let endpoint = "quoteCount?category=\(category.rawValue.lowercased())"
+        let endpoint = "quotes/count?category=\(category.rawValue.lowercased())"
         
         performRequest(endpoint: endpoint, method: .get, responseType: CountResponse.self) { result in
             switch result {
