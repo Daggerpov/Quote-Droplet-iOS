@@ -88,52 +88,32 @@ class SingleQuoteViewModel: ObservableObject {
     }
     
     func toggleLike(for quote: Quote) -> Void {
-        DispatchQueue.main.async { [weak self] in // weak self to avoid memory leaks
-            guard let self = self else { return }
-            self.isLiked.toggle()
-            
-            if self.isLiked {
-                self.localQuotesService.saveLikedQuote(quote: quote, isLiked: isLiked)
-            }
-            
-            self.increaseInteractions()
-        }
-    }
-    
-    func likeQuoteAction(for quote: Quote) -> Void {
         guard !isLiking else { return }
         
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.isLiking = true
+        // Read the stored state before changing it, so the API call always matches what the user sees
+        let wasLiked: Bool = localQuotesService.isQuoteLiked(quote)
+        
+        isLiked = !wasLiked
+        localQuotesService.saveLikedQuote(quote: quote, isLiked: isLiked)
+        // Optimistically update the count; the API response below replaces it with the real value
+        likes = max(0, likes + (isLiked ? 1 : -1))
+        isLiking = true
+        increaseInteractions()
+        
+        let completion: (Quote?, Error?) -> Void = { [weak self] updatedQuote, error in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                if let updatedLikes = updatedQuote?.likes {
+                    self.likes = updatedLikes
+                }
+                self.isLiking = false
+            }
         }
         
-        // Check if the quote is already liked
-        let isAlreadyLiked: Bool = localQuotesService.isQuoteLiked(quote)
-        
-        // Call the like/unlike API based on the current like status
-        if isAlreadyLiked {
-            apiService.unlikeQuote(quoteID: quote.id) { [weak self] updatedQuote, error in
-                guard let self = self else { return }
-                DispatchQueue.main.async {
-                    if let updatedQuote = updatedQuote {
-                        // Update likes count only, not the entire quote
-                        self.likes = updatedQuote.likes ?? 0
-                    }
-                    self.isLiking = false
-                }
-            }
+        if wasLiked {
+            apiService.unlikeQuote(quoteID: quote.id, completion: completion)
         } else {
-            apiService.likeQuote(quoteID: quote.id) { [weak self] updatedQuote, error in
-                guard let self = self else { return }
-                DispatchQueue.main.async {
-                    if let updatedQuote = updatedQuote {
-                        // Update likes count only, not the entire quote
-                        self.likes = updatedQuote.likes ?? 0
-                    }
-                    self.isLiking = false
-                }
-            }
+            apiService.likeQuote(quoteID: quote.id, completion: completion)
         }
     }
     

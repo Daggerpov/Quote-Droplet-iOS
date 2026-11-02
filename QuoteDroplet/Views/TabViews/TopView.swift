@@ -112,7 +112,6 @@ extension TopView {
                             
                             Button(action: {
                                 viewModel.toggleLike(for: quote)
-                                viewModel.likeQuoteAction(for: quote)
                             }) {
                                 HStack(spacing: 4) {
                                     Image(systemName: viewModel.isQuoteLiked(quote) ? "heart.fill" : "heart")
@@ -213,45 +212,37 @@ class TopViewModel: ObservableObject {
     }
     
     func toggleLike(for quote: Quote) {
-        let isLiked = isQuoteLiked(quote)
+        guard !isLiking else { return }
+        
+        // Read the liked state before changing it, so liking calls the like endpoint (and vice versa)
+        let wasLiked = isQuoteLiked(quote)
         
         // Update local state
-        if isLiked {
+        if wasLiked {
             likedQuoteIDs.remove(quote.id)
         } else {
             likedQuoteIDs.insert(quote.id)
         }
         
         // Save to local storage
-        localQuotesService.saveLikedQuote(quote: quote, isLiked: !isLiked)
-    }
-    
-    func likeQuoteAction(for quote: Quote) {
-        guard !isLiking else { return }
-        isLiking = true
+        localQuotesService.saveLikedQuote(quote: quote, isLiked: !wasLiked)
         
-        if isQuoteLiked(quote) {
-            apiService.unlikeQuote(quoteID: quote.id) { [weak self] updatedQuote, error in
-                guard let self = self else { return }
-                
-                DispatchQueue.main.async {
-                    if let updatedQuote = updatedQuote, let index = self.topQuotes.firstIndex(where: { $0.id == updatedQuote.id }) {
-                        self.topQuotes[index] = updatedQuote
-                    }
-                    self.isLiking = false
+        isLiking = true
+        let completion: (Quote?, Error?) -> Void = { [weak self] updatedQuote, error in
+            guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                if let updatedQuote = updatedQuote, let index = self.topQuotes.firstIndex(where: { $0.id == updatedQuote.id }) {
+                    self.topQuotes[index] = updatedQuote
                 }
+                self.isLiking = false
             }
+        }
+        
+        if wasLiked {
+            apiService.unlikeQuote(quoteID: quote.id, completion: completion)
         } else {
-            apiService.likeQuote(quoteID: quote.id) { [weak self] updatedQuote, error in
-                guard let self = self else { return }
-                
-                DispatchQueue.main.async {
-                    if let updatedQuote = updatedQuote, let index = self.topQuotes.firstIndex(where: { $0.id == updatedQuote.id }) {
-                        self.topQuotes[index] = updatedQuote
-                    }
-                    self.isLiking = false
-                }
-            }
+            apiService.likeQuote(quoteID: quote.id, completion: completion)
         }
     }
 } 
