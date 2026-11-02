@@ -289,6 +289,9 @@ class APIService: IAPIService {
             quoteObject["submitter_name"] = submitterName
         }
         
+        // Lets the user look up this submission later in My Submissions
+        quoteObject["submitter_id"] = SubmitterIDService.getOrCreate()
+        
         print("📤 API: addQuote - Text: \(text), Author: \(author ?? "nil"), Classification: \(classification), Submitter: \(submitterName ?? "nil")")
         
         let endpoint = "quotes"
@@ -464,6 +467,35 @@ class APIService: IAPIService {
             } else {
                 print("❌ API Error: getTopQuotes - Failed to get top quotes for category: \(category.rawValue)")
                 completion(nil, error)
+            }
+        }
+    }
+    
+    func getSubmissions(submitterID: String, completion: @escaping ([Submission]?, Error?) -> Void) {
+        let endpoint = "quotes/submissions"
+        
+        performRequest(endpoint: endpoint, method: .get, headers: ["X-Submitter-ID": submitterID], responseType: [Submission].self) { result in
+            switch result {
+            case .success(let submissions):
+                print("✅ API Success: getSubmissions - Retrieved \(submissions.count) submissions")
+                completion(submissions, nil)
+            case .failure(let error):
+                let nsError: NSError
+                switch error {
+                case .invalidURL:
+                    nsError = NSError(domain: "InvalidURL", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
+                case .networkError(let underlyingError):
+                    nsError = underlyingError as NSError
+                case .httpError(let statusCode):
+                    nsError = NSError(domain: "HTTPError", code: statusCode, userInfo: nil)
+                case .noData:
+                    nsError = NSError(domain: "NoDataError", code: -1, userInfo: nil)
+                case .decodingError(let underlyingError):
+                    nsError = underlyingError as NSError
+                case .jsonParsingError(let underlyingError):
+                    nsError = underlyingError as NSError
+                }
+                completion(nil, nsError)
             }
         }
     }

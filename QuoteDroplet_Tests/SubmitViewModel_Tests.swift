@@ -32,7 +32,7 @@ import Foundation
         sut.author = "Anonymous"
         sut.selectedCategory = .inspiration
 
-        sut.addQuote()
+        await sut.addQuote()
 
         // Verify that submission was successful and state was updated correctly
         #expect(sut.submissionMessage == "Thanks for submitting a quote. It is now awaiting approval to be added to this app's quote database.")
@@ -53,7 +53,7 @@ import Foundation
         sut.quoteText = "Test failure quote."
         sut.author = "Test Author"
 
-        sut.addQuote()
+        await sut.addQuote()
 
         // Verify that the submission failed, and error message was set
         #expect(sut.submissionMessage == errorMessage)

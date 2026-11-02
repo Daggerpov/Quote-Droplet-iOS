@@ -95,4 +95,11 @@ protocol IAPIService {
             Error?
         ) -> Void
     ) -> Void
+    func getSubmissions(
+        submitterID: String,
+        completion: @escaping (
+            [Submission]?,
+            Error?
+        ) -> Void
+    ) -> Void
 }

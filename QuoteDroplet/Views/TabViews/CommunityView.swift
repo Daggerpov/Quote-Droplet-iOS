@@ -38,6 +38,7 @@ struct CommunityView: View {
                     quoteSection
                     Spacer()
                     SubmitView()
+                    mySubmissionsButton
                     Spacer()
                 }
                 .padding()
@@ -65,6 +66,15 @@ struct CommunityView_Previews: PreviewProvider {
 
 @available(iOS 16.0, *)
 extension CommunityView {
+    private var mySubmissionsButton: some View {
+        NavigationLink {
+            SubmissionsView()
+        } label: {
+            SubmitButtonView(text: "My Submissions", imageSystemName: "tray.full")
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
     private var quoteSection: some View {
         VStack(alignment: .leading) {
             HStack{
