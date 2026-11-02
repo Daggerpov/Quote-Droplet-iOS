@@ -11,12 +11,15 @@ import Foundation
 
 @Suite("Submit View Model Tests", .serialized) final class SubmitViewModel_Tests {
     let mockAPIService: MockAPIService
+    let userDefaults: UserDefaults
     let sut: SubmitViewModel
 	weak var weakSUT: SubmitViewModel?
 
     init() {
         self.mockAPIService = MockAPIService()
-		self.sut = SubmitViewModel(apiService: mockAPIService)
+        self.userDefaults = UserDefaults(suiteName: "SubmitViewModel_Tests")!
+        self.userDefaults.removePersistentDomain(forName: "SubmitViewModel_Tests")
+		self.sut = SubmitViewModel(apiService: mockAPIService, userDefaults: userDefaults)
 		self.weakSUT = self.sut
 	}
 
@@ -64,5 +67,24 @@ import Foundation
         #expect(sut.quoteText.isEmpty)
         #expect(sut.author.isEmpty)
         #expect(sut.selectedCategory == .wisdom)  // Assuming wisdom is the default category after reset
+    }
+
+    @Test func addQuote_keepsSubmitterName() async {
+        mockAPIService.setAddQuoteResponse(success: true, error: nil)
+        sut.quoteText = "Keep my name."
+        sut.submitterName = "Daniel"
+
+        await sut.addQuote()
+
+        #expect(sut.quoteText.isEmpty)
+        #expect(sut.submitterName == "Daniel")
+    }
+
+    @Test func submitterName_persistsAcrossViewModels() {
+        sut.submitterName = "Daniel"
+
+        let newViewModel = SubmitViewModel(apiService: mockAPIService, userDefaults: userDefaults)
+
+        #expect(newViewModel.submitterName == "Daniel")
     }
 }
