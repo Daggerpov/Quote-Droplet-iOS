@@ -12,16 +12,11 @@ import SwiftUI
 @main
 struct QuoteDropletWidgetBundle: WidgetBundle {
     var body: some Widget {
-        // Standard widgets (non-interactive)
-        QuoteDropletWidgetSmall()
-        QuoteDropletWidgetMedium()
-        QuoteDropletWidgetLarge()
-        QuoteDropletWidgetExtraLarge()
+        // Standard widget (non-interactive), all sizes
+        QuoteDropletStandardWidget()
         
-        // Interactive widgets with intents
-        QuoteDropletWidgetWithIntentsMedium()
-        QuoteDropletWidgetWithIntentsLarge()
-        QuoteDropletWidgetWithIntentsExtraLarge()
+        // Interactive widget with intents
+        QuoteDropletWidgetWithIntents()
         
         // Uncomment when LiveActivity is implemented properly
         // QuoteDropletWidgetLiveActivity()

@@ -393,8 +393,10 @@ struct QuoteDropletWidgetEntryView : View {
 }
 
 
+// Each Widget in the bundle needs a unique kind. These kind strings must stay the same, since
+// changing one removes every widget of that kind already placed on users' home screens.
 @available(iOS 16.0, *)
-struct QuoteDropletWidgetSmall: Widget {
+struct QuoteDropletStandardWidget: Widget {
     let kind: String = "QuoteDropletWidget"
     
     var body: some WidgetConfiguration {
@@ -404,57 +406,12 @@ struct QuoteDropletWidgetSmall: Widget {
         .disableContentMarginsIfNeeded() // Use the extension here
         .configurationDisplayName("Example Widget")
         .description("Note that the color palette and font are customizable.")
-        .supportedFamilies([.systemSmall])
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
     }
 }
 
 @available(iOS 16.0, *)
-struct QuoteDropletWidgetMedium: Widget {
-    let kind: String = "QuoteDropletWidget"
-    
-    var body: some WidgetConfiguration {
-        IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
-            QuoteDropletWidgetEntryView(entry: entry, isIntentsActive: false)
-        }
-        .disableContentMarginsIfNeeded() // Use the extension here
-        .configurationDisplayName("Example Widget")
-        .description("Note that the color palette and font are customizable.")
-        .supportedFamilies([.systemMedium])
-    }
-}
-
-@available(iOS 16.0, *)
-struct QuoteDropletWidgetLarge: Widget {
-    let kind: String = "QuoteDropletWidget"
-    
-    var body: some WidgetConfiguration {
-        IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
-            QuoteDropletWidgetEntryView(entry: entry, isIntentsActive: false)
-        }
-        .disableContentMarginsIfNeeded() // Use the extension here
-        .configurationDisplayName("Example Widget")
-        .description("Note that the color palette and font are customizable.")
-        .supportedFamilies([.systemLarge])
-    }
-}
-
-@available(iOS 16.0, *)
-struct QuoteDropletWidgetExtraLarge: Widget {
-    let kind: String = "QuoteDropletWidget"
-    
-    var body: some WidgetConfiguration {
-        IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
-            QuoteDropletWidgetEntryView(entry: entry, isIntentsActive: false)
-        }
-        .disableContentMarginsIfNeeded()
-        .configurationDisplayName("Example Widget")
-        .description("Note that the color palette and font are customizable.")
-        .supportedFamilies([.systemExtraLarge])
-    }
-}
-
-@available(iOS 16.0, *)
-struct QuoteDropletWidgetWithIntentsMedium: Widget {
+struct QuoteDropletWidgetWithIntents: Widget {
     let kind: String = "QuoteDropletWidgetWithIntents"
     
     var body: some WidgetConfiguration {
@@ -464,37 +421,7 @@ struct QuoteDropletWidgetWithIntentsMedium: Widget {
         .disableContentMarginsIfNeeded()
         .configurationDisplayName("Interactive Widget")
         .description("Widget with interactive elements.")
-        .supportedFamilies([.systemMedium])
-    }
-}
-
-@available(iOS 16.0, *)
-struct QuoteDropletWidgetWithIntentsLarge: Widget {
-    let kind: String = "QuoteDropletWidgetWithIntents"
-    
-    var body: some WidgetConfiguration {
-        IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
-            QuoteDropletWidgetEntryView(entry: entry, isIntentsActive: true)
-        }
-        .disableContentMarginsIfNeeded()
-        .configurationDisplayName("Interactive Widget")
-        .description("Widget with interactive elements.")
-        .supportedFamilies([.systemLarge])
-    }
-}
-
-@available(iOS 16.0, *)
-struct QuoteDropletWidgetWithIntentsExtraLarge: Widget {
-    let kind: String = "QuoteDropletWidgetWithIntents"
-    
-    var body: some WidgetConfiguration {
-        IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
-            QuoteDropletWidgetEntryView(entry: entry, isIntentsActive: true)
-        }
-        .disableContentMarginsIfNeeded()
-        .configurationDisplayName("Interactive Widget")
-        .description("Widget with interactive elements.")
-        .supportedFamilies([.systemExtraLarge])
+        .supportedFamilies([.systemMedium, .systemLarge, .systemExtraLarge])
     }
 }
 
