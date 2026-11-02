@@ -98,6 +98,8 @@ extension InfoView {
     private var aboutMeSection: some View {
         HStack {
             Spacer()
+            buildLinkImage(urlForImage: "https://www.instagram.com/quote_droplet_app", imageName: "instagramlogo")
+            Spacer()
             buildLinkImage(urlForImage: "https://www.linkedin.com/in/danielagapov/", imageName: "linkedinlogo")
             Spacer()
             buildLinkImage(urlForImage: "https://github.com/Daggerpov", imageName: "githublogo")
