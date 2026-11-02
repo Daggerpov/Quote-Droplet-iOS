@@ -130,7 +130,10 @@ extension DropletsView {
                     ForEach(viewModel.getPageSpecificQuotes()) { quote in
                         SingleQuoteView(
                             quote: quote,
-                            from: .standardView
+                            from: .standardView,
+                            onBookmarkRemoved: viewModel.selected == .saved ? {
+                                viewModel.removeSavedQuote(quote)
+                            } : nil
                         )
                     }
                 }
