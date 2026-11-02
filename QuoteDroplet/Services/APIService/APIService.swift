@@ -236,8 +236,12 @@ class APIService: IAPIService {
     }
     
     func getQuotesByAuthor(author: String, completion: @escaping ([Quote]?, Error?) -> Void) {
-        // Author is already URL encoded from the calling method
-        let endpoint = "quotes?author=\(author)"
+        guard let encodedAuthor = author.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed.subtracting(CharacterSet(charactersIn: "&+=?"))) else {
+            let error = NSError(domain: "InvalidURL", code: -1, userInfo: [NSLocalizedDescriptionKey: "Could not encode author"])
+            completion(nil, error)
+            return
+        }
+        let endpoint = "quotes?author=\(encodedAuthor)"
         
         print("🔍 Fetching quotes by author: \(author)")
         print("🔗 URL endpoint: \(endpoint)")

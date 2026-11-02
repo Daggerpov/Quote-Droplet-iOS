@@ -10,7 +10,7 @@ import Foundation
 
 @available(iOS 16.0, *)
 struct AuthorView: View {
-    @ObservedObject var viewModel: AuthorViewModel
+    @StateObject var viewModel: AuthorViewModel
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
 
     @AppStorage("widgetColorPaletteIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
@@ -27,11 +27,11 @@ struct AuthorView: View {
     private var widgetCustomColorPaletteThirdIndex = "DEF4C6"
 
     init(quote: Quote) {
-        self.viewModel = AuthorViewModel(
+        _viewModel = StateObject(wrappedValue: AuthorViewModel(
             quote: quote,
             localQuotesService: LocalQuotesService(),
             apiService: APIService()
-        )
+        ))
     }
 
     var body: some View {
@@ -44,15 +44,6 @@ struct AuthorView: View {
 
                     Spacer()
                 }
-
-                ZStack{
-                    Image("authorimageframe")
-                        .resizable()
-                        .frame(width: 200, height: 200)
-                        .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[1] ?? .white)
-                    AsyncImage(url: URL(string: "https://your_image_url_address"))
-                }
-
 
                 ScrollView {
                     Spacer()
@@ -100,16 +91,6 @@ struct AuthorView: View {
                 colorPalettes[3][0] = Color(hex: widgetCustomColorPaletteFirstIndex)
                 colorPalettes[3][1] = Color(hex: widgetCustomColorPaletteSecondIndex)
                 colorPalettes[3][2] = Color(hex: widgetCustomColorPaletteThirdIndex)
-
-                if let APIKey: String = ProcessInfo.processInfo.environment["GoogleImagesAPIKey"] {
-                    viewModel
-                        .loadRemoteJSON("https://www.googleapis.com/customsearch/v1?key=\(APIKey)&cx=238ad9d0296fb425a&searchType=image&q=Marcus%20Aurelius"){ (
-                            data: TestModel
-                        ) in
-                            //data is your returned value of the generic type T.
-                            print(data)
-                        }
-                }
             }
         }
     }
