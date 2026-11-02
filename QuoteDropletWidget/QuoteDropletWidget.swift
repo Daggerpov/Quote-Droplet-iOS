@@ -529,105 +529,53 @@ struct QuoteDropletWidget_Previews: PreviewProvider {
 
 @available(iOS 16.0, *)
 struct LikeQuoteIntent: AppIntent {
-    var widgetQuote: Quote
-    
-    // Remove @EnvironmentObject and @AppStorage - these don't work properly in widget intents
-    private var isLiked: Bool = false
-    private var isLiking: Bool = false
-    
-    let localQuotesService: LocalQuotesService = LocalQuotesService()
-    let apiService: APIService = APIService()
-    
-    init() {
-        self.widgetQuote = Quote(id: 1, text: "", author: "", classification: "", likes: 15)
-        self.isLiked = false
-    }
-    
-    init(quote: Quote) {
-        self.widgetQuote = quote
-        self.isLiked = isQuoteLiked(widgetQuote)
-    }
-    
     static var title: LocalizedStringResource = "Like Quote Button"
     
     static var description = IntentDescription("Like/Unlike Quote")
     
+    // Only @Parameter properties are kept between the widget creating this intent and the system
+    // performing it; plain stored properties are reset by init(), which made every tap like quote #1
+    @Parameter(title: "Quote ID")
+    var quoteID: Int
+    
+    @Parameter(title: "Quote Text")
+    var quoteText: String
+    
+    @Parameter(title: "Quote Author")
+    var quoteAuthor: String?
+    
+    @Parameter(title: "Quote Classification")
+    var quoteClassification: String?
+    
+    init() {}
+    
+    init(quote: Quote) {
+        self.quoteID = quote.id
+        self.quoteText = quote.text
+        self.quoteAuthor = quote.author
+        self.quoteClassification = quote.classification
+    }
+    
     func perform() async throws -> some IntentResult {
-        var mutableSelf = self
-        await mutableSelf.likeQuoteAction()
-        mutableSelf.toggleLike()
+        let localQuotesService = LocalQuotesService()
+        let apiService = APIService()
+        let quote = Quote(id: quoteID, text: quoteText, author: quoteAuthor, classification: quoteClassification, likes: nil)
         
-        // Only update the like status, don't refresh the entire widget which would change the quote
+        // Read the stored state before changing it, so liking calls the like endpoint (and vice versa)
+        let wasLiked = localQuotesService.isQuoteLiked(quote)
+        localQuotesService.saveLikedQuote(quote: quote, isLiked: !wasLiked)
+        
+        do {
+            if wasLiked {
+                _ = try await apiService.unlikeQuoteAsync(quoteID: quoteID)
+            } else {
+                _ = try await apiService.likeQuoteAsync(quoteID: quoteID)
+            }
+        } catch {
+            print("⚠️ Error \(wasLiked ? "unliking" : "liking") quote \(quoteID) from widget: \(error)")
+        }
+        
         return .result()
-    }
-    
-    private mutating func toggleLike() {
-        isLiked.toggle()
-        
-        localQuotesService.saveLikedQuote(quote: widgetQuote, isLiked: isLiked)
-    }
-    
-    private mutating func likeQuoteAction() async {
-        guard !isLiking else { return }
-        isLiking = true
-        
-        // Check if the quote is already liked
-        let isAlreadyLiked = isQuoteLiked(widgetQuote)
-        
-        // Use async/await pattern instead of completion handlers
-        if isAlreadyLiked {
-            do {
-                let result = try await apiService.unlikeQuoteAsync(quoteID: widgetQuote.id)
-                if let updatedQuote = result {
-                    self.widgetQuote = updatedQuote
-                }
-            } catch {
-                print("⚠️ Error unliking quote: \(error)")
-            }
-        } else {
-            do {
-                let result = try await apiService.likeQuoteAsync(quoteID: widgetQuote.id)
-                if let updatedQuote = result {
-                    self.widgetQuote = updatedQuote
-                }
-            } catch {
-                print("⚠️ Error liking quote: \(error)")
-            }
-        }
-        
-        isLiking = false
-    }
-    
-    private func isQuoteLiked(_ quote: Quote) -> Bool {
-        guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
-            print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
-            return false
-        }
-        
-        // Use a do-catch block for the JSON decoding to prevent crashes
-        do {
-            let quotes = try JSONDecoder().decode([Quote].self, from: likedQuotesData)
-            return quotes.contains(where: { $0.id == quote.id })
-        } catch {
-            print("⚠️ Warning: Error decoding liked quotes: \(error)")
-            return false
-        }
-    }
-    
-    private func getLikedQuotes() -> [Quote] {
-        guard let likedQuotesData = UserDefaults(suiteName: "group.selectedSettings")?.data(forKey: "likedQuotes") else {
-            print("⚠️ Warning: Could not access likedQuotes data from shared UserDefaults")
-            return []
-        }
-        
-        // Use a do-catch block for the JSON decoding to prevent crashes
-        do {
-            let quotes = try JSONDecoder().decode([Quote].self, from: likedQuotesData)
-            return quotes
-        } catch {
-            print("⚠️ Warning: Error decoding liked quotes: \(error)")
-            return []
-        }
     }
 }
 
