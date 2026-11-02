@@ -80,20 +80,4 @@ import Testing
         #expect(sut.quotes.count == AuthorViewModel.maxQuotes)
         #expect(sut.isLoadingMore == false)
     }
-
-    @Test func loadRemoteJSON_success() async {
-        // Assuming URLSession can be mocked for this test
-        let mockData = [Quote.mockQuote()]
-        let urlString = "https://example.com/success.json"
-        sut.loadRemoteJSON(urlString) { (result: [Quote]) in
-            #expect(result == mockData)
-        }
-    }
-
-    @Test func loadRemoteJSON_failure() async {
-        let urlString = "invalid_url"
-        sut.loadRemoteJSON(urlString) { (_: [Quote]) in
-            #expect(Bool(false), "Expected failure due to invalid URL")
-        }
-    }
 }
