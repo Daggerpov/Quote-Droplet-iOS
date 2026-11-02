@@ -44,14 +44,7 @@ struct Submission: Codable, Identifiable, Equatable {
     }
 
     var submittedDate: Date? {
-        guard let createdAt = createdAt else { return nil }
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        if let date = formatter.date(from: createdAt) {
-            return date
-        }
-        formatter.formatOptions = [.withInternetDateTime]
-        return formatter.date(from: createdAt)
+        APIDateParser.date(from: createdAt)
     }
 }
 

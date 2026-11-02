@@ -204,6 +204,19 @@ struct CommunityQuotesAuthorTextStyling: ViewModifier {
 }
 
 @available(iOS 15.0, *)
+struct CommunityQuotesDateTextStyling: ViewModifier {
+    @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
+    func body(content: Content) -> some View {
+        content
+            .font(.footnote)
+            .foregroundColor((colorPalettes[safe: sharedVars.colorPaletteIndex]?[1] ?? .white).opacity(0.8))
+            .padding(.bottom, 5)
+            .lineLimit(1)
+            .fixedSize()
+    }
+}
+
+@available(iOS 15.0, *)
 struct QuotesSectionOuterStyling: ViewModifier {
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
     func body(content: Content) -> some View {
