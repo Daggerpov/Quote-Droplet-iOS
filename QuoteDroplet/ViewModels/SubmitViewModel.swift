@@ -15,12 +15,22 @@ class SubmitViewModel: ObservableObject {
     @Published var showSubmissionInfoAlert: Bool = false
     @Published var quoteText: String = ""
     @Published var author: String = ""
-    @Published var submitterName: String = ""
+    // Remembered between submissions and app launches, so users don't retype their name each time
+    @Published var submitterName: String {
+        didSet {
+            userDefaults.set(submitterName, forKey: Self.submitterNameKey)
+        }
+    }
+    
+    static let submitterNameKey = "submitterName"
     
     let apiService: IAPIService
+    private let userDefaults: UserDefaults
     
-    init (apiService: IAPIService) {
+    init (apiService: IAPIService, userDefaults: UserDefaults = .standard) {
         self.apiService = apiService
+        self.userDefaults = userDefaults
+        self.submitterName = userDefaults.string(forKey: Self.submitterNameKey) ?? ""
     }
     
     func addQuote() async -> Void {
@@ -42,7 +52,6 @@ class SubmitViewModel: ObservableObject {
         await MainActor.run {
             self.quoteText = ""
             self.author = ""
-            self.submitterName = ""
             self.selectedCategory = .wisdom
         }
     }
