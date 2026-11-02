@@ -50,10 +50,10 @@ class LocalQuotesService: ILocalQuotesService {
 
         var bookmarkedQuotes = getBookmarkedQuotes()
         
+        // Remove first so re-saving a quote never creates duplicates
+        bookmarkedQuotes.removeAll { $0.id == quote.id }
         if isBookmarked {
             bookmarkedQuotes.append(quote)
-        } else {
-            bookmarkedQuotes.removeAll { $0.id == quote.id }
         }
         
         @AppStorage("bookmarkedQuotes", store: UserDefaults(suiteName: "group.selectedSettings"))

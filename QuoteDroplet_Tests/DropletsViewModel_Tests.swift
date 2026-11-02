@@ -82,6 +82,16 @@ import Testing
         #expect(sut.getPageSpecificQuotes().count == sut.savedQuotes.count)
     }
 
+    @Test func removeSavedQuote() {
+        let keptQuote = Quote(id: 1, text: "Kept", author: nil, classification: nil, likes: nil)
+        let removedQuote = Quote(id: 2, text: "Removed", author: nil, classification: nil, likes: nil)
+        sut.savedQuotes = [keptQuote, removedQuote]
+
+        sut.removeSavedQuote(removedQuote)
+
+        #expect(sut.savedQuotes == [keptQuote])
+    }
+
     @Test func checkLimitReached() {
         sut.setSelected(newValue: .feed)
         sut.quotes = [Quote](repeating: Quote.mockQuote(), count: DropletsViewModel.maxQuotes)

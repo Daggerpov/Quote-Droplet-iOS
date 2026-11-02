@@ -63,6 +63,10 @@ class DropletsViewModel: ObservableObject {
         }
     }
     
+    func removeSavedQuote(_ quote: Quote) -> Void {
+        self.savedQuotes.removeAll { $0.id == quote.id }
+    }
+    
     func loadInitialQuotes() -> Void {
         self.totalQuotesLoaded = 0
         self.totalSavedQuotesLoaded = 0

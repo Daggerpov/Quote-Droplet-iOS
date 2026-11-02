@@ -80,10 +80,8 @@ class SingleQuoteViewModel: ObservableObject {
             guard let self = self else { return }
             self.isBookmarked.toggle()
             
-            if self.isBookmarked {
-                
-                self.localQuotesService.saveBookmarkedQuote(quote: quote, isBookmarked: isBookmarked)
-            }
+            // Persist both directions, so unbookmarked quotes are removed from the Saved tab
+            self.localQuotesService.saveBookmarkedQuote(quote: quote, isBookmarked: self.isBookmarked)
             
             self.increaseInteractions()
         }

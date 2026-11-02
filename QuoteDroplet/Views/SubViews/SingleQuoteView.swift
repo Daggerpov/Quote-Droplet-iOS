@@ -11,20 +11,23 @@ import UniformTypeIdentifiers
 
 @available(iOS 16.0, *)
 struct SingleQuoteView: View {
-    @ObservedObject var viewModel: SingleQuoteViewModel
+    // StateObject so the view model (and its like/bookmark state) survives parent re-renders
+    @StateObject var viewModel: SingleQuoteViewModel
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
     
     var quote: Quote
     var from: SingleQuoteSource
     var searchText: String?
+    var onBookmarkRemoved: (() -> Void)?
     
-    init(quote: Quote, from: SingleQuoteSource, searchText: String? = "") {
+    init(quote: Quote, from: SingleQuoteSource, searchText: String? = "", onBookmarkRemoved: (() -> Void)? = nil) {
         self.quote = quote
         self.from = from
         self.searchText = searchText
-        self.viewModel = SingleQuoteViewModel(
+        self.onBookmarkRemoved = onBookmarkRemoved
+        self._viewModel = StateObject(wrappedValue: SingleQuoteViewModel(
             localQuotesService: LocalQuotesService(),
-            apiService: APIService(), quote: quote, from: from)
+            apiService: APIService(), quote: quote, from: from))
     }
     
     var body: some View {
@@ -140,7 +143,11 @@ extension SingleQuoteView {
             }
 
             Button(action: {
+                let wasBookmarked = viewModel.isBookmarked
                 viewModel.toggleBookmark(for: quote)
+                if wasBookmarked {
+                    onBookmarkRemoved?()
+                }
             }) {
                 Image(systemName: viewModel.isBookmarked ? "bookmark.fill" : "bookmark")
                     .modifier(QuoteInteractionButtonStyling())
