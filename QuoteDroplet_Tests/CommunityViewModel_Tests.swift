@@ -49,4 +49,21 @@ import Foundation
 
         #expect(sut.recentQuotes.isEmpty)
     }
+
+    @Test func quote_decodesApprovedAt() throws {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let json = Data("""
+        [
+            {"id": 1, "text": "With date", "author": "A", "classification": "wisdom", "likes": 3, "approved_at": "2026-06-27T07:34:54.931084Z"},
+            {"id": 2, "text": "Without date", "author": "B", "classification": "wisdom", "likes": 4}
+        ]
+        """.utf8)
+
+        let quotes = try decoder.decode([Quote].self, from: json)
+
+        #expect(quotes[0].approvedDate != nil)
+        #expect(quotes[1].approvedAt == nil)
+        #expect(quotes[1].approvedDate == nil)
+    }
 }

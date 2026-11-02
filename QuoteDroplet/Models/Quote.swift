@@ -13,6 +13,26 @@ struct Quote: Codable, Identifiable, Equatable {
     let author: String?
     let classification: String?
     let likes: Int?
+    // Only returned by some endpoints (e.g. quotes/recent)
+    var approvedAt: String? = nil
+
+    var approvedDate: Date? {
+        APIDateParser.date(from: approvedAt)
+    }
+}
+
+// Parses the backend's RFC 3339 timestamps, which may or may not include fractional seconds
+enum APIDateParser {
+    static func date(from string: String?) -> Date? {
+        guard let string = string else { return nil }
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = formatter.date(from: string) {
+            return date
+        }
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter.date(from: string)
+    }
 }
 
 

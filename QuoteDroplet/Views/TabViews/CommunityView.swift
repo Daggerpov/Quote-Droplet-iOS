@@ -111,16 +111,19 @@ extension CommunityView {
                             Spacer()
                         }
                         
-                        // adjusted
-                        if let author = quote.author, isAuthorValid(authorGiven: quote.author) {
-                            HStack{
-                                Spacer()
+                        HStack{
+                            if let approvedDate = quote.approvedDate {
+                                Text("Added \(approvedDate.formatted(date: .abbreviated, time: .omitted))")
+                                    .modifier(CommunityQuotesDateTextStyling())
+                            }
+                            Spacer()
+                            if let author = quote.author, isAuthorValid(authorGiven: quote.author) {
                                 Text("— \(author)")
                                     .modifier(CommunityQuotesAuthorTextStyling())
+                            } else {
+                                Text("")
+                                    .modifier(CommunityQuotesAuthorTextStyling())
                             }
-                        } else {
-                            Text("")
-                                .modifier(CommunityQuotesAuthorTextStyling())
                         }
                     }
                 }
