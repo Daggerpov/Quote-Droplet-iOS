@@ -162,6 +162,18 @@ class MockAPIService: IAPIService {
         completion(topQuotesResponse?.0, topQuotesResponse?.1)
     }
 
+    // MARK: - Submissions Response
+    private var submissionsResponse: ([Submission]?, Error?)?
+    private(set) var lastSubmitterID: String?
+    func setSubmissionsResponse(submissions: [Submission]?, error: Error?) {
+        submissionsResponse = (submissions, error)
+    }
+
+    func getSubmissions(submitterID: String, completion: @escaping ([Submission]?, Error?) -> Void) {
+        lastSubmitterID = submitterID
+        completion(submissionsResponse?.0, submissionsResponse?.1)
+    }
+
     // Add implementations for the async methods
     func likeQuoteAsync(quoteID: Int) async throws -> Quote? {
         // For testing, return a mock response

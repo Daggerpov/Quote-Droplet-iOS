@@ -126,6 +126,14 @@
 		DCE0F64F2C8EBCEF00F24BC6 /* SingleQuoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE0F64E2C8EBCEE00F24BC6 /* SingleQuoteView.swift */; };
 		DCE0F6502C8EBCEF00F24BC6 /* SingleQuoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE0F64E2C8EBCEE00F24BC6 /* SingleQuoteView.swift */; };
 		E7A00833EB7F4A57F27D2AE0 /* Pods_Quote_Droplet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95461FB5248B4845B525336A /* Pods_Quote_Droplet.framework */; };
+		E1A500022EB0C00100A1B2C3 /* Submission.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A500012EB0C00100A1B2C3 /* Submission.swift */; };
+		E1A500032EB0C00100A1B2C3 /* Submission.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A500012EB0C00100A1B2C3 /* Submission.swift */; };
+		E1A500052EB0C00100A1B2C3 /* SubmitterIDService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A500042EB0C00100A1B2C3 /* SubmitterIDService.swift */; };
+		E1A500062EB0C00100A1B2C3 /* SubmitterIDService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A500042EB0C00100A1B2C3 /* SubmitterIDService.swift */; };
+		E1A500082EB0C00100A1B2C3 /* SubmissionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A500072EB0C00100A1B2C3 /* SubmissionsViewModel.swift */; };
+		E1A500092EB0C00100A1B2C3 /* SubmissionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A500072EB0C00100A1B2C3 /* SubmissionsViewModel.swift */; };
+		E1A5000B2EB0C00100A1B2C3 /* SubmissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A5000A2EB0C00100A1B2C3 /* SubmissionsView.swift */; };
+		E1A5000C2EB0C00100A1B2C3 /* SubmissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A5000A2EB0C00100A1B2C3 /* SubmissionsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -234,6 +242,10 @@
 		DCDF64262CCC93F400FBA5B1 /* ViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModifiers.swift; sourceTree = "<group>"; };
 		DCE0F64B2C8EA2A900F24BC6 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		DCE0F64E2C8EBCEE00F24BC6 /* SingleQuoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleQuoteView.swift; sourceTree = "<group>"; };
+		E1A500012EB0C00100A1B2C3 /* Submission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Submission.swift; sourceTree = "<group>"; };
+		E1A500042EB0C00100A1B2C3 /* SubmitterIDService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitterIDService.swift; sourceTree = "<group>"; };
+		E1A500072EB0C00100A1B2C3 /* SubmissionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmissionsViewModel.swift; sourceTree = "<group>"; };
+		E1A5000A2EB0C00100A1B2C3 /* SubmissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmissionsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -246,6 +258,7 @@
 				DropletsViewModel_Tests.swift,
 				QuotesViewModel_Tests.swift,
 				SearchViewModel_Tests.swift,
+				SubmissionsViewModel_Tests.swift,
 				SingleQuoteViewModel_Tests.swift,
 				SubmitViewModel_Tests.swift,
 			);
@@ -329,6 +342,7 @@
 		DC0EFB8D2C4CB79100B4D46A /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				E1A500042EB0C00100A1B2C3 /* SubmitterIDService.swift */,
 				DC8E76372CCDDE2800F9EB0E /* APIService */,
 				DC8E76362CCDDE0500F9EB0E /* LocalQuotesService */,
 				DC7010E32BAE654F008678CB /* NotificationSchedulerService.swift */,
@@ -340,6 +354,7 @@
 		DC2998FC2C4D9C670025D32E /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				E1A500012EB0C00100A1B2C3 /* Submission.swift */,
 				DCAB2DCC2A9FACC300A822D7 /* Quote.swift */,
 				DCC0B3652CC9B1A4002DED7A /* QuoteJSON.swift */,
 				DCC0B3822CC9FC2F002DED7A /* GoogleImageModel.swift */,
@@ -469,6 +484,7 @@
 		DCC0B35E2CC9B057002DED7A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				E1A500072EB0C00100A1B2C3 /* SubmissionsViewModel.swift */,
 				659AC3312DBC6C6700C55BA1 /* FeedbackViewModel.swift */,
 				DCC0B37F2CC9F561002DED7A /* AuthorViewModel.swift */,
 				DCB82F772CCB301200E81549 /* CommunityViewModel.swift */,
@@ -485,6 +501,7 @@
 		DCC0B3682CC9B2BF002DED7A /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
+				E1A5000A2EB0C00100A1B2C3 /* SubmissionsView.swift */,
 				65C2EDEA2CF1AD0E005C637D /* TabButtonView.swift */,
 				DC5DD51D2CCDC5C400B80F5D /* SubmitButtonView.swift */,
 				DCB1DA5C2CCC64DB00D823B0 /* TimeIntervalPickerView.swift */,
@@ -718,6 +735,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1A5000B2EB0C00100A1B2C3 /* SubmissionsView.swift in Sources */,
+				E1A500082EB0C00100A1B2C3 /* SubmissionsViewModel.swift in Sources */,
+				E1A500052EB0C00100A1B2C3 /* SubmitterIDService.swift in Sources */,
+				E1A500022EB0C00100A1B2C3 /* Submission.swift in Sources */,
 				DC890E7F2C5F211900008838 /* LocalQuotesService.swift in Sources */,
 				DCC0B3632CC9B154002DED7A /* Fonts.swift in Sources */,
 				DC2998FA2C4D9C5C0025D32E /* SingleQuoteViewModel.swift in Sources */,
@@ -777,6 +798,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1A5000C2EB0C00100A1B2C3 /* SubmissionsView.swift in Sources */,
+				E1A500092EB0C00100A1B2C3 /* SubmissionsViewModel.swift in Sources */,
+				E1A500062EB0C00100A1B2C3 /* SubmitterIDService.swift in Sources */,
+				E1A500032EB0C00100A1B2C3 /* Submission.swift in Sources */,
 				DCC0B3932CCA11F2002DED7A /* SelectedPageEnum.swift in Sources */,
 				DC26EB952BF96FD4004CA84F /* DropletsView.swift in Sources */,
 				65C2EDEC2CF1AD11005C637D /* TabButtonView.swift in Sources */,
