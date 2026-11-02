@@ -79,12 +79,17 @@ struct InfoView: View {
             .sheet(isPresented: $feedbackViewModel.isSubmittingFeedback) {
                 feedbackSubmissionView
             }
-            .alert(isPresented: $feedbackViewModel.showSubmissionReceivedAlert) {
-                Alert(
-                    title: Text("Feedback Received"),
-                    message: Text(feedbackViewModel.submissionMessage),
-                    dismissButton: .default(Text("OK"))
-                )
+            // Both alerts live here: a legacy .alert(isPresented:) on this ancestor stopped the
+            // Mac note's alert (previously attached to its button) from ever presenting
+            .alert("Feedback Received", isPresented: $feedbackViewModel.showSubmissionReceivedAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(feedbackViewModel.submissionMessage)
+            }
+            .alert("Note for Mac Owners", isPresented: $showMacAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("You can actually add this same iOS widget to your Mac's widgets by clicking the date in the top-right corner of your Mac -> Edit Widgets.\n\nAlso, Quote Droplet has a Mac version available on the App Store. It conveniently shows quotes from a small icon in your menu bar, even offline.")
             }
         }
         .modifier(MainScreenBackgroundStyling())
@@ -188,17 +193,10 @@ extension InfoView {
             }) {
                 HStack {
                     Image(systemName: "info.circle")
-                    Text("Rate Quote Droplet")
+                    Text("Note for Mac Owners")
                         .font(.title3)
                 }
                 .modifier(RoundedRectangleStyling())
-            }
-            .alert(isPresented: $showMacAlert) {
-                Alert(
-                    title: Text("Note for Mac Owners"),
-                    message: Text("You can actually add this same iOS widget to your Mac's widgets by clicking the date in the top-right corner of your Mac -> Edit Widgets.\n\nAlso, Quote Droplet has a Mac version available on the App Store. It conveniently shows quotes from a small icon in your menu bar, even offline."),
-                    dismissButton: .default(Text("OK"))
-                )
             }
         }
     }
