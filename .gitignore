@@ -13,3 +13,6 @@ Quote Droplet.xcworkspace
 Quote Droplet.xcodeproj/xcshareddata/xcschemes/Quote Droplet.xcscheme
 Pods/Pods.xcodeproj/xcuserdata/daniel.xcuserdatad/xcschemes/xcschememanagement.plist
 Quote Droplet.xcodeproj/xcuserdata/daniel.xcuserdatad/xcschemes/xcschememanagement.plist
+
+# Release script output
+build/
