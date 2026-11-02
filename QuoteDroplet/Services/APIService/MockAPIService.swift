@@ -103,10 +103,14 @@ class MockAPIService: IAPIService {
         likeCount = count
     }
 
+    private(set) var likeQuoteCallCount = 0
+    private(set) var unlikeQuoteCallCount = 0
+
     func likeQuote(
         quoteID: Int,
         completion: @escaping (Quote?, (any Error)?) -> Void
     ) {
+        likeQuoteCallCount += 1
         completion(likeQuoteResponse?.0, likeQuoteResponse?.1)
     }
 
@@ -120,6 +124,7 @@ class MockAPIService: IAPIService {
         quoteID: Int,
         completion: @escaping (Quote?, (any Error)?) -> Void
     ) {
+        unlikeQuoteCallCount += 1
         completion(unlikeQuoteResponse?.0, unlikeQuoteResponse?.1)
     }
 

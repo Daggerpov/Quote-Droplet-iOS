@@ -26,7 +26,7 @@ class MockLocalQuotesService: ILocalQuotesService {
     }
 
     func saveLikedQuote(quote: Quote, isLiked: Bool) -> Void {
-        return
+        self.isLiked = isLiked
     }
 
     func getBookmarkedQuotes() -> [Quote] {

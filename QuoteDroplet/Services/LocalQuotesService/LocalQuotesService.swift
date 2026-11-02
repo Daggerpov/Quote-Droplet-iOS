@@ -22,10 +22,10 @@ class LocalQuotesService: ILocalQuotesService {
     func saveLikedQuote(quote: Quote, isLiked: Bool) -> Void {
         var likedQuotes = getLikedQuotes()
         
+        // Remove first so re-liking a quote never creates duplicates
+        likedQuotes.removeAll { $0.id == quote.id }
         if isLiked {
             likedQuotes.append(quote)
-        } else {
-            likedQuotes.removeAll { $0.id == quote.id }
         }
         
         @AppStorage("likedQuotes", store: UserDefaults(suiteName: "group.selectedSettings"))

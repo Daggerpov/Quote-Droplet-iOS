@@ -66,30 +66,39 @@ import Testing
         #expect(sut.interactions == initialInteractions + 1)
     }
 
-    @MainActor @Test func toggleLike_changesLikeState() {
-        let initialInteractions = sut.interactions
-        sut.toggleLike(for: mockQuote)
-        #expect(sut.isLiked)
-        #expect(sut.interactions == initialInteractions + 1)
-    }
-
-    @MainActor @Test func likeQuoteAction_likeIncreasesCount() {
-        // Mock responses for liking the quote
+    @MainActor @Test func toggleLike_likesUnlikedQuote() {
         mockLocalQuotesService.setIsLiked(false)
-        mockAPIService.setLikeCountResponse(count: 10)
+        let initialLikes = sut.likes
 
-        sut.likeQuoteAction(for: mockQuote)
-        #expect(sut.likes == 10)
-        #expect(!sut.isLiking)
+        sut.toggleLike(for: mockQuote)
+
+        #expect(sut.isLiked)
+        #expect(mockLocalQuotesService.isQuoteLiked(mockQuote))
+        #expect(sut.likes == initialLikes + 1)
+        #expect(mockAPIService.likeQuoteCallCount == 1)
+        #expect(mockAPIService.unlikeQuoteCallCount == 0)
     }
 
-    @MainActor @Test func likeQuoteAction_unlikeDecreasesCount() {
-        // Mock responses for unliking the quote
+    @MainActor @Test func toggleLike_unlikesLikedQuote() {
         mockLocalQuotesService.setIsLiked(true)
-        mockAPIService.setLikeCountResponse(count: 5)
+        sut.likes = 10
 
-        sut.likeQuoteAction(for: mockQuote)
-        #expect(sut.likes == 5)
-        #expect(!sut.isLiking)
+        sut.toggleLike(for: mockQuote)
+
+        #expect(!sut.isLiked)
+        #expect(!mockLocalQuotesService.isQuoteLiked(mockQuote))
+        #expect(sut.likes == 9)
+        #expect(mockAPIService.likeQuoteCallCount == 0)
+        #expect(mockAPIService.unlikeQuoteCallCount == 1)
+    }
+
+    @MainActor @Test func toggleLike_ignoresTapsWhileRequestInFlight() {
+        mockLocalQuotesService.setIsLiked(false)
+        sut.isLiking = true
+
+        sut.toggleLike(for: mockQuote)
+
+        #expect(!sut.isLiked)
+        #expect(mockAPIService.likeQuoteCallCount == 0)
     }
 }
