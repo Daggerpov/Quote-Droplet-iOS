@@ -24,13 +24,13 @@ struct DataService {
     }
     
     @AppStorage("widgetCustomColorPaletteFirstIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteFirstIndex = "1C7C54"
+    private var widgetCustomColorPaletteFirstIndex = defaultCustomPaletteHex[0]
     
     @AppStorage("widgetCustomColorPaletteSecondIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteSecondIndex = "E2B6CF"
+    private var widgetCustomColorPaletteSecondIndex = defaultCustomPaletteHex[1]
     
     @AppStorage("widgetCustomColorPaletteThirdIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteThirdIndex = "DEF4C6"
+    private var widgetCustomColorPaletteThirdIndex = defaultCustomPaletteHex[2]
     
     func getColorPalette() -> [Color] {
         // Safely get color values with fallbacks

@@ -12,45 +12,25 @@ struct DropletsView: View {
         localQuotesService: LocalQuotesService(),
         apiService: APIService()
     )
-    
+
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
-    
-    @AppStorage("widgetColorPaletteIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    var widgetColorPaletteIndex = 0
-    
-    // actual colors of custom:
-    @AppStorage("widgetCustomColorPaletteFirstIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteFirstIndex = "1C7C54"
-    
-    @AppStorage("widgetCustomColorPaletteSecondIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteSecondIndex = "E2B6CF"
-    
-    @AppStorage("widgetCustomColorPaletteThirdIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteThirdIndex = "DEF4C6"
-    
+
     var body: some View {
         NavigationStack {
-            VStack {
-                HeaderView()
-                VStack{
-                    topNavBar
-                    Spacer()
-                    quotesListView
-                }
-                .padding()
+            VStack(spacing: 14) {
+                HeaderView(title: "Droplets", subtitle: Date.now.formatted(.dateTime.weekday(.wide).month(.wide).day()))
+                topNavBar
+                quotesListView
             }
             .modifier(MainScreenBackgroundStyling())
+            .toolbar(.hidden, for: .navigationBar)
             .onAppear {
                 // Fetch initial quotes when the view appears
                 viewModel.loadInitialQuotes()
                 // ------------------------------------------
 
-                sharedVars.colorPaletteIndex = widgetColorPaletteIndex
-                
-                colorPalettes[3][0] = Color(hex: widgetCustomColorPaletteFirstIndex)
-                colorPalettes[3][1] = Color(hex: widgetCustomColorPaletteSecondIndex)
-                colorPalettes[3][2] = Color(hex: widgetCustomColorPaletteThirdIndex)
-                
+                sharedVars.reloadFromDefaults()
+
                 // Schedule notifications:
                 // will schedule with previous date and category values
                 NotificationSchedulerService.shared.scheduleNotifications()
@@ -82,50 +62,67 @@ struct DropletsView: View {
 struct DropletsView_Previews: PreviewProvider {
     static var previews: some View {
         DropletsView()
+            .environmentObject(SharedVarsBetweenTabs())
     }
 }
 
 @available(iOS 16.0, *)
 extension DropletsView {
     private var topNavBar: some View {
-        Picker(selection: $viewModel.selected, label: Text("Picker"), content: {
-            Text("Feed").tag(SelectedPage.feed)
-            Text("Saved").tag(SelectedPage.saved)
-            Text("Recent").tag(SelectedPage.recent)
-        })
-        .pickerStyle(SegmentedPickerStyle())
+        PillSegmentedControl(
+            options: [(SelectedPage.feed, "Feed"), (SelectedPage.saved, "Saved"), (SelectedPage.recent, "Recent")],
+            selection: $viewModel.selected
+        )
+        .padding(.horizontal, AppMetrics.screenPadding)
         .onChange(of: viewModel.selected) { newValue in
             viewModel.loadMoreQuotes()
         }
     }
-    
-    private var titleText: some View {
-        HStack {
-            Spacer()
-            Text(viewModel.getTitleText())
-                .modifier(QuotesPageTitleStyling())
-            Spacer()
+
+    private func emptyState(icon: String, title: String, message: String) -> some View {
+        let palette = sharedVars.palette
+        return VStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 26, weight: .semibold))
+                .foregroundColor(palette.accent)
+                .frame(width: 64, height: 64)
+                .background(Circle().fill(palette.accent.opacity(0.16)))
+            Text(title)
+                .font(AppFont.sectionTitle)
+                .foregroundColor(palette.text)
+            Text(message)
+                .font(.subheadline)
+                .foregroundColor(palette.secondaryText)
+                .multilineTextAlignment(.center)
         }
+        .frame(maxWidth: .infinity)
+        .modifier(CardStyling(padding: 28))
+        .padding(.horizontal, AppMetrics.screenPadding)
+        .padding(.top, 24)
     }
-    
+
     private var quotesListView: some View {
         ScrollView {
-            Spacer()
-            LazyVStack{
-                titleText
-                Spacer()
-
+            LazyVStack(spacing: 16) {
                 if viewModel.getPageSpecificQuotes().isEmpty {
-                    Text(viewModel.getPageSpecificEmptyText())
-                        .modifier(QuotesPageTextStyling())
-                    if viewModel.selected == .saved {
-                        Image(systemName: "bookmark")
-                            .modifier(QuoteInteractionButtonStyling())
+                    switch viewModel.selected {
+                        case .feed:
+                            ProgressView()
+                                .tint(sharedVars.palette.accent)
+                                .scaleEffect(1.3)
+                                .padding(.top, 80)
+                        case .saved:
+                            emptyState(icon: "bookmark", title: "Nothing saved yet",
+                                       message: "Tap the bookmark on any quote in your feed to keep it here.")
+                        case .recent:
+                            emptyState(icon: "clock.arrow.circlepath", title: "No recent quotes yet",
+                                       message: "Quotes from your daily notifications will be listed here. Turn on notifications to start collecting them.")
                     }
                 } else {
                     if viewModel.selected == .recent {
-                        Text("These are your most recent quotes from notifications.")
-                            .modifier(QuotesPageTextStyling())
+                        Text("Your most recent quotes from notifications.")
+                            .font(.footnote)
+                            .foregroundColor(sharedVars.palette.secondaryText)
                     }
                     ForEach(viewModel.getPageSpecificQuotes()) { quote in
                         SingleQuoteView(
@@ -137,7 +134,7 @@ extension DropletsView {
                         )
                     }
                 }
-                
+
                 Color.clear.frame(height: 1)
                     .onAppear {
                         viewModel.checkMoreQuotesNeeded()
@@ -146,8 +143,9 @@ extension DropletsView {
                     Text("You've reached the quote limit of \(DropletsViewModel.maxQuotes). Maybe take a break?")
                         .modifier(QuotesPageTextStyling())
                 }
-                Spacer()
             }
+            .padding(.top, 6)
+            .padding(.bottom, 24)
         }
     }
 }

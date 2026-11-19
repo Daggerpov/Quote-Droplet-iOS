@@ -12,19 +12,25 @@ import SwiftUI
 struct TopView: View {
     @StateObject private var viewModel = TopViewModel(apiService: APIService(), localQuotesService: LocalQuotesService())
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
+    @State private var copiedQuoteID: Int? = nil
     
     var body: some View {
         NavigationStack {
-            VStack {
-                HeaderView()
-                VStack {
-                    categoryFilterSection
-                    leaderboardContent
+            VStack(spacing: 14) {
+                HeaderView(title: "Top Quotes", subtitle: "Most liked")
+                CategoryChips(
+                    categories: QuoteCategory.allCases.filter { $0 != .bookmarkedQuotes },
+                    selection: $viewModel.selectedCategory
+                )
+                .onChange(of: viewModel.selectedCategory) { _ in
+                    viewModel.loadTopQuotes()
                 }
-                .padding()
+                leaderboardContent
             }
             .modifier(MainScreenBackgroundStyling())
+            .toolbar(.hidden, for: .navigationBar)
             .onAppear {
+                sharedVars.reloadFromDefaults()
                 viewModel.loadLikedQuotes()
                 viewModel.loadTopQuotes()
             }
@@ -34,116 +40,102 @@ struct TopView: View {
 
 @available(iOS 16.0, *)
 extension TopView {
-    private var categoryFilterSection: some View {
-        HStack {
-            Text("Category:")
-                .modifier(BasePicker_TextStyling())
-            Picker("", selection: $viewModel.selectedCategory) {
-                ForEach(QuoteCategory.allCases, id: \.self) { category in
-                    Text(category.displayName)
-                        .font(.headline)
-                }
-            }
-            .modifier(BasePicker_PickerStyling())
-            .onChange(of: viewModel.selectedCategory) { _ in
-                viewModel.loadTopQuotes()
-            }
-        }
-        .modifier(BasePicker_OuterBackgroundStyling())
-        .padding(.vertical)
-    }
-    
+    private var palette: AppPalette { sharedVars.palette }
+
     private var leaderboardContent: some View {
         ScrollView {
             if viewModel.isLoading {
                 ProgressView()
-                    .scaleEffect(1.5)
-                    .padding(.top, 50)
+                    .tint(palette.accent)
+                    .scaleEffect(1.3)
+                    .padding(.top, 80)
             } else if viewModel.topQuotes.isEmpty {
-                VStack {
-                    Spacer()
-                    Text("No quotes available for this category")
-                        .modifier(QuotesPageTextStyling())
-                    Spacer()
-                }
-                .frame(height: 400)
+                Text("No quotes available for this category")
+                    .modifier(QuotesPageTextStyling())
+                    .padding(.top, 60)
             } else {
-                VStack(spacing: 16) {
+                LazyVStack(spacing: 14) {
                     ForEach(Array(viewModel.topQuotes.enumerated()), id: \.element.id) { index, quote in
                         leaderboardQuoteRow(quote: quote, rank: index + 1)
                     }
                 }
+                .padding(.horizontal, AppMetrics.screenPadding)
+                .padding(.top, 6)
+                .padding(.bottom, 24)
             }
         }
     }
+
+    private func rankBadge(_ rank: Int) -> some View {
+        let isPodium = rank <= 3
+        return Text("\(rank)")
+            .font(.system(size: 15, weight: .bold, design: .rounded))
+            .foregroundColor(isPodium ? palette.onAccent : palette.accent)
+            .frame(width: 34, height: 34)
+            .background(Circle().fill(isPodium ? palette.accent : palette.accent.opacity(0.14)))
+    }
     
     private func leaderboardQuoteRow(quote: Quote, rank: Int) -> some View {
-        VStack(alignment: .leading) {
-            HStack(alignment: .top) {
-                Text("#\(rank)")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[1] ?? .blue)
-                    .frame(width: 40, alignment: .leading)
+        HStack(alignment: .top, spacing: 14) {
+            rankBadge(rank)
+            
+            VStack(alignment: .leading, spacing: 10) {
+                Text(quote.text)
+                    .modifier(QuoteTextStyling(font: .system(.body, design: .serif)))
                 
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(quote.text)
-                        .font(.system(size: 16))
-                        .foregroundColor(.primary)
-                        .multilineTextAlignment(.leading)
+                HStack(alignment: .center) {
+                    if let author = quote.author, isAuthorValid(authorGiven: quote.author) {
+                        Text("— \(author)")
+                            .modifier(AuthorTextStyling())
+                    }
                     
-                    HStack {
-                        if let author = quote.author, isAuthorValid(authorGiven: quote.author) {
-                            Text("— \(author)")
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(.secondary)
-                                .italic()
+                    Spacer()
+                    
+                    HStack(spacing: 16) {
+                        Button(action: {
+                            copyQuoteToClipboard(quote)
+                        }) {
+                            Image(systemName: copiedQuoteID == quote.id ? "checkmark" : "doc.on.doc")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(copiedQuoteID == quote.id ? palette.accent : palette.secondaryText)
                         }
+                        .buttonStyle(PressableButtonStyle())
+                        .accessibilityLabel("Copy")
                         
-                        Spacer()
-                        
-                        HStack(spacing: 12) {
-                            Button(action: {
-                                copyQuoteToClipboard(quote)
-                            }) {
-                                Image(systemName: "doc.on.doc")
-                                    .foregroundColor(.blue)
-                                    .font(.system(size: 16))
+                        Button(action: {
+                            viewModel.toggleLike(for: quote)
+                        }) {
+                            let liked = viewModel.isQuoteLiked(quote)
+                            HStack(spacing: 4) {
+                                Image(systemName: liked ? "heart.fill" : "heart")
+                                    .font(.system(size: 16, weight: .medium))
+                                Text("\(quote.likes ?? 0)")
+                                    .font(.subheadline.weight(.semibold).monospacedDigit())
                             }
-                            
-                            Button(action: {
-                                viewModel.toggleLike(for: quote)
-                            }) {
-                                HStack(spacing: 4) {
-                                    Image(systemName: viewModel.isQuoteLiked(quote) ? "heart.fill" : "heart")
-                                        .foregroundColor(.red)
-                                    Text("\(quote.likes ?? 0)")
-                                        .font(.system(size: 14, weight: .semibold))
-                                }
-                            }
+                            .foregroundColor(liked ? palette.accent : palette.secondaryText)
                         }
+                        .buttonStyle(PressableButtonStyle())
+                        .accessibilityLabel("Like")
                     }
                 }
             }
-            
-            Divider()
-                .background(colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .gray.opacity(0.5))
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color(UIColor.systemBackground))
-                .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
-        )
+        .modifier(CardStyling(padding: 16))
     }
     
     private func copyQuoteToClipboard(_ quote: Quote) {
         let quoteText = formatQuoteForClipboard(quote)
         UIPasteboard.general.string = quoteText
         
-        // You could add a toast notification here if desired
-        // For now, just providing feedback through haptic
+        // Haptic feedback plus a brief checkmark on the copy button
         let impact = UIImpactFeedbackGenerator(style: .medium)
         impact.impactOccurred()
+        withAnimation(.easeOut(duration: 0.15)) { copiedQuoteID = quote.id }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
+            if copiedQuoteID == quote.id {
+                withAnimation(.easeOut(duration: 0.2)) { copiedQuoteID = nil }
+            }
+        }
     }
     
     private func formatQuoteForClipboard(_ quote: Quote) -> String {

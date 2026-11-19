@@ -14,44 +14,26 @@ struct CommunityView: View {
         localQuotesService: LocalQuotesService(), apiService: APIService()
     )
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
-    
-    @AppStorage("widgetColorPaletteIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    var widgetColorPaletteIndex = 0
-    
-    // actual colors of custom:
-    
-    @AppStorage("widgetCustomColorPaletteFirstIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteFirstIndex = "1C7C54"
-    
-    @AppStorage("widgetCustomColorPaletteSecondIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteSecondIndex = "E2B6CF"
-    
-    @AppStorage("widgetCustomColorPaletteThirdIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteThirdIndex = "DEF4C6"
-    
+
     var body: some View {
         NavigationStack {
-            VStack {
-                HeaderView()
-                VStack{
-                    Spacer()
-                    quoteSection
-                    Spacer()
-                    SubmitView()
-                    mySubmissionsButton
-                    Spacer()
+            VStack(spacing: 8) {
+                HeaderView(title: "Community", subtitle: "From readers")
+                ScrollView {
+                    VStack(spacing: 20) {
+                        actionsSection
+                        quoteSection
+                    }
+                    .padding(.horizontal, AppMetrics.screenPadding)
+                    .padding(.top, 8)
+                    .padding(.bottom, 24)
                 }
-                .padding()
             }
             .modifier(MainScreenBackgroundStyling())
+            .toolbar(.hidden, for: .navigationBar)
             .onAppear {
                 viewModel.getRecentQuotes()
-                
-                sharedVars.colorPaletteIndex = widgetColorPaletteIndex
-                
-                colorPalettes[3][0] = Color(hex:widgetCustomColorPaletteFirstIndex)
-                colorPalettes[3][1] = Color(hex:widgetCustomColorPaletteSecondIndex)
-                colorPalettes[3][2] = Color(hex:widgetCustomColorPaletteThirdIndex)
+                sharedVars.reloadFromDefaults()
             }
         }
     }
@@ -61,74 +43,87 @@ struct CommunityView: View {
 struct CommunityView_Previews: PreviewProvider {
     static var previews: some View {
         CommunityView()
+            .environmentObject(SharedVarsBetweenTabs())
     }
 }
 
 @available(iOS 16.0, *)
 extension CommunityView {
+    private var palette: AppPalette { sharedVars.palette }
+
+    private var actionsSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Know a quote that belongs here?")
+                .font(AppFont.sectionTitle)
+                .foregroundColor(palette.text)
+            Text("Submit it, and once it's approved it shows up for everyone, credited to you if you like.")
+                .font(.subheadline)
+                .foregroundColor(palette.secondaryText)
+                .fixedSize(horizontal: false, vertical: true)
+            HStack(spacing: 10) {
+                SubmitView()
+                mySubmissionsButton
+            }
+            .padding(.top, 4)
+        }
+        .modifier(CardStyling(padding: 20))
+    }
+
     private var mySubmissionsButton: some View {
         NavigationLink {
             SubmissionsView()
         } label: {
-            SubmitButtonView(text: "My Submissions", imageSystemName: "tray.full")
+            SubmitButtonView(text: "My Submissions", imageSystemName: "tray.full", isPrimary: false)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(PressableButtonStyle())
     }
-    
-    private var quoteSection: some View {
-        VStack(alignment: .leading) {
-            HStack{
-                Spacer()
-                Text("Newest Quotes")
-                    .modifier(QuotesPageTitleStyling())
-                Spacer()
-            }
 
-            if viewModel.recentQuotes.isEmpty {
-                Text("Loading Quotes ...")
-                    .modifier(CommunityQuotesTextStyling())
-                ForEach(1..<4) { index in
-                    VStack() {
-                        HStack {
-                            Text("Quote Loading")
-                                .modifier(CommunityQuotesTextStyling())
-                            Spacer()
-                        }
-                        
-                        HStack{
-                            Spacer()
-                            Text("— Author Loading")
-                                .modifier(CommunityQuotesAuthorTextStyling())
-                        }
-                    }
+    private func communityQuoteRow(_ quote: Quote) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(quote.text)
+                .modifier(QuoteTextStyling(font: .system(.body, design: .serif)))
+            HStack {
+                if let approvedDate = quote.approvedDate {
+                    Text("Added \(approvedDate.formatted(date: .abbreviated, time: .omitted))")
+                        .font(.caption)
+                        .foregroundColor(palette.secondaryText)
+                        .lineLimit(1)
                 }
-            } else {
-                ForEach(viewModel.recentQuotes, id: \.id) { quote in
-                    VStack() {
-                        HStack{
-                            Text("\(quote.text)")
-                                .modifier(CommunityQuotesTextStyling())
-                            Spacer()
-                        }
-                        
-                        HStack{
-                            if let approvedDate = quote.approvedDate {
-                                Text("Added \(approvedDate.formatted(date: .abbreviated, time: .omitted))")
-                                    .modifier(CommunityQuotesDateTextStyling())
-                            }
-                            Spacer()
-                            if let author = quote.author, isAuthorValid(authorGiven: quote.author) {
-                                Text("— \(author)")
-                                    .modifier(CommunityQuotesAuthorTextStyling())
-                            } else {
-                                Text("")
-                                    .modifier(CommunityQuotesAuthorTextStyling())
-                            }
-                        }
-                    }
+                Spacer()
+                if let author = quote.author, isAuthorValid(authorGiven: quote.author) {
+                    Text("— \(author)")
+                        .modifier(AuthorTextStyling())
                 }
             }
         }
-        .modifier(QuotesSectionOuterStyling())
+        .padding(.vertical, 14)
+    }
+
+    private var quoteSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SectionLabel(text: "Newest quotes")
+            VStack(alignment: .leading, spacing: 0) {
+                if viewModel.recentQuotes.isEmpty {
+                    ForEach(0..<3, id: \.self) { index in
+                        VStack(alignment: .leading, spacing: 8) {
+                            RoundedRectangle(cornerRadius: 5).fill(palette.text.opacity(0.10)).frame(height: 12)
+                            RoundedRectangle(cornerRadius: 5).fill(palette.text.opacity(0.10)).frame(width: 180, height: 12)
+                        }
+                        .padding(.vertical, 16)
+                        if index < 2 {
+                            Rectangle().fill(palette.hairline).frame(height: 1)
+                        }
+                    }
+                } else {
+                    ForEach(viewModel.recentQuotes, id: \.id) { quote in
+                        communityQuoteRow(quote)
+                        if quote.id != viewModel.recentQuotes.last?.id {
+                            Rectangle().fill(palette.hairline).frame(height: 1)
+                        }
+                    }
+                }
+            }
+            .modifier(CardStyling(padding: 18))
+        }
     }
 }

@@ -14,12 +14,13 @@ struct SingleQuoteView: View {
     // StateObject so the view model (and its like/bookmark state) survives parent re-renders
     @StateObject var viewModel: SingleQuoteViewModel
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
-    
+    @State private var showCopiedCheck = false
+
     var quote: Quote
     var from: SingleQuoteSource
     var searchText: String?
     var onBookmarkRemoved: (() -> Void)?
-    
+
     init(quote: Quote, from: SingleQuoteSource, searchText: String? = "", onBookmarkRemoved: (() -> Void)? = nil) {
         self.quote = quote
         self.from = from
@@ -29,117 +30,109 @@ struct SingleQuoteView: View {
             localQuotesService: LocalQuotesService(),
             apiService: APIService(), quote: quote, from: from))
     }
-    
+
+    private var palette: AppPalette { sharedVars.palette }
+
     var body: some View {
-        VStack {
+        VStack(alignment: .leading, spacing: 12) {
+            Image(systemName: "quote.opening")
+                .font(.system(size: 18, weight: .bold))
+                .foregroundColor(palette.accent.opacity(0.7))
             quoteTextView
             authorTextView
+            Rectangle()
+                .fill(palette.hairline)
+                .frame(height: 1)
+                .padding(.top, 2)
             quoteInteractionButtons
         }
-        .modifier(QuotesSectionOuterStyling())
-        .padding(.horizontal)
+        .modifier(CardStyling(padding: 20))
+        .padding(.horizontal, AppMetrics.screenPadding)
         .onAppear {
             viewModel.getQuoteInfo()
         }
-        
     }
 }
 
 @available(iOS 16.0, *)
 extension SingleQuoteView {
-    private var attributedString: AttributedString {
-        var attributedString = AttributedString(quote.text)
+    private func highlighted(_ text: String) -> AttributedString {
+        var attributedString = AttributedString(text)
         let searchTextLowercased = (searchText ?? "").lowercased()
-        let textLowercased = quote.text.lowercased()
+        guard !searchTextLowercased.isEmpty else { return attributedString }
+        let textLowercased = text.lowercased()
         var searchStartIndex = textLowercased.startIndex
-        
+
         // Loop to find and highlight all occurrences
         while let range = textLowercased.range(of: searchTextLowercased, range: searchStartIndex..<textLowercased.endIndex) {
             // Convert String.Index to AttributedString.Index
             if let attributedRange = Range(NSRange(range, in: textLowercased), in: attributedString) {
-                attributedString[attributedRange].backgroundColor = (colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .yellow).opacity(0.3)
+                attributedString[attributedRange].backgroundColor = palette.accent.opacity(0.32)
             }
             // Move searchStartIndex to the end of the found range to continue searching
             searchStartIndex = range.upperBound
         }
-        
-        return attributedString
-    }
-    
-    private var attributedAuthorString: AttributedString {
-        guard let author = quote.author, let searchText = searchText, !searchText.isEmpty else {
-            return AttributedString(quote.author ?? "")
-        }
-        
-        var attributedString = AttributedString(author)
-        let searchTextLowercased = searchText.lowercased()
-        let authorLowercased = author.lowercased()
-        var searchStartIndex = authorLowercased.startIndex
-        
-        // Loop to find and highlight all occurrences in author name
-        while let range = authorLowercased.range(of: searchTextLowercased, range: searchStartIndex..<authorLowercased.endIndex) {
-            // Convert String.Index to AttributedString.Index
-            if let attributedRange = Range(NSRange(range, in: authorLowercased), in: attributedString) {
-                attributedString[attributedRange].backgroundColor = (colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .yellow).opacity(0.3)
-            }
-            // Move searchStartIndex to the end of the found range to continue searching
-            searchStartIndex = range.upperBound
-        }
-        
+
         return attributedString
     }
 
     private var quoteTextView: some View {
-        HStack {
-            Text(attributedString)
-                .font(.title3)
-                .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[1] ?? .white)
-                .padding(.bottom, 2)
-                .frame(alignment: .leading)
-            Spacer()
-        }
+        Text(highlighted(quote.text))
+            .modifier(QuoteTextStyling())
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 
+    @ViewBuilder
     private var authorTextView: some View {
-        HStack {
-            if let author: String = quote.author, isAuthorValid(authorGiven: quote.author) {
-                HStack {
-                    Spacer()
-                    if viewModel.shouldShowArrow() {
-                        NavigationLink(destination: AuthorView(quote: viewModel.quote)) {
-                            Text(AttributedString("— ") + attributedAuthorString)
-                                .font(.body)
-                                .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .white)
-                                .padding(.bottom, 5)
-                                .frame(alignment: .trailing)
-                                .underline(true, color: colorPalettes[safe: sharedVars.colorPaletteIndex]?[2].opacity(0.5) ?? .white.opacity(0.5))
+        if let author: String = quote.author, isAuthorValid(authorGiven: quote.author) {
+            HStack(spacing: 4) {
+                Spacer()
+                if viewModel.shouldShowArrow() {
+                    NavigationLink(destination: AuthorView(quote: viewModel.quote)) {
+                        HStack(spacing: 4) {
+                            Text(AttributedString("— ") + highlighted(author))
+                                .modifier(AuthorTextStyling())
+                            Image(systemName: "chevron.right")
+                                .font(.caption.weight(.bold))
+                                .foregroundColor(palette.accent.opacity(0.8))
                         }
-                    } else {
-                        Text(AttributedString("— ") + attributedAuthorString)
-                            .font(.body)
-                            .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .white)
-                            .padding(.bottom, 5)
-                            .frame(alignment: .trailing)
                     }
+                    .buttonStyle(PressableButtonStyle())
+                } else {
+                    Text(AttributedString("— ") + highlighted(author))
+                        .modifier(AuthorTextStyling())
                 }
             }
         }
+    }
+
+    private func actionIcon(_ systemName: String, active: Bool = false) -> some View {
+        Image(systemName: systemName)
+            .font(.system(size: 18, weight: .medium))
+            .foregroundColor(active ? palette.accent : palette.secondaryText)
+            .frame(width: 36, height: 32)
+            .contentShape(Rectangle())
     }
 
     private var quoteInteractionButtons: some View {
-        HStack {
-            HStack {
-                Button(action: {
-                    viewModel.toggleLike(for: quote)
-                }) {
-                    Image(systemName: viewModel.isLiked ? "heart.fill" : "heart")
-                        .modifier(QuoteInteractionButtonStyling())
-                }
+        let authorForSharing = (isAuthorValid(authorGiven: quote.author)) ? quote.author : ""
+        let wholeAuthorText = (authorForSharing != "") ? "\n— \(authorForSharing ?? "Unknown Author")" : ""
 
-                // Display the like count next to the heart button
-                Text("\(viewModel.likes)")
-                    .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .white)
+        return HStack(spacing: 6) {
+            Button(action: {
+                viewModel.toggleLike(for: quote)
+            }) {
+                HStack(spacing: 2) {
+                    actionIcon(viewModel.isLiked ? "heart.fill" : "heart", active: viewModel.isLiked)
+                    // The like count next to the heart button
+                    Text("\(viewModel.likes)")
+                        .font(.subheadline.weight(.semibold).monospacedDigit())
+                        .foregroundColor(viewModel.isLiked ? palette.accent : palette.secondaryText)
+                        .padding(.trailing, 6)
+                }
             }
+            .buttonStyle(PressableButtonStyle())
+            .accessibilityLabel(viewModel.isLiked ? "Unlike" : "Like")
 
             Button(action: {
                 let wasBookmarked = viewModel.isBookmarked
@@ -148,31 +141,34 @@ extension SingleQuoteView {
                     onBookmarkRemoved?()
                 }
             }) {
-                Image(systemName: viewModel.isBookmarked ? "bookmark.fill" : "bookmark")
-                    .modifier(QuoteInteractionButtonStyling())
-            }.padding(.leading, 5)
-
-            let authorForSharing = (isAuthorValid(authorGiven: quote.author)) ? quote.author : ""
-            let wholeAuthorText = (authorForSharing != "") ? "\n— \(authorForSharing ?? "Unknown Author")" : ""
+                actionIcon(viewModel.isBookmarked ? "bookmark.fill" : "bookmark", active: viewModel.isBookmarked)
+            }
+            .buttonStyle(PressableButtonStyle())
+            .accessibilityLabel(viewModel.isBookmarked ? "Remove from saved" : "Save")
 
             Button(action: {
                 UIPasteboard.general.setValue("\(quote.text)\(wholeAuthorText)",
                                               forPasteboardType: UTType.plainText.identifier)
                 viewModel.toggleCopy(for: quote)
-            }) {
-                Image(systemName: "doc.on.doc")
-                    .modifier(QuoteInteractionButtonStyling())
-            }.padding(.leading, 5)
-            
-            if let url = URL(string: "https://apps.apple.com/us/app/quote-droplet/id6455084603") {
-                ShareLink(item: url, message: Text("From the Quote Droplet app:\n\n\"\(quote.text)\"\(wholeAuthorText)")) {
-                    Image(systemName: "square.and.arrow.up")
-                        .modifier(QuoteInteractionButtonStyling())
-                        .padding(.leading, 5)
+                withAnimation(.easeOut(duration: 0.15)) { showCopiedCheck = true }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
+                    withAnimation(.easeOut(duration: 0.2)) { showCopiedCheck = false }
                 }
+            }) {
+                actionIcon(showCopiedCheck ? "checkmark" : "doc.on.doc", active: showCopiedCheck)
             }
+            .buttonStyle(PressableButtonStyle())
+            .accessibilityLabel("Copy")
 
             Spacer()
+
+            if let url = URL(string: "https://apps.apple.com/us/app/quote-droplet/id6455084603") {
+                ShareLink(item: url, message: Text("From the Quote Droplet app:\n\n\"\(quote.text)\"\(wholeAuthorText)")) {
+                    actionIcon("square.and.arrow.up")
+                }
+                .buttonStyle(PressableButtonStyle())
+                .accessibilityLabel("Share")
+            }
         }
     }
 }

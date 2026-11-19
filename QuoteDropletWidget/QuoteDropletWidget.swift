@@ -234,6 +234,7 @@ struct QuoteDropletWidgetEntryView : View {
                     .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .authorText))) // Use the selected font for author text
                 }
             }
+            .multilineTextAlignment(.center)
             .padding()
             .onAppear {
                 isBookmarked = isQuoteBookmarked(widgetQuote)
@@ -302,6 +303,7 @@ struct QuoteDropletWidgetEntryView : View {
                         .font(Font.custom(availableFonts[data.getSelectedFontIndex()], size: getFontSizeForText(familia: family, whichText: .authorText))) // Use the selected font for author text
                     }
                 }
+                .multilineTextAlignment(.center)
                 .padding()
             }
             .onAppear {
@@ -440,9 +442,9 @@ struct QuoteDropletWidget_Previews: PreviewProvider {
             ),
             widgetColorPaletteIndex: 420,
             widgetCustomColorPalette: [
-                Color(hex: "1C7C54"),
-                Color(hex: "E2B6CF"),
-                Color(hex: "DEF4C6")
+                Color(hex: defaultCustomPaletteHex[0]),
+                Color(hex: defaultCustomPaletteHex[1]),
+                Color(hex: defaultCustomPaletteHex[2])
             ],
             quoteFrequency: .oneDay,
             quoteCategory: .all
