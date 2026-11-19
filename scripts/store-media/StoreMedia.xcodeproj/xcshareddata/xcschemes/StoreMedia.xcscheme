@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9C23AD1A17714BD435E6B709"
+               BlueprintIdentifier = "07B8A082636CD129F48EC1BF"
                BuildableName = "MediaHost.app"
                BlueprintName = "MediaHost"
                ReferencedContainer = "container:StoreMedia.xcodeproj">
@@ -28,7 +28,7 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E8B3877CDF5F6AF06B2246EC"
+               BlueprintIdentifier = "C7C8CCCA5AFD4492453FD9C7"
                BuildableName = "MediaUITests.xctest"
                BlueprintName = "MediaUITests"
                ReferencedContainer = "container:StoreMedia.xcodeproj">
@@ -46,7 +46,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E8B3877CDF5F6AF06B2246EC"
+               BlueprintIdentifier = "C7C8CCCA5AFD4492453FD9C7"
                BuildableName = "MediaUITests.xctest"
                BlueprintName = "MediaUITests"
                ReferencedContainer = "container:StoreMedia.xcodeproj">

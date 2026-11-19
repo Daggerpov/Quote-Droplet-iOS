@@ -36,7 +36,13 @@ extension XCTestCase {
     }
 
     func openTab(_ name: String) {
-        let button = app.tabBars.buttons[name]
+        let tabBarButton = app.tabBars.buttons[name]
+        if tabBarButton.waitForExistence(timeout: 2) {
+            tabBarButton.tap()
+            return
+        }
+        // iPad shows the tabs in a bar at the top, exposed as plain buttons.
+        let button = app.buttons.matching(NSPredicate(format: "label == %@", name)).firstMatch
         XCTAssertTrue(button.waitForExistence(timeout: 5), "tab \(name)")
         button.tap()
     }
@@ -57,6 +63,6 @@ extension XCTestCase {
         app.terminate()
         app.launch()
         allowNotificationsIfAsked()
-        _ = app.tabBars.firstMatch.waitForExistence(timeout: 10)
+        _ = app.buttons["Droplets"].firstMatch.waitForExistence(timeout: 10)
     }
 }
