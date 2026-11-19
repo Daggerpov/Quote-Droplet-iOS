@@ -12,125 +12,203 @@ import Foundation
 @available(iOS 16.0, *)
 struct AppearanceSubview: View {
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
-    
+
     @AppStorage("selectedFontIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
     var selectedFontIndex = 0
-    
+
     @AppStorage("widgetColorPaletteIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
     var widgetColorPaletteIndex = 0
-    
+
     @AppStorage("widgetCustomColorPaletteFirstIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteFirstIndex = "1C7C54"
-    
+    private var widgetCustomColorPaletteFirstIndex = defaultCustomPaletteHex[0]
+
     @AppStorage("widgetCustomColorPaletteSecondIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteSecondIndex = "E2B6CF"
-    
+    private var widgetCustomColorPaletteSecondIndex = defaultCustomPaletteHex[1]
+
     @AppStorage("widgetCustomColorPaletteThirdIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteThirdIndex = "DEF4C6"
-    
+    private var widgetCustomColorPaletteThirdIndex = defaultCustomPaletteHex[2]
+
+    private var palette: AppPalette { sharedVars.palette }
+
     var body: some View {
-        VStack {
-            Spacer()
+        VStack(alignment: .leading, spacing: 22) {
             widgetPreviewSection
-            Spacer()
             fontSelector
-            Spacer()
             sampleColorSection
             customColorSection
-            Spacer()
         }
     }
 }
 
 @available(iOS 16.0, *)
 extension AppearanceSubview {
+    private func reloadWidgets() {
+        WidgetCenter.shared.reloadTimelines(ofKind: "QuoteDropletWidget")
+        WidgetCenter.shared.reloadTimelines(ofKind: "QuoteDropletWidgetWithIntents")
+    }
+
+    private var widgetPreviewSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SectionLabel(text: "Widget preview")
+            ZStack {
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .fill(palette.background)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .stroke(palette.hairline, lineWidth: 1)
+                    )
+                    .shadow(color: Color.black.opacity(palette.isDark ? 0.35 : 0.14), radius: 16, x: 0, y: 8)
+                VStack(spacing: 10) {
+                    Text("More is lost by indecision than by wrong decision.")
+                        .font(Font.custom(availableFonts[safe: selectedFontIndex] ?? "Georgia", size: 19))
+                        .foregroundColor(palette.text)
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(3)
+                        .minimumScaleFactor(0.6)
+                    Text("— Cicero")
+                        .font(Font.custom(availableFonts[safe: selectedFontIndex] ?? "Georgia", size: 15))
+                        .foregroundColor(palette.accent)
+                        .lineLimit(1)
+                }
+                .padding(.horizontal, 26)
+            }
+            .frame(height: 158)
+            .padding(.horizontal, 4)
+            .animation(.easeInOut(duration: 0.25), value: sharedVars.colorPaletteIndex)
+        }
+    }
+
     private var fontSelector: some View {
-        HStack {
-            Text("Widget Font:")
-                .modifier(BasePicker_TextStyling())
+        SettingsRowLabel(icon: "textformat", title: "Widget font") {
             Picker("", selection: $selectedFontIndex) {
                 ForEach(0..<availableFonts.count, id: \.self) { index in
                     Text(availableFonts[index])
                         .font(Font.custom(availableFonts[index], size: 16))
                 }
             }
-            .modifier(BasePicker_PickerStyling())
+            .pickerStyle(.menu)
+            .labelsHidden()
+            .tint(palette.accent)
             .onChange(of: selectedFontIndex) { _ in
-                WidgetCenter.shared.reloadTimelines(ofKind: "QuoteDropletWidget")
-                WidgetCenter.shared.reloadTimelines(ofKind: "QuoteDropletWidgetWithIntents")
+                reloadWidgets()
             }
         }
-        .modifier(BasePicker_OuterBackgroundStyling())
+        .padding(.horizontal, 16)
+        .padding(.vertical, 2)
+        .modifier(CardStyling(padding: 0))
     }
+
     private var sampleColorSection: some View {
-        VStack {
-            Text("Sample Colors:")
-                .modifier(ColorPaletteTitleStyling())
-            sampleColorPickers
-        }
-        .frame(alignment: .center)
-    }
-    
-    private var sampleColorPickers: some View {
-        VStack{
-            HStack(spacing: 10) {
-                ForEach(0..<3, id: \.self) { paletteIndex in
-                    sampleColorPicker(index: paletteIndex)
-                }
-                sampleColorPicker(index: 4)
-            }
-            HStack(spacing: 10) {
-                ForEach(5..<colorPalettes.count, id: \.self) { paletteIndex in
+        VStack(alignment: .leading, spacing: 10) {
+            SectionLabel(text: "Color palette")
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 4), spacing: 14) {
+                ForEach(paletteDisplayOrder, id: \.self) { paletteIndex in
                     sampleColorPicker(index: paletteIndex)
                 }
             }
+            .modifier(CardStyling(padding: 16))
         }
     }
-    
+
+    private func swatch(for index: Int, size: CGFloat) -> some View {
+        let swatchPalette = appPalette(index)
+        let isSelected = sharedVars.colorPaletteIndex == index
+        return ZStack(alignment: .bottomTrailing) {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(swatchPalette.background)
+                .overlay(
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("Aa")
+                            .font(.system(size: size * 0.3, weight: .semibold, design: .serif))
+                            .foregroundColor(swatchPalette.text)
+                        Capsule()
+                            .fill(swatchPalette.accent)
+                            .frame(width: size * 0.36, height: 4)
+                    }
+                    .padding(10),
+                    alignment: .topLeading
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(isSelected ? palette.accent : palette.hairline, lineWidth: isSelected ? 3 : 1)
+                )
+            if isSelected {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 18, weight: .bold))
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(palette.onAccent, palette.accent)
+                    .offset(x: 5, y: 5)
+            }
+        }
+        .frame(height: size)
+    }
+
     private func sampleColorPicker(index: Int) -> some View {
-        ColorPaletteView(colors: colorPalettes[safe: index] ?? [])
-            .modifier(ColorPickerOuterStyling(index: index))
-            .onTapGesture {
+        Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
                 sharedVars.colorPaletteIndex = index
-                widgetColorPaletteIndex = index
-                WidgetCenter.shared.reloadTimelines(ofKind: "QuoteDropletWidget")
-                WidgetCenter.shared.reloadTimelines(ofKind: "QuoteDropletWidgetWithIntents")
             }
+            widgetColorPaletteIndex = index
+            reloadWidgets()
+        } label: {
+            VStack(spacing: 6) {
+                swatch(for: index, size: 70)
+                Text(paletteNames[safe: index] ?? "")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundColor(sharedVars.colorPaletteIndex == index ? palette.text : palette.secondaryText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+        }
+        .buttonStyle(PressableButtonStyle())
+        .accessibilityLabel("\(paletteNames[safe: index] ?? "") palette")
+        .accessibilityAddTraits(sharedVars.colorPaletteIndex == index ? .isSelected : [])
     }
-    
+
     private var customColorSection: some View {
-        VStack {
-            Text("Custom Colors:")
-                .modifier(ColorPaletteTitleStyling())
-            customColorPickers
-        }
-        .frame(alignment: .center)
-    }
-    
-    private var customColorPickers: some View {
-        HStack(spacing: 10) {
-            ForEach(0..<(colorPalettes.last?.count ?? 0), id: \.self) { customIndex in
-                if customIndex == 2 {
-                    // essentially only padding the last one
-                    customColorPicker(index: customIndex)
-                        .padding(.trailing, 30)
-                } else {
-                    customColorPicker(index: customIndex)
+        VStack(alignment: .leading, spacing: 10) {
+            SectionLabel(text: "Custom palette")
+            HStack(alignment: .center, spacing: 16) {
+                Button {
+                    sharedVars.colorPaletteIndex = customPaletteIndex
+                    widgetColorPaletteIndex = customPaletteIndex
+                    reloadWidgets()
+                } label: {
+                    swatch(for: customPaletteIndex, size: 70)
+                        .frame(width: 70)
                 }
-                
+                .buttonStyle(PressableButtonStyle())
+                .accessibilityLabel("Custom palette")
+
+                HStack(spacing: 0) {
+                    ForEach(0..<3, id: \.self) { customIndex in
+                        VStack(spacing: 6) {
+                            customColorPicker(index: customIndex)
+                            Text(["Background", "Text", "Accent"][customIndex])
+                                .font(.caption2.weight(.semibold))
+                                .foregroundColor(palette.secondaryText)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }
             }
+            .modifier(CardStyling(padding: 16))
+            Text("Pick any three colors. Your widget and the app both use them.")
+                .font(.footnote)
+                .foregroundColor(palette.secondaryText)
+                .padding(.horizontal, 4)
         }
     }
-    
+
     private func customColorPicker(index: Int) -> some View {
         ColorPicker("",
             selection: Binding(
                 get: {
-                    colorPalettes[3][index]
+                    colorPalettes[customPaletteIndex][index]
                 },
                 set: { newColor in
 
-                    colorPalettes[3][index] = newColor
+                    colorPalettes[customPaletteIndex][index] = newColor
 
                     if (index == 0) {
                         widgetCustomColorPaletteFirstIndex = newColor.hex
@@ -138,48 +216,16 @@ extension AppearanceSubview {
                         widgetCustomColorPaletteSecondIndex = newColor.hex
                     } else if (index == 2) {
                         widgetCustomColorPaletteThirdIndex = newColor.hex
-                    } else {
-                        // do nothing, idk
                     }
-                    sharedVars.colorPaletteIndex = 3
-                    widgetColorPaletteIndex = 3
-                    WidgetCenter.shared.reloadTimelines(ofKind: "QuoteDropletWidget")
-                    WidgetCenter.shared.reloadTimelines(ofKind: "QuoteDropletWidgetWithIntents")
+                    sharedVars.colorPaletteIndex = customPaletteIndex
+                    widgetColorPaletteIndex = customPaletteIndex
+                    reloadWidgets()
                 }
             ),
-            supportsOpacity: true
+            supportsOpacity: false
         )
-        .modifier(ColorPickerOuterStyling(index: index))
-        .onChange(of: colorPalettes) { _ in
-            WidgetCenter.shared.reloadTimelines(ofKind: "QuoteDropletWidget")
-            WidgetCenter.shared.reloadTimelines(ofKind: "QuoteDropletWidgetWithIntents")
-        }
-    }
-    
-    private var widgetPreviewSection: some View {
-        VStack {
-            ZStack {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(colorPalettes[safe: sharedVars.colorPaletteIndex]?[0] ?? .clear)
-                    .overlay(
-                        VStack {
-                            Spacer()
-                            Text("More is lost by indecision than by wrong decision.")
-                                .modifier(WidgetPreviewTextStyling(fontSize: 16, selectedFontIndex: selectedFontIndex, colorPaletteIndex: 1))
-                                .multilineTextAlignment(.center)
-                                .lineSpacing(4)
-                                .frame(maxHeight: .infinity)
-                            
-                            Text("— Cicero")
-                                .modifier(WidgetPreviewTextStyling(fontSize: 14, selectedFontIndex: selectedFontIndex, colorPaletteIndex: 2))
-                                .lineLimit(1)
-                        }
-                    )
-                    .cornerRadius(8)
-                    .shadow(color: Color.black.opacity(0.25), radius: 10, x: 0, y: 0)
-            }
-            .frame(width: 150, height: 150)
-        }
-        .padding(.bottom, 10)
+        .labelsHidden()
+        .scaleEffect(1.25)
+        .frame(width: 40, height: 40)
     }
 }

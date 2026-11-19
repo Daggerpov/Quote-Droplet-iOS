@@ -13,19 +13,6 @@ struct AuthorView: View {
     @StateObject var viewModel: AuthorViewModel
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
 
-    @AppStorage("widgetColorPaletteIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    var widgetColorPaletteIndex = 0
-
-    // actual colors of custom:
-    @AppStorage("widgetCustomColorPaletteFirstIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteFirstIndex = "1C7C54"
-
-    @AppStorage("widgetCustomColorPaletteSecondIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteSecondIndex = "E2B6CF"
-
-    @AppStorage("widgetCustomColorPaletteThirdIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteThirdIndex = "DEF4C6"
-
     init(quote: Quote) {
         _viewModel = StateObject(wrappedValue: AuthorViewModel(
             quote: quote,
@@ -35,63 +22,63 @@ struct AuthorView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            VStack {
-                HStack {
-                    Spacer()
-                    Text("Quotes by \(viewModel.quote.author ?? "Author"):")
-                        .modifier(QuotesPageTitleStyling())
-
-                    Spacer()
+        let palette = sharedVars.palette
+        ScrollView {
+            LazyVStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("QUOTES BY")
+                        .font(AppFont.eyebrow)
+                        .tracking(1.4)
+                        .foregroundColor(palette.accent)
+                    Text(viewModel.quote.author ?? "Author")
+                        .font(AppFont.screenTitle)
+                        .foregroundColor(palette.text)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, AppMetrics.screenPadding)
 
-                ScrollView {
-                    Spacer()
-                    LazyVStack{
-                        if viewModel.quotes.isEmpty {
-                            Text("Loading Quotes...")
-                                .modifier(QuotesPageTextStyling())
-                        } else {
-                            ForEach(viewModel.quotes) { quote in
-                                SingleQuoteView(quote: quote, from: .authorView)
-                            }
-                        }
-                        Color.clear.frame(height: 1)
-                            .onAppear {
-                                if !viewModel.isLoadingMore && viewModel.quotes.count < AuthorViewModel.maxQuotes {
-                                    viewModel.loadMoreQuotes()
-                                }
-                            }
-                        Spacer()
-
-                        VStack{
-                            Text("Missing a quote from this author?\nI'd greatly appreciate submissions:")
-                                .modifier(QuotesPageTextStyling())
-
-                            SubmitView(viewModel: SubmitViewModel(apiService: viewModel.apiService))
-                        }
-
-                        if !viewModel.isLoadingMore {
-                            if (viewModel.quotes.count >= AuthorViewModel.maxQuotes) {
-                                Text("You've reached the quote limit of \(AuthorViewModel.maxQuotes). Maybe take a break?")
-                                    .modifier(QuotesPageTextStyling())
-                            }
-                        }
-                        Spacer()
+                if viewModel.quotes.isEmpty {
+                    ProgressView()
+                        .tint(palette.accent)
+                        .padding(.top, 40)
+                } else {
+                    ForEach(viewModel.quotes) { quote in
+                        SingleQuoteView(quote: quote, from: .authorView)
                     }
                 }
+                Color.clear.frame(height: 1)
+                    .onAppear {
+                        if !viewModel.isLoadingMore && viewModel.quotes.count < AuthorViewModel.maxQuotes {
+                            viewModel.loadMoreQuotes()
+                        }
+                    }
 
-            }
-            .modifier(MainScreenBackgroundStyling())
-            .onAppear {
-                // Fetch initial quotes when the view appears
-                viewModel.loadInitialQuotes()
-                sharedVars.colorPaletteIndex = widgetColorPaletteIndex
+                VStack(spacing: 14) {
+                    Text("Missing a quote from this author? I'd greatly appreciate submissions.")
+                        .font(.subheadline)
+                        .foregroundColor(palette.secondaryText)
+                        .multilineTextAlignment(.center)
+                    SubmitView(viewModel: SubmitViewModel(apiService: viewModel.apiService))
+                }
+                .modifier(CardStyling(padding: 20))
+                .padding(.horizontal, AppMetrics.screenPadding)
 
-                colorPalettes[3][0] = Color(hex: widgetCustomColorPaletteFirstIndex)
-                colorPalettes[3][1] = Color(hex: widgetCustomColorPaletteSecondIndex)
-                colorPalettes[3][2] = Color(hex: widgetCustomColorPaletteThirdIndex)
+                if !viewModel.isLoadingMore {
+                    if (viewModel.quotes.count >= AuthorViewModel.maxQuotes) {
+                        Text("You've reached the quote limit of \(AuthorViewModel.maxQuotes). Maybe take a break?")
+                            .modifier(QuotesPageTextStyling())
+                    }
+                }
             }
+            .padding(.bottom, 24)
+        }
+        .modifier(MainScreenBackgroundStyling())
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            // Fetch initial quotes when the view appears
+            viewModel.loadInitialQuotes()
+            sharedVars.reloadFromDefaults()
         }
     }
 }

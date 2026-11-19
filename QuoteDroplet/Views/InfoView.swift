@@ -23,234 +23,188 @@ struct InfoView: View {
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
     @StateObject var feedbackViewModel = FeedbackViewModel(apiService: APIService())
 
-    @AppStorage("widgetColorPaletteIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    var widgetColorPaletteIndex = 0
-
-    // actual colors of custom:
-    @AppStorage("widgetCustomColorPaletteFirstIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteFirstIndex = "1C7C54"
-
-    @AppStorage("widgetCustomColorPaletteSecondIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteSecondIndex = "E2B6CF"
-
-    @AppStorage("widgetCustomColorPaletteThirdIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteThirdIndex = "DEF4C6"
-
     @Environment(\.requestReview) var requestReview
 
     @State private var showMacAlert = false
 
-    
+    private var palette: AppPalette { sharedVars.palette }
 
     var body: some View {
-        NavigationStack {
-            VStack {
-                Spacer()
-                HStack {
-                    Spacer()
-                    Text("App Info (Version \(Bundle.main.releaseVersionNumber ?? "Unknown"))")
-                        .font(.title)
-                        .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .blue)
-                        .padding(.bottom, 5)
-
-                    Spacer()
-                }
-                shareAppButton
-                Spacer()
-                reviewButton
-                Spacer()
-                feedbackButton
-                Spacer()
-                macNoteSection
-                Spacer()
+        ScrollView {
+            VStack(spacing: 22) {
+                heroSection
+                actionsSection
                 aboutMeSection
-                Spacer()
             }
-            .modifier(MainScreenBackgroundStyling())
-            .padding()
-            .onAppear {
-                // Fetch initial quotes when the view appears
-                sharedVars.colorPaletteIndex = widgetColorPaletteIndex
-
-                colorPalettes[3][0] = Color(hex: widgetCustomColorPaletteFirstIndex)
-                colorPalettes[3][1] = Color(hex: widgetCustomColorPaletteSecondIndex)
-                colorPalettes[3][2] = Color(hex: widgetCustomColorPaletteThirdIndex)
-            }
-            .sheet(isPresented: $feedbackViewModel.isSubmittingFeedback) {
-                feedbackSubmissionView
-            }
-            // Both alerts live here: a legacy .alert(isPresented:) on this ancestor stopped the
-            // Mac note's alert (previously attached to its button) from ever presenting
-            .alert("Feedback Received", isPresented: $feedbackViewModel.showSubmissionReceivedAlert) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text(feedbackViewModel.submissionMessage)
-            }
-            .alert("Note for Mac Owners", isPresented: $showMacAlert) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text("You can actually add this same iOS widget to your Mac's widgets by clicking the date in the top-right corner of your Mac -> Edit Widgets.\n\nAlso, Quote Droplet has a Mac version available on the App Store. It conveniently shows quotes from a small icon in your menu bar, even offline.")
-            }
+            .padding(.horizontal, AppMetrics.screenPadding)
+            .padding(.top, 8)
+            .padding(.bottom, 32)
         }
         .modifier(MainScreenBackgroundStyling())
-        .padding()
+        .navigationTitle("About")
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            sharedVars.reloadFromDefaults()
+        }
+        .sheet(isPresented: $feedbackViewModel.isSubmittingFeedback) {
+            feedbackSubmissionView
+                .environmentObject(sharedVars)
+                .preferredColorScheme(palette.colorScheme)
+        }
+        // Both alerts live here: a legacy .alert(isPresented:) on this ancestor stopped the
+        // Mac note's alert (previously attached to its button) from ever presenting
+        .alert("Feedback Received", isPresented: $feedbackViewModel.showSubmissionReceivedAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(feedbackViewModel.submissionMessage)
+        }
+        .alert("Note for Mac Owners", isPresented: $showMacAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("You can actually add this same iOS widget to your Mac's widgets by clicking the date in the top-right corner of your Mac -> Edit Widgets.\n\nAlso, Quote Droplet has a Mac version available on the App Store. It conveniently shows quotes from a small icon in your menu bar, even offline.")
+        }
     }
 }
 
 
 @available(iOS 16.0, *)
 extension InfoView {
-    private var aboutMeSection: some View {
-        HStack {
-            Spacer()
-            buildLinkImage(urlForImage: "https://www.instagram.com/quote_droplet_app", imageName: "instagramlogo")
-            Spacer()
-            buildLinkImage(urlForImage: "https://www.linkedin.com/in/danielagapov/", imageName: "linkedinlogo")
-            Spacer()
-            buildLinkImage(urlForImage: "https://github.com/Daggerpov", imageName: "githublogo")
-            Spacer()
-            buildLinkImage(urlForImage: "mailto:danielagapov1@gmail.com?subject=Quote%20Droplet%20Contact", imageName: "gmaillogo", widthSpecified: 60)
-            Spacer()
+    private var heroSection: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "drop.fill")
+                .font(.system(size: 34, weight: .semibold))
+                .foregroundColor(palette.onAccent)
+                .frame(width: 76, height: 76)
+                .background(
+                    RoundedRectangle(cornerRadius: 22, style: .continuous)
+                        .fill(LinearGradient(colors: [palette.accent, palette.accent.mixed(with: .black, amount: 0.18)],
+                                             startPoint: .topLeading, endPoint: .bottomTrailing))
+                )
+                .shadow(color: palette.shadow, radius: 12, x: 0, y: 6)
+            Text("Quote Droplet")
+                .font(.system(size: 28, weight: .bold, design: .serif))
+                .foregroundColor(palette.text)
+            Text("Version \(Bundle.main.releaseVersionNumber ?? "Unknown")")
+                .font(.subheadline)
+                .foregroundColor(palette.secondaryText)
         }
-        
-        .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
-        .background(ColorPaletteView(colors: [colorPalettes[safe: sharedVars.colorPaletteIndex]?[0] ?? Color.clear]))
-        .cornerRadius(20)
-        .shadow(radius: 5)
-        .padding(.horizontal)
+        .padding(.top, 12)
     }
-    
-    private var shareAppButton: some View {
-        HStack{
-            HStack{
-                ShareLink(item: URL(string: "https://apps.apple.com/us/app/quote-droplet/id6455084603")!, message: Text("Check out this app, Quote Droplet.")){
-                    Label("Share Quote Droplet", systemImage: "arrow.up.right.square")
-                        .font(.title3)
-                        .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[1] ?? .blue)
-                }
-                
+
+    private var actionsSection: some View {
+        VStack(spacing: 0) {
+            ShareLink(item: URL(string: "https://apps.apple.com/us/app/quote-droplet/id6455084603")!, message: Text("Check out this app, Quote Droplet.")) {
+                SettingsRowLabel(icon: "square.and.arrow.up", title: "Share Quote Droplet") { RowChevron() }
             }
-            .modifier(RoundedRectangleStyling())
-        }
-    }
-    
-    private var donateButton: some View {
-        HStack{
-            HStack{
-                Link(destination: URL(string: "https://buy.stripe.com/fZe17cbqd25Q0Mw000")!) {
-                    Label("Donate", systemImage: "giftcard")
-                        .font(.title3)
-                        .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[1] ?? .blue)
-                }
-                
-            }
-            .modifier(RoundedRectangleStyling())
-        }
-    }
-    
-    private var feedbackButton: some View {
-        Button(action: {
-            feedbackViewModel.isSubmittingFeedback = true
-        }) {
-            HStack {
-                Image(systemName: "bubble.left.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 25, height: 25)
-                Text("Send Feedback")
-                    .font(.title3)
-            }
-            .modifier(RoundedRectangleStyling())
-        }
-        .padding()
-    }
-    
-    
-    private var reviewButton: some View {
-        
-        return HStack{
+            .buttonStyle(PressableButtonStyle())
+            RowDivider()
             Button(action: {
                 requestReview()
             }) {
-                HStack {
-                    Image(systemName: "star")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 25, height: 25)
-                    Text("Rate Quote Droplet")
-                        .font(.title3)
-                }
-                .modifier(RoundedRectangleStyling())
+                SettingsRowLabel(icon: "star.fill", title: "Rate Quote Droplet") { RowChevron() }
             }
-            .padding()
-        }
-    }
-    
-    private var macNoteSection: some View {
-        VStack (spacing: 10){
+            .buttonStyle(PressableButtonStyle())
+            RowDivider()
+            Button(action: {
+                feedbackViewModel.isSubmittingFeedback = true
+            }) {
+                SettingsRowLabel(icon: "bubble.left.fill", title: "Send Feedback", subtitle: "Bugs, ideas or quote corrections") { RowChevron() }
+            }
+            .buttonStyle(PressableButtonStyle())
+            RowDivider()
             Button(action: {
                 showMacAlert = true
             }) {
-                HStack {
-                    Image(systemName: "info.circle")
-                    Text("Note for Mac Owners")
-                        .font(.title3)
-                }
-                .modifier(RoundedRectangleStyling())
+                SettingsRowLabel(icon: "laptopcomputer", title: "Note for Mac Owners") { RowChevron(systemName: "info.circle") }
             }
+            .buttonStyle(PressableButtonStyle())
+        }
+        .modifier(CardStyling(padding: 16))
+    }
+
+    private var aboutMeSection: some View {
+        VStack(spacing: 10) {
+            SectionLabel(text: "Find me online")
+            HStack(spacing: 0) {
+                Spacer()
+                buildLinkImage(urlForImage: "https://www.instagram.com/quote_droplet_app", imageName: "instagramlogo")
+                Spacer()
+                buildLinkImage(urlForImage: "https://www.linkedin.com/in/danielagapov/", imageName: "linkedinlogo")
+                Spacer()
+                buildLinkImage(urlForImage: "https://github.com/Daggerpov", imageName: "githublogo")
+                Spacer()
+                buildLinkImage(urlForImage: "mailto:danielagapov1@gmail.com?subject=Quote%20Droplet%20Contact", imageName: "gmaillogo", widthSpecified: 40)
+                Spacer()
+            }
+            .modifier(CardStyling(padding: 16))
         }
     }
-    
+
     private var feedbackSubmissionView: some View {
-        VStack {
-            HStack {
-                Button(action: {
-                    feedbackViewModel.showSubmissionInfoAlert = true
-                }) {
-                    HStack {
-                        Image(systemName: "info.circle")
-                            .font(.title3)
-                        Text("About Feedback")
+        NavigationStack {
+            Form {
+                Section {
+                    Picker("Feedback Type", selection: $feedbackViewModel.feedbackType) {
+                        Text("General").tag("General")
+                        Text("Bug Report").tag("Bug Report")
+                        Text("Feature Request").tag("Feature Request")
+                        Text("Content").tag("Content")
                     }
-                    .padding()
+
+                    TextField("What's on your mind?", text: $feedbackViewModel.feedbackText, axis: .vertical)
+                        .lineLimit(5...10)
+                } header: {
+                    Text("Feedback")
                 }
-                .alert(isPresented: $feedbackViewModel.showSubmissionInfoAlert) {
-                    Alert(
-                        title: Text("About Feedback"),
-                        message: Text("Your feedback helps me improve Quote Droplet. I personally review all feedback and take it into consideration for future updates."),
-                        dismissButton: .default(Text("OK"))
-                    )
+                .modifier(PaletteFormRowStyling())
+
+                Section {
+                    TextField("Email (optional)", text: $feedbackViewModel.contactEmail)
+                        .keyboardType(.emailAddress)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                } header: {
+                    Text("Contact")
+                } footer: {
+                    Text("Only if you'd like a reply.")
+                }
+                .modifier(PaletteFormRowStyling())
+
+                Section {
+                    Button {
+                        feedbackViewModel.submitFeedback()
+                    } label: {
+                        Text("Send Feedback")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(PrimaryButtonStyle(palette: palette))
+                    .disabled(feedbackViewModel.feedbackText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets())
                 }
             }
-            
-            NavigationStack {
-                Text("Send Feedback")
-                    .font(.largeTitle.bold())
-                    .padding(.bottom, 5)
-                
-                Form {
-                    Section {
-                        Picker("Feedback Type", selection: $feedbackViewModel.feedbackType) {
-                            Text("General").tag("General")
-                            Text("Bug Report").tag("Bug Report")
-                            Text("Feature Request").tag("Feature Request")
-                            Text("Content").tag("Content")
-                        }
-                        .pickerStyle(DefaultPickerStyle())
-                        
-                        TextField("Feedback Message", text: $feedbackViewModel.feedbackText, axis: .vertical)
-                            .lineLimit(5...10)
-                        
-                        TextField("Email (Optional)", text: $feedbackViewModel.contactEmail)
-                            .keyboardType(.emailAddress)
-                            .autocapitalization(.none)
-                    }
-                    
-                    Button("Submit Feedback") {
-                        feedbackViewModel.submitFeedback()
+            .modifier(PaletteFormStyling())
+            .navigationTitle("Send Feedback")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        feedbackViewModel.isSubmittingFeedback = false
                     }
                 }
-                .accentColor(.blue)
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        feedbackViewModel.showSubmissionInfoAlert = true
+                    } label: {
+                        Image(systemName: "info.circle")
+                    }
+                    .accessibilityLabel("About feedback")
+                }
+            }
+            .alert("About Feedback", isPresented: $feedbackViewModel.showSubmissionInfoAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("Your feedback helps me improve Quote Droplet. I personally review all feedback and take it into consideration for future updates.")
             }
         }
     }

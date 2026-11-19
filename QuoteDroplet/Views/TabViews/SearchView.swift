@@ -14,30 +14,23 @@ struct SearchView: View {
         localQuotesService: LocalQuotesService(),
         apiService: APIService()
     )
-    
+
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
-    
-    @AppStorage("widgetColorPaletteIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    var widgetColorPaletteIndex = 0
-    
-    // actual colors of custom:
-    @AppStorage("widgetCustomColorPaletteFirstIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteFirstIndex = "1C7C54"
-    
-    @AppStorage("widgetCustomColorPaletteSecondIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteSecondIndex = "E2B6CF"
-    
-    @AppStorage("widgetCustomColorPaletteThirdIndex", store: UserDefaults(suiteName: "group.selectedSettings"))
-    private var widgetCustomColorPaletteThirdIndex = "DEF4C6"
-    
-    // for top UI stuff:
-    @Namespace private var animation
-    
+    @FocusState private var isSearchFocused: Bool
+
+    private let suggestions = ["Seneca", "courage", "Marcus Aurelius", "time", "kindness", "Maya Angelou"]
+
     var body: some View {
-        NavigationStack{
-            VStack{
+        NavigationStack {
+            VStack(spacing: 14) {
+                HeaderView(title: "Search", subtitle: "Find a quote")
+                searchField
+                CategoryChips(categories: QuoteCategory.allCases, selection: $viewModel.activeCategory)
+                    .onChange(of: viewModel.activeCategory) { _ in
+                        viewModel.loadQuotesBySearch()
+                    }
                 ScrollView(.vertical) {
-                    LazyVStack(spacing: 15) {
+                    LazyVStack(spacing: 16) {
                         if viewModel.searchText != "" {
                             ForEach(viewModel.quotes) { quote in
                                 SingleQuoteView(
@@ -47,21 +40,18 @@ struct SearchView: View {
                                 )
                             }
                         } else {
-                            DummyQuotesView()
+                            suggestionsView
                         }
                     }
-                    .safeAreaInset(edge: .top, spacing: 0) {
-                        ExpandableSearchBar()
-                    }
+                    .padding(.top, 6)
+                    .padding(.bottom, 24)
                 }
+                .scrollDismissesKeyboard(.interactively)
             }
             .modifier(MainScreenBackgroundStyling())
+            .toolbar(.hidden, for: .navigationBar)
             .onAppear() {
-                sharedVars.colorPaletteIndex = widgetColorPaletteIndex
-                
-                colorPalettes[3][0] = Color(hex: widgetCustomColorPaletteFirstIndex)
-                colorPalettes[3][1] = Color(hex: widgetCustomColorPaletteSecondIndex)
-                colorPalettes[3][2] = Color(hex: widgetCustomColorPaletteThirdIndex)
+                sharedVars.reloadFromDefaults()
             }
         }
     }
@@ -71,125 +61,125 @@ struct SearchView: View {
 struct SearchView_Previews: PreviewProvider {
     static var previews: some View {
         SearchView()
+            .environmentObject(SharedVarsBetweenTabs())
     }
 }
 
 @available(iOS 16.0, *)
 extension SearchView {
-    @ViewBuilder
-    func ExpandableSearchBar(_ title: String = "Quote Search") -> some View {
-        VStack(spacing: 10) {
-            Text(title)
-                .font(.largeTitle.bold())
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .blue)
-                .padding(.bottom, 5)
-            HStack(spacing: 12) {
-                Image(systemName: "magnifyingglass").font(.title3)
-                TextField("Search by quote text or author name", text: $viewModel.searchText)
-                    .onChange(of: viewModel.searchText) { _ in
-                        viewModel.loadQuotesBySearch()
-                    }
-                
-                // Clear/dismiss button
-                if !viewModel.searchText.isEmpty {
-                    Button(action: {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            viewModel.clearSearch()
-                        }
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.title3)
-                            .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .gray)
-                    }
-                    .transition(.scale.combined(with: .opacity))
-                }
-            }
-            .padding(.vertical, 10)
-            .padding(.horizontal, 15)
-            .frame(height: 45)
-            .background{
-                RoundedRectangle(cornerRadius: 25).fill(.background)
-            }
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ForEach(QuoteCategory.allCases, id: \.rawValue) { category in
-                        Button(action: {
-                            withAnimation(.snappy) {
-                                viewModel.activeCategory = category
-                            }
-                            
-                        }) {
-                            Text(category.rawValue)
-                                .font(.callout)
-                                .foregroundColor(colorPalettes[safe: sharedVars.colorPaletteIndex]?[0] ?? .blue)
-                                .padding(.vertical, 8)
-                                .padding(.horizontal, 15)
-                                .background {
-                                    if viewModel.activeCategory == category {
-                                        Capsule()
-                                            .fill(colorPalettes[safe: sharedVars.colorPaletteIndex]?[1] ?? .white)
-                                            .matchedGeometryEffect(id: "ACTIVECATEGORY", in: animation)
-                                    } else {
-                                        Capsule()
-                                            .fill(colorPalettes[safe: sharedVars.colorPaletteIndex]?[2] ?? .blue)
-                                    }
-                                }
-                        }
-                        .buttonStyle(.plain)
-                        
-                    }
-                }
-                .onChange(of: viewModel.activeCategory) { _ in
+    private var searchField: some View {
+        let palette = sharedVars.palette
+        return HStack(spacing: 10) {
+            Image(systemName: "magnifyingglass")
+                .font(.body.weight(.semibold))
+                .foregroundColor(palette.secondaryText)
+            TextField("", text: $viewModel.searchText, prompt: Text("Quote text or author").foregroundColor(palette.secondaryText))
+                .foregroundColor(palette.text)
+                .focused($isSearchFocused)
+                .submitLabel(.search)
+                .autocorrectionDisabled()
+                .onChange(of: viewModel.searchText) { _ in
                     viewModel.loadQuotesBySearch()
                 }
-                .padding(.top, 10)
+
+            // Clear/dismiss button
+            if !viewModel.searchText.isEmpty {
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        viewModel.clearSearch()
+                    }
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.body)
+                        .foregroundColor(palette.secondaryText)
+                }
+                .transition(.scale.combined(with: .opacity))
+                .accessibilityLabel("Clear search")
             }
         }
-        .padding(.horizontal, 15)
-        .padding(.bottom, 20)
+        .padding(.horizontal, 16)
+        .frame(height: 50)
+        .background(
+            RoundedRectangle(cornerRadius: AppMetrics.controlRadius, style: .continuous)
+                .fill(palette.card)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: AppMetrics.controlRadius, style: .continuous)
+                .stroke(isSearchFocused ? palette.accent.opacity(0.7) : palette.hairline, lineWidth: isSearchFocused ? 1.5 : 1)
+        )
+        .padding(.horizontal, AppMetrics.screenPadding)
     }
-    
-    // Dummy Quotes View
-    @ViewBuilder
-    func DummyQuotesView() -> some View {
-        ForEach(0..<20, id: \.self) { _ in
-            VStack {
-                HStack {
-                    VStack {
-                        HStack {
-                            Rectangle().frame(width: CGFloat(Int.random(in: 200..<250)), height:9.5)
-                                .modifier(DummyQuoteTextStyling())
-                            Spacer()
+
+    private var suggestionsView: some View {
+        let palette = sharedVars.palette
+        return VStack(alignment: .leading, spacing: 14) {
+            SectionLabel(text: "Try searching for")
+            FlowLayout(spacing: 8) {
+                ForEach(suggestions, id: \.self) { suggestion in
+                    Button {
+                        viewModel.searchText = suggestion
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "sparkle.magnifyingglass")
+                                .font(.caption.weight(.semibold))
+                                .foregroundColor(palette.accent)
+                            Text(suggestion)
+                                .font(.subheadline.weight(.medium))
+                                .foregroundColor(palette.text)
                         }
-                        
-                        HStack{
-                            Rectangle().frame(width: CGFloat(Int.random(in: 40..<130)), height:9.5)
-                                .modifier(DummyQuoteTextStyling())
-                            Spacer()
-                        }
-                        
-                        HStack{
-                            Rectangle().frame(width: CGFloat(Int.random(in: 40..<130)), height:9.5)
-                                .modifier(DummyQuoteTextStyling())
-                            Spacer()
-                        }
-                        
+                        .padding(.vertical, 9)
+                        .padding(.horizontal, 14)
+                        .background(Capsule().fill(palette.card))
+                        .overlay(Capsule().stroke(palette.hairline, lineWidth: 1))
                     }
-                    Spacer()
-                }
-                
-                HStack{
-                    Spacer()
-                    Text("— ")
-                        .modifier(DummyQuoteAuthorTextStyling())
-                    Rectangle().frame(width: CGFloat(Int.random(in: 70..<150)), height: 9.5)
-                        .modifier(DummyQuoteAuthorTextStyling())
+                    .buttonStyle(PressableButtonStyle())
                 }
             }
-            .modifier(QuotesSectionOuterStyling())
-            .padding(.horizontal)
+            Text("Search matches words in a quote and in its author's name. Pick a category above to narrow it down.")
+                .font(.footnote)
+                .foregroundColor(palette.secondaryText)
+                .padding(.horizontal, 4)
+                .padding(.top, 6)
+        }
+        .padding(.horizontal, AppMetrics.screenPadding)
+        .padding(.top, 8)
+    }
+}
+
+/// Lays children out in rows, wrapping to the next row when one is full.
+@available(iOS 16.0, *)
+struct FlowLayout: Layout {
+    var spacing: CGFloat = 8
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let maxWidth = proposal.width ?? .infinity
+        var x: CGFloat = 0, y: CGFloat = 0, rowHeight: CGFloat = 0, widest: CGFloat = 0
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if x > 0 && x + size.width > maxWidth {
+                y += rowHeight + spacing
+                x = 0
+                rowHeight = 0
+            }
+            x += size.width + spacing
+            widest = max(widest, x - spacing)
+            rowHeight = max(rowHeight, size.height)
+        }
+        return CGSize(width: proposal.width ?? widest, height: y + rowHeight)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        var x = bounds.minX, y = bounds.minY, rowHeight: CGFloat = 0
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if x > bounds.minX && x + size.width > bounds.maxX {
+                y += rowHeight + spacing
+                x = bounds.minX
+                rowHeight = 0
+            }
+            subview.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(size))
+            x += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
         }
     }
 }
