@@ -89,13 +89,15 @@ struct AuthorView: View {
 struct AuthorLink: View {
     let author: String
     let quote: Quote
+    // Leading where the name starts a row (Top), trailing where it ends one
+    var alignment: TextAlignment = .trailing
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
 
     var body: some View {
         NavigationLink(destination: AuthorView(quote: quote)) {
             HStack(spacing: 4) {
                 Text("— \(author)")
-                    .modifier(AuthorTextStyling())
+                    .modifier(AuthorTextStyling(alignment: alignment))
                 Image(systemName: "chevron.right")
                     .font(.caption.weight(.bold))
                     .foregroundColor(sharedVars.palette.accent.opacity(0.8))

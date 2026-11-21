@@ -82,14 +82,15 @@ extension CommunityView {
         VStack(alignment: .leading, spacing: 10) {
             Text(quote.text)
                 .modifier(QuoteTextStyling(font: .system(.body, design: .serif)))
-            HStack {
+            HStack(alignment: .firstTextBaseline) {
                 if let approvedDate = quote.approvedDate {
                     Text("Added \(approvedDate.formatted(date: .abbreviated, time: .omitted))")
                         .font(.caption)
                         .foregroundColor(palette.secondaryText)
                         .lineLimit(1)
+                        .fixedSize()
                 }
-                Spacer()
+                Spacer(minLength: 12)
                 if let author = quote.author, isAuthorValid(authorGiven: quote.author) {
                     AuthorLink(author: author, quote: quote)
                 }

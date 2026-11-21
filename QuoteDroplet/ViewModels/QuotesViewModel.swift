@@ -73,6 +73,9 @@ class QuotesViewModel: ObservableObject{
                     self.counts[category.rawValue] = bookmarkedCount
                     group.leave()
                 }
+            } else if category == .custom {
+                self.counts[category.rawValue] = self.localQuotesService.getCustomQuotes().count
+                group.leave()
             } else {
                 self.apiService.getCountForCategory(category: category) { [weak self] categoryCount in
                     guard let self = self else { return }

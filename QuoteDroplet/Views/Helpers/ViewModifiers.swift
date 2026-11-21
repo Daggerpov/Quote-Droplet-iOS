@@ -115,11 +115,15 @@ struct QuoteTextStyling: ViewModifier {
 
 struct AuthorTextStyling: ViewModifier {
     @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
+    // Long attributions (e.g. "Lord Krishna, Bhagavad Gita") wrap instead of being cut off
+    var alignment: TextAlignment = .trailing
     func body(content: Content) -> some View {
         content
             .font(AppFont.author)
             .foregroundColor(sharedVars.palette.accent)
-            .lineLimit(1)
+            .lineLimit(3)
+            .multilineTextAlignment(alignment)
+            .fixedSize(horizontal: false, vertical: true)
     }
 }
 

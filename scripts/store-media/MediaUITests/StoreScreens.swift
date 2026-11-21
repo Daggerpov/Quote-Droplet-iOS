@@ -22,6 +22,14 @@ final class StoreScreens: XCTestCase {
         pause(1.5)
         shot("2-appearance")
 
+        // 8. Your own quotes, in Droplets > Custom (seed a few custom quotes first).
+        selectPalette("Sage")
+        openTab("Droplets")
+        app.buttons["Custom"].firstMatch.tap()
+        pause(1.5)
+        shot("8-custom")
+        app.buttons["Feed"].firstMatch.tap()
+
         // 3. Search.
         selectPalette("Midnight")
         openTab("Search")

@@ -10,8 +10,9 @@ protocol ILocalQuotesService {
     func saveLikedQuote(quote: Quote, isLiked: Bool) -> Void
     func getBookmarkedQuotes() -> [Quote]
     func saveBookmarkedQuote(quote: Quote, isBookmarked: Bool) -> Void
-    func getRecentLocalQuotes() -> [Quote]
-    func saveRecentQuote(quote: Quote) -> Void
+    func getCustomQuotes() -> [Quote]
+    func saveCustomQuote(_ quote: Quote) -> Void
+    func deleteCustomQuote(_ quote: Quote) -> Void
     func loadQuotesFromJSON() -> [QuoteJSON]
     func isQuoteLiked(_ quote: Quote) -> Bool
     func isQuoteBookmarked(_ quote: Quote) -> Bool

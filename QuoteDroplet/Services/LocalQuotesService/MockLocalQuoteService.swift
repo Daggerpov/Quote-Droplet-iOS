@@ -37,12 +37,19 @@ class MockLocalQuotesService: ILocalQuotesService {
         return
     }
 
-    func getRecentLocalQuotes() -> [Quote] {
-        return [Quote.mockQuote(), Quote.mockQuote()]
+    private var customQuotes: [Quote] = [Quote]()
+
+    func getCustomQuotes() -> [Quote] {
+        return customQuotes
     }
 
-    func saveRecentQuote(quote: Quote) -> Void {
-        return
+    func saveCustomQuote(_ quote: Quote) -> Void {
+        customQuotes.removeAll { $0.id == quote.id }
+        customQuotes.append(quote)
+    }
+
+    func deleteCustomQuote(_ quote: Quote) -> Void {
+        customQuotes.removeAll { $0.id == quote.id }
     }
 
     func loadQuotesFromJSON() -> [QuoteJSON] {

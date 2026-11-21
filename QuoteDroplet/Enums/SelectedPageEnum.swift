@@ -10,5 +10,5 @@ import Foundation
 enum SelectedPage {
     case feed
     case saved
-    case recent
+    case custom
 }

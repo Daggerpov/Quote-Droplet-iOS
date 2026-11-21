@@ -27,8 +27,8 @@ import Testing
 
     @Test func setSelected() {
         #expect(sut.selected == SelectedPage.feed)
-        sut.setSelected(newValue: SelectedPage.recent)
-        #expect(sut.selected == SelectedPage.recent)
+        sut.setSelected(newValue: SelectedPage.custom)
+        #expect(sut.selected == SelectedPage.custom)
         sut.setSelected(newValue: SelectedPage.saved)
         #expect(sut.selected == SelectedPage.saved)
     }
@@ -38,15 +38,46 @@ import Testing
         #expect(sut.getTitleText() == "Quotes Feed")
         sut.setSelected(newValue: SelectedPage.saved)
         #expect(sut.getTitleText() == "Saved Quotes")
-        sut.setSelected(newValue: SelectedPage.recent)
-        #expect(sut.getTitleText() == "Recent Quotes")
+        sut.setSelected(newValue: SelectedPage.custom)
+        #expect(sut.getTitleText() == "Custom Quotes")
+    }
+
+    @Test func customQuotes_addEditDelete() {
+        #expect(sut.customQuotes.isEmpty)
+        #expect(!sut.saveCustomQuote(text: "   ", author: "Nobody"))
+        #expect(sut.customQuotes.isEmpty)
+
+        #expect(sut.saveCustomQuote(text: "  Be kind.  ", author: " Mom "))
+        #expect(sut.customQuotes.count == 1)
+        let added = sut.customQuotes[0]
+        #expect(added.text == "Be kind.")
+        #expect(added.author == "Mom")
+        #expect(added.isCustom)
+        #expect(added.id < 0)
+
+        #expect(sut.saveCustomQuote(text: "Be very kind.", author: "", editing: added))
+        #expect(sut.customQuotes.count == 1)
+        #expect(sut.customQuotes[0].id == added.id)
+        #expect(sut.customQuotes[0].text == "Be very kind.")
+        #expect(sut.customQuotes[0].author == nil)
+
+        sut.deleteCustomQuote(sut.customQuotes[0])
+        #expect(sut.customQuotes.isEmpty)
+    }
+
+    @Test func customCategory_isOnDeviceOnly() {
+        #expect(QuoteCategory.custom.isOnDevice)
+        #expect(QuoteCategory.bookmarkedQuotes.isOnDevice)
+        #expect(!QuoteCategory.remoteCases.contains(.custom))
+        #expect(!QuoteCategory.remoteCases.contains(.bookmarkedQuotes))
+        #expect(QuoteCategory.remoteCases.contains(.wisdom))
     }
 
     /*
     @Test func loadInitialQuotes() async throws {
         #expect(sut.quotes.isEmpty)
         #expect(sut.savedQuotes.isEmpty)
-        #expect(sut.recentQuotes.isEmpty)
+        #expect(sut.customQuotes.isEmpty)
 
         let mockQuotes = [Quote.mockQuote(), Quote.mockQuote()]
         mockApiService.setQuoteByIDResponse(quotes: mockQuotes, error: nil)

@@ -14,6 +14,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 SCREENS = [
     ("1-droplets", "Espresso", "QUOTE DROPLET", "A daily drop\nof wisdom"),
     ("7-home", "Espresso", "WIDGETS", "Quotes right on\nyour home screen"),
+    ("8-custom", "Sage", "YOUR OWN QUOTES", "Add the quotes\nthat matter to you"),
     ("2-appearance", "Espresso", "MAKE IT YOURS", "Eight palettes,\nor your own colors"),
     ("3-search", "Midnight", "SEARCH", "Find the words\nyou need"),
     ("4-top", "Sky", "TOP QUOTES", "The quotes readers\nlove most"),
@@ -28,6 +29,7 @@ PALETTES = {
     "Ember": ("1E1D2A", "F4F2F8", "F59A62"),
     "Sky": ("DCEEF8", "0F2536", "1D6696"),
     "Linen": ("F6F0E6", "3A2E27", "A9492A"),
+    "Sage": ("E6ECE2", "1E2B22", "3F6E4E"),
 }
 
 SIZES = {"iphone": (1320, 2868), "ipad": (2064, 2752)}

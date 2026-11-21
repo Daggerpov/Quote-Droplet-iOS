@@ -59,27 +59,26 @@ struct Provider: IntentTimelineProvider {
             likes: 0
         )
         
-        if data.getQuoteCategory() == .bookmarkedQuotes {
-            let bookmarkedQuotes = localQuotesService.getBookmarkedQuotes()
-            
-            if !bookmarkedQuotes.isEmpty {
-                let randomIndex = Int.random(in: 0..<bookmarkedQuotes.count)
-                let entry = SimpleEntry(date: nextUpdate, configuration: configuration, quote: bookmarkedQuotes[randomIndex], widgetColorPaletteIndex: data.getIndex(), widgetCustomColorPalette: data.getColorPalette(), quoteFrequency: data.getQuoteFrequencySelected(), quoteCategory: data.getQuoteCategory())
-                let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
-                completion(timeline)
-            } else {
-                // Use fallback quote with a message about no bookmarks
-                let noBookmarksQuote = Quote(
-                    id: 998,
-                    text: "No bookmarked quotes found. Save quotes in the app to see them here.",
-                    author: "Quote Droplet",
-                    classification: "info",
-                    likes: 0
-                )
-                let entry = SimpleEntry(date: nextUpdate, configuration: configuration, quote: noBookmarksQuote, widgetColorPaletteIndex: data.getIndex(), widgetCustomColorPalette: data.getColorPalette(), quoteFrequency: data.getQuoteFrequencySelected(), quoteCategory: data.getQuoteCategory())
-                let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
-                completion(timeline)
-            }
+        let category = data.getQuoteCategory()
+        if category.isOnDevice {
+            // Saved and Custom quotes are stored on the device, shared through the app group
+            let localQuotes = category == .custom
+                ? localQuotesService.getCustomQuotes()
+                : localQuotesService.getBookmarkedQuotes()
+            // The small widget prefers short quotes, like the backend's maxLength for other categories
+            let shortQuotes = localQuotes.filter { $0.text.count <= 100 }
+            let pool = (family == .systemSmall && !shortQuotes.isEmpty) ? shortQuotes : localQuotes
+            let emptyQuote = Quote(
+                id: 998,
+                text: category == .custom
+                    ? "No custom quotes yet. Add your own in the app's Droplets tab, under Custom."
+                    : "No bookmarked quotes found. Save quotes in the app to see them here.",
+                author: "Quote Droplet",
+                classification: "info",
+                likes: 0
+            )
+            let entry = SimpleEntry(date: nextUpdate, configuration: configuration, quote: pool.randomElement() ?? emptyQuote, widgetColorPaletteIndex: data.getIndex(), widgetCustomColorPalette: data.getColorPalette(), quoteFrequency: data.getQuoteFrequencySelected(), quoteCategory: category)
+            completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
         } else {
             // Fetch the initial quote
             apiService
@@ -149,18 +148,21 @@ struct QuoteDropletWidgetEntryView : View {
     
     private var likesSection: some View {
         HStack {
-            if #available(iOS 17.0, *) {
-                Button(intent: LikeQuoteIntent(quote: widgetQuote)) {
+            // Custom quotes only exist on this device, so they have no likes
+            if !widgetQuote.isCustom {
+                if #available(iOS 17.0, *) {
+                    Button(intent: LikeQuoteIntent(quote: widgetQuote)) {
+                        Image(systemName: isLiked ? "heart.fill" : "heart")
+                            .foregroundStyle(colors[2])
+                    }.backgroundStyle(colors[2])
+                } else {
                     Image(systemName: isLiked ? "heart.fill" : "heart")
                         .foregroundStyle(colors[2])
-                }.backgroundStyle(colors[2])
-            } else {
-                Image(systemName: isLiked ? "heart.fill" : "heart")
-                    .foregroundStyle(colors[2])
+                }
+                
+                Text("\(widgetQuote.likes ?? 69)")
+                    .foregroundColor(colors[2])
             }
-            
-            Text("\(widgetQuote.likes ?? 69)")
-                .foregroundColor(colors[2])
                 
             if #available(iOS 17.0, *) {
                 Button(intent: NextQuoteIntent()) {

@@ -20,12 +20,18 @@ struct SingleQuoteView: View {
     var from: SingleQuoteSource
     var searchText: String?
     var onBookmarkRemoved: (() -> Void)?
+    // Custom quotes show edit and delete in place of like and save
+    var onEdit: (() -> Void)?
+    var onDelete: (() -> Void)?
 
-    init(quote: Quote, from: SingleQuoteSource, searchText: String? = "", onBookmarkRemoved: (() -> Void)? = nil) {
+    init(quote: Quote, from: SingleQuoteSource, searchText: String? = "", onBookmarkRemoved: (() -> Void)? = nil,
+         onEdit: (() -> Void)? = nil, onDelete: (() -> Void)? = nil) {
         self.quote = quote
         self.from = from
         self.searchText = searchText
         self.onBookmarkRemoved = onBookmarkRemoved
+        self.onEdit = onEdit
+        self.onDelete = onDelete
         self._viewModel = StateObject(wrappedValue: SingleQuoteViewModel(
             localQuotesService: LocalQuotesService(),
             apiService: APIService(), quote: quote, from: from))
@@ -119,32 +125,11 @@ extension SingleQuoteView {
         let wholeAuthorText = (authorForSharing != "") ? "\n— \(authorForSharing ?? "Unknown Author")" : ""
 
         return HStack(spacing: 6) {
-            Button(action: {
-                viewModel.toggleLike(for: quote)
-            }) {
-                HStack(spacing: 2) {
-                    actionIcon(viewModel.isLiked ? "heart.fill" : "heart", active: viewModel.isLiked)
-                    // The like count next to the heart button
-                    Text("\(viewModel.likes)")
-                        .font(.subheadline.weight(.semibold).monospacedDigit())
-                        .foregroundColor(viewModel.isLiked ? palette.accent : palette.secondaryText)
-                        .padding(.trailing, 6)
-                }
+            if quote.isCustom {
+                customQuoteButtons
+            } else {
+                likeAndSaveButtons
             }
-            .buttonStyle(PressableButtonStyle())
-            .accessibilityLabel(viewModel.isLiked ? "Unlike" : "Like")
-
-            Button(action: {
-                let wasBookmarked = viewModel.isBookmarked
-                viewModel.toggleBookmark(for: quote)
-                if wasBookmarked {
-                    onBookmarkRemoved?()
-                }
-            }) {
-                actionIcon(viewModel.isBookmarked ? "bookmark.fill" : "bookmark", active: viewModel.isBookmarked)
-            }
-            .buttonStyle(PressableButtonStyle())
-            .accessibilityLabel(viewModel.isBookmarked ? "Remove from saved" : "Save")
 
             Button(action: {
                 UIPasteboard.general.setValue("\(quote.text)\(wholeAuthorText)",
@@ -170,5 +155,53 @@ extension SingleQuoteView {
                 .accessibilityLabel("Share")
             }
         }
+    }
+
+    @ViewBuilder
+    private var customQuoteButtons: some View {
+        if let onEdit = onEdit {
+            Button(action: onEdit) {
+                actionIcon("pencil")
+            }
+            .buttonStyle(PressableButtonStyle())
+            .accessibilityLabel("Edit")
+        }
+        if let onDelete = onDelete {
+            Button(action: onDelete) {
+                actionIcon("trash")
+            }
+            .buttonStyle(PressableButtonStyle())
+            .accessibilityLabel("Delete")
+        }
+    }
+
+    @ViewBuilder
+    private var likeAndSaveButtons: some View {
+        Button(action: {
+            viewModel.toggleLike(for: quote)
+        }) {
+            HStack(spacing: 2) {
+                actionIcon(viewModel.isLiked ? "heart.fill" : "heart", active: viewModel.isLiked)
+                // The like count next to the heart button
+                Text("\(viewModel.likes)")
+                    .font(.subheadline.weight(.semibold).monospacedDigit())
+                    .foregroundColor(viewModel.isLiked ? palette.accent : palette.secondaryText)
+                    .padding(.trailing, 6)
+            }
+        }
+        .buttonStyle(PressableButtonStyle())
+        .accessibilityLabel(viewModel.isLiked ? "Unlike" : "Like")
+
+        Button(action: {
+            let wasBookmarked = viewModel.isBookmarked
+            viewModel.toggleBookmark(for: quote)
+            if wasBookmarked {
+                onBookmarkRemoved?()
+            }
+        }) {
+            actionIcon(viewModel.isBookmarked ? "bookmark.fill" : "bookmark", active: viewModel.isBookmarked)
+        }
+        .buttonStyle(PressableButtonStyle())
+        .accessibilityLabel(viewModel.isBookmarked ? "Remove from saved" : "Save")
     }
 }
