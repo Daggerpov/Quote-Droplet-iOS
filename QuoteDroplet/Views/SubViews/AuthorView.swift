@@ -82,3 +82,26 @@ struct AuthorView: View {
         }
     }
 }
+
+/// An author's name ("— Name ›") that opens their author page. Used wherever a quote's author is shown
+/// outside the full quote card, so every author in the app leads to their quotes.
+@available(iOS 16.0, *)
+struct AuthorLink: View {
+    let author: String
+    let quote: Quote
+    @EnvironmentObject var sharedVars: SharedVarsBetweenTabs
+
+    var body: some View {
+        NavigationLink(destination: AuthorView(quote: quote)) {
+            HStack(spacing: 4) {
+                Text("— \(author)")
+                    .modifier(AuthorTextStyling())
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.bold))
+                    .foregroundColor(sharedVars.palette.accent.opacity(0.8))
+            }
+        }
+        .buttonStyle(PressableButtonStyle())
+        .accessibilityLabel("More quotes by \(author)")
+    }
+}
