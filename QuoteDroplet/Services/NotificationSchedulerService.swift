@@ -17,7 +17,6 @@ class NotificationSchedulerService {
     
     // notifications default settings:
     private var defaultNotificationTime: Date = Calendar.current.date(byAdding: .minute, value: 3, to: Date.now) ?? Date.now
-    private var defaultQuoteCategory: QuoteCategory = QuoteCategory.all
     
     public static var isDefaultConfigOverwritten: Bool = false
     
@@ -42,11 +41,20 @@ class NotificationSchedulerService {
     func scheduleNotifications() {
         // removed toggle check to make sure user has opted in; simply notififying no matter if opted in.
         if NotificationSchedulerService.isDefaultConfigOverwritten {
-            scheduleNotifications(notificationTime: NotificationSchedulerService.previouslySelectedNotificationTime, quoteCategory: NotificationSchedulerService.previouslySelectedNotificationCategory, defaults: true)
+            scheduleNotifications(notificationTime: NotificationSchedulerService.previouslySelectedNotificationTime, quoteCategory: NotificationSchedulerService.storedQuoteCategory, defaults: true)
         } else {
             NotificationSchedulerService.defaultScheduledNotificationTime = defaultNotificationTime
-            scheduleNotifications(notificationTime: defaultNotificationTime, quoteCategory: defaultQuoteCategory, defaults: true)
+            scheduleNotifications(notificationTime: defaultNotificationTime, quoteCategory: NotificationSchedulerService.storedQuoteCategory, defaults: true)
         }
+    }
+
+    /// The category picked in Settings > Quotes (shared with the widget), so notifications follow it across launches.
+    static var storedQuoteCategory: QuoteCategory {
+        if let raw = UserDefaults(suiteName: "group.selectedSettings")?.string(forKey: "quoteCategory"),
+           let category = QuoteCategory(rawValue: raw) {
+            return category
+        }
+        return .all
     }
     
     func scheduleNotifications(notificationTime: Date, quoteCategory: QuoteCategory, defaults: Bool) {
@@ -120,6 +128,14 @@ class NotificationSchedulerService {
                     
                 }
                 
+            } else if classification.lowercased() == QuoteCategory.custom.lowercasedName {
+                if let custom = localQuotesService.getCustomQuotes().randomElement() {
+                    randomQuote = custom.toQuoteJSON()
+                    content.title = "Quote Droplet: Your Quotes"
+                } else {
+                    randomQuote = QuoteJSON(id: 9999998, text: "Add your own quotes in the app's \"Droplets\" tab, under Custom", author: "", classification: "Custom")
+                    content.title = "Quote Droplet: No Custom Quotes Added"
+                }
             } else {
                 // Fetch a random quote with the specified classification
                 let filteredQuotes = shortQuotes.filter { $0.classification.lowercased() == classification.lowercased() }
@@ -158,34 +174,4 @@ class NotificationSchedulerService {
             }
         }
     }
-    
-    func saveSentNotificationsAsRecents() {
-        UNUserNotificationCenter.current().getDeliveredNotifications { [weak self] notifications in // weak to prevent memory leaks (automatic reference count can't go to 0 due to deadlock)
-            for notification in notifications {
-                let content = notification.request.content
-                let body = content.body
-                
-                // Assuming the quote text and author are separated by "\n— " in the body
-                let components = body.split(separator: "\n", maxSplits: 1, omittingEmptySubsequences: true)
-                if components.count == 2 {
-                    let text = String(components[0])
-                    let author = String(components[1].dropFirst(2)) // Remove the "— " prefix
-                    if let quoteID = content.userInfo["quoteID"] as? Int {
-                        let quote = QuoteJSON(id: quoteID, text: text, author: author, classification: content.title)
-                        self?.localQuotesService.saveRecentQuote(quote: quote.toQuote())
-                    }
-                } else {
-                    // Handle case where there's no author
-                    let text = String(components[0])
-                    if let quoteID = content.userInfo["quoteID"] as? Int {
-                        let quote = QuoteJSON(id: quoteID, text: text, author: "", classification: content.title)
-                        self?.localQuotesService.saveRecentQuote(quote: quote.toQuote())
-                    }
-                }
-            }
-        }
-    }
-    
-    
 }
-

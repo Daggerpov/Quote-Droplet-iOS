@@ -113,8 +113,8 @@ extension SubmitView {
 
     private var submissionQuoteCategoryPicker: some View {
         Picker("Category", selection: $viewModel.selectedCategory) {
-            // .all (shown as "Unsure") first, without the Saved pseudo-category
-            ForEach([.all] + QuoteCategory.allCases.filter { $0 != .bookmarkedQuotes && $0 != .all }, id: \.self) { category in
+            // .all (shown as "Unsure") first, without the on-device Saved and Custom categories
+            ForEach([.all] + QuoteCategory.remoteCases.filter { $0 != .all }, id: \.self) { category in
                 Text(category == .all ? "Unsure" : category.rawValue)
             }
         }

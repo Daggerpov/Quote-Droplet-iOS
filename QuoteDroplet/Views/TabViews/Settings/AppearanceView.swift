@@ -73,7 +73,6 @@ extension AppearanceSubview {
                 .padding(.horizontal, 26)
             }
             .frame(height: 158)
-            .padding(.horizontal, 4)
             .animation(.easeInOut(duration: 0.25), value: sharedVars.colorPaletteIndex)
         }
     }

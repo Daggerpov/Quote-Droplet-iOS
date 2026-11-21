@@ -48,7 +48,7 @@ class SingleQuoteViewModel: ObservableObject {
     }
     
     public func shouldShowArrow() -> Bool {
-        return isAuthorValid(authorGiven: quote.author) && from != .authorView
+        return isAuthorValid(authorGiven: quote.author) && from != .authorView && !quote.isCustom
     }
     
     public func getQuoteInfo() -> Void {

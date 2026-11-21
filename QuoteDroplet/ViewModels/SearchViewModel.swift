@@ -60,6 +60,17 @@ class SearchViewModel: ObservableObject {
             return
         }
         
+        // Saved and Custom quotes live on the device, so search them locally
+        if activeCategory.isOnDevice {
+            let local = activeCategory == .custom
+                ? Array(localQuotesService.getCustomQuotes().reversed())
+                : localQuotesService.getBookmarkedQuotes()
+            self.allSearchResults = local
+            self.quotes = self.filteredQuotes
+            self.isLoadingMore = false
+            return
+        }
+        
         print("🔍 Search: Searching for \"\(searchText)\" in category \"\(activeCategory.rawValue)\"")
         
         apiService.getQuotesBySearchKeyword(searchKeyword: searchText, searchCategory: activeCategory.rawValue.lowercased()) { [weak self] quotes, error in

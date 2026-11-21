@@ -19,6 +19,19 @@ struct Quote: Codable, Identifiable, Equatable {
     var approvedDate: Date? {
         APIDateParser.date(from: approvedAt)
     }
+
+    /// A quote the user wrote in the app's Custom tab. It only exists on this device, so it can't be liked or saved.
+    var isCustom: Bool {
+        return id < 0 && classification == Quote.customClassification
+    }
+
+    static let customClassification = "custom"
+
+    /// Custom quotes get negative IDs so they never collide with the backend's quote IDs.
+    static func newCustom(text: String, author: String?) -> Quote {
+        let id = -Int(Date().timeIntervalSince1970 * 1000)
+        return Quote(id: id, text: text, author: author, classification: customClassification, likes: nil)
+    }
 }
 
 // Parses the backend's RFC 3339 timestamps, which may or may not include fractional seconds

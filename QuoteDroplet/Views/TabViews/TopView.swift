@@ -19,7 +19,7 @@ struct TopView: View {
             VStack(spacing: 14) {
                 HeaderView(title: "Top Quotes", subtitle: "Most liked")
                 CategoryChips(
-                    categories: QuoteCategory.allCases.filter { $0 != .bookmarkedQuotes },
+                    categories: QuoteCategory.remoteCases,
                     selection: $viewModel.selectedCategory
                 )
                 .onChange(of: viewModel.selectedCategory) { _ in
@@ -85,10 +85,10 @@ extension TopView {
                 
                 HStack(alignment: .center) {
                     if let author = quote.author, isAuthorValid(authorGiven: quote.author) {
-                        AuthorLink(author: author, quote: quote)
+                        AuthorLink(author: author, quote: quote, alignment: .leading)
                     }
                     
-                    Spacer()
+                    Spacer(minLength: 12)
                     
                     HStack(spacing: 16) {
                         Button(action: {
