@@ -87,8 +87,13 @@ extension SubmissionsView {
             if let author = submission.author, isAuthorValid(authorGiven: submission.author) {
                 HStack {
                     Spacer()
-                    Text("— \(author)")
-                        .modifier(AuthorTextStyling())
+                    AuthorLink(author: author, quote: Quote(
+                        id: submission.id,
+                        text: submission.text,
+                        author: author,
+                        classification: submission.classification,
+                        likes: submission.likes
+                    ))
                 }
             }
 

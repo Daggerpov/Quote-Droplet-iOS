@@ -91,8 +91,7 @@ extension CommunityView {
                 }
                 Spacer()
                 if let author = quote.author, isAuthorValid(authorGiven: quote.author) {
-                    Text("— \(author)")
-                        .modifier(AuthorTextStyling())
+                    AuthorLink(author: author, quote: quote)
                 }
             }
         }
